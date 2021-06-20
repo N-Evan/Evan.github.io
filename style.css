@@ -190,7 +190,7 @@ footer .button-wrapper {
 
 table {
   margin: auto auto 50px auto;
-  width: 80%;
+  width: 40%;
   background-color: #1B4332;
 }
 
@@ -211,7 +211,7 @@ tr:nth-child(even) {
 }
 
 .table-header {
-  margin: 200px auto 50px;
+  margin: 100px auto 50px;
   color: #52B788;
   font-size: 24px;
   text-align: center;
