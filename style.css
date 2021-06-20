@@ -43,7 +43,6 @@ header ul {
 
 li.navbar {
   float: right;
-  display: inline-block;
   overflow: hidden;
   list-style: none;
   text-decoration: none;
@@ -63,7 +62,7 @@ li.navbar a {
 }
 
 li a:hover {
-  background-color: ;
+  background-color: #74C69D;
   color: #2D6A4F;
 }
 
@@ -87,16 +86,11 @@ li a:hover {
   padding: 10px;
   vertical-align: middle;
   font-size: 20px;
-  line-heigh: 1.1;
+  line-height: 1.1;
 }
 
 h1 {
   display: block;
-  font-weight: bold;
-  margin-block-start: 0.67em;
-  margin-block-end: 0.67em;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
   font-weight: bold;
   font-size: 70px;
 }
@@ -104,10 +98,6 @@ h1 {
 h2 {
   display: block;
   font-size: 30px;
-  margin-block-start: 0.83em;
-  margin-block-end: 0.83em;
-  margin-inline-start: 0px;
-  margin-inline-end: 0px;
   font-weight: bold;
 }
 
@@ -122,38 +112,20 @@ h2 {
   font-size: 2rem;
 }
 
-.fa {
-  padding: 20px;
-  font-size: 20px;
-  width: 20px;
-  text-align: center;
+.sm {
   text-decoration: none;
-  margin: 5px 2px;
   border-radius: 50%;
 }
 
-.fa:hover {
+.sm:hover {
   opacity: 0.7;
 }
 
-.fa-linkedin {
-  background: #007BB5;
-  color: white;
-}
+/* About me */
 
-.fa-twitter {
-  background: #55ACEE;
-  color: white;
-}
-
-.fa-facebook {
-  background: #3B5998;
-  color: white;
-}
-
-h2.category {
+.category {
   color: #52B788;
-  margin-left: 0px;
+  margin-left: 0;
   font-size: 50px;
 }
 
@@ -163,10 +135,10 @@ h2.category {
   background-color: #081C15;
   color: #52B788;
   display: flex;
-  padding-top: 100px;
+  /* padding-top: 100px; */
 }
 
-div.content {
+.content {
   position: relative;
   display: block;
   font-size: 24px;
