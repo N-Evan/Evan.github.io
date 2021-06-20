@@ -25,12 +25,12 @@ header {
   position: fixed;
   background-color: #1B4332;
   z-index: 1;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
 }
 
 header ul {
-  padding: 0 5rem;
-  margin: 0 auto;
+  padding: 0 2.5rem;
+  margin: auto auto;
   list-style: none;
 }
 
@@ -46,14 +46,13 @@ li.navbar {
   overflow: hidden;
   list-style: none;
   text-decoration: none;
-  padding: 0 0;
 }
 
 li.navbar a {
   color: #D8F3DC;
   font-weight: 600;
   display: block;
-  padding: 10px 15px;
+  padding: 10px 20px;
   text-align: center;
 }
 
@@ -62,7 +61,7 @@ li.navbar a {
 }
 
 li a:hover {
-  background-color: #74C69D;
+  background-color: #B7E4C7;
   color: #2D6A4F;
 }
 
@@ -80,7 +79,7 @@ li a:hover {
 }
 
 .greeting-text-div {
-  margin-top: 100px;
+  margin-top: 10px;
   margin-left: 50px;
   flex: 50%;
   padding: 10px;
@@ -167,18 +166,6 @@ h2 {
   clear: both;
 }
 
-/* .music-desc {
-  text-align: justify;
-  padding-right: 800px;
-  float: left;
-}
-
-.music-chart {
-  text-align: justify;
-  padding-right: 500px;
-  float: right;
-} */
-
 /* footer */
 footer {
   position: relative;
@@ -188,7 +175,7 @@ footer {
   background-color: #222;
   text-align: center;
   color: #fff;
-  padding: 10px 0 10px 0;
+  padding: 10px 0 15px 0;
 }
 
 a, a:focus, a:active {
@@ -197,4 +184,43 @@ a, a:focus, a:active {
 
 footer .button-wrapper {
   margin: 20px;
+}
+
+/* contact */
+
+table {
+  margin: 70px auto auto auto;
+  width: 90%;
+  background-color: #B7E4C7;
+}
+
+th, td {
+  border: 1.5px solid #7209B7;
+  text-align: left;
+  padding: 10px;
+}
+
+tr:nth-child(even) {
+  background-color: #2D6A4F;
+}
+
+.contact-left {
+  width: 50%;
+}
+
+.contact-right {
+  padding-left: 80px;
+  width: 30%;
+}
+
+.table-header {
+  margin: 150px auto auto 155px;
+  color: #52B788;
+  font-size: 24px;
+}
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
 }
