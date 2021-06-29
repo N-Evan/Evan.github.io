@@ -15,6 +15,7 @@
       <li id="icon">Placeholder</li>
       <li class="navbar"><a href="contact.html">Contact</a></li>
       <li class="navbar"><a href="aboutme.html" rel="noopener noreferrer">About Me</a></li>
+      <li class="navbar"><a href="tools.html" rel="noopener noreferrer">Tools</a></li>
       <li class="navbar"><a href="index.html" class="active" rel="noopener noreferrer">Home</a></li>
     </ul>
   </header>
@@ -51,12 +52,11 @@
         <tr>
           <td>Federal Bureau of Control</td>
           <td>Akira Yamaoka</td>
-          <td>Japan</td>
+          <td rowspan="2">Japan</td>
         </tr>
         <tr>
           <td>Claudia Hodgins Postal Auto Memoir Doll Service</td>
           <td>Violet Evergarden</td>
-          <td>Land of The Rising Sun</td>
         </tr>
         <tr>
           <td>Friday The 13th</td>
@@ -74,14 +74,34 @@
           <td>Mexico</td>
         </tr>
       </table>
-      <p style="text-align: center">Back to <a href="#banner">top</a></p>
+    </div>
+    <p style="text-align: center">Back to <a href="#banner">top</a></p>
+    <div class="quote">
+      <div class="quotebox" id="quotes">
+        <p id="quotehere" onclick="printQuote()">
+          Click to get your daily quote!
+        </p>
+      </div>
+      <button id="tgreen" style="background-color: #B7E4C7;"></button>
+      <button id="ogreen" style="background-color: #74C69D;"></button>
+      <button id="emerald" style="background-color: #40916C;"></button>
+      <button id="black" style="background-color: #000;"></button>
     </div>
   </section>
 
+  <center>
+
+  </center>
+
   <footer>
     <p>Took quite a few cups of coffee and a lot of Googling.</p>
-    <script src="script.js"></script>
+    <script>
+      var date = document.lastModified;
+      document.write("Last updated on " + date + " ~ ");
+      document.write("Location: " + window.location.href);
+    </script>
   </footer>
+  <script src="script.js"></script>
 </body>
 
 </html>

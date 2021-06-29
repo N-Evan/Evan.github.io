@@ -165,6 +165,33 @@ h2 {
   clear: both;
 }
 
+/* quote box */
+
+.quote {
+  display: flex;
+  justify-content: center;
+}
+.quotebox {
+  color: black;
+  padding: 25px;
+  margin-right: 50px;
+  margin-bottom: 25px;
+  background-color: #D8F3DC;
+  border-radius: 50px;
+  text-align: center;
+  text-decoration: none;
+}
+
+/*buttons beside quotebox */
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 10px;
+  height: 30px;
+  margin-top: 40px;
+}
+
+
 /* footer */
 footer {
   position: relative;
@@ -185,6 +212,19 @@ footer .button-wrapper {
   margin: 20px;
 }
 
+/* tools */
+.converter {
+  width: 250px;
+}
+
+input {
+  text-align: center;
+}
+
+.calcuations {
+  
+}
+
 /* contact */
 table {
   margin: auto auto 50px auto;
@@ -193,7 +233,7 @@ table {
 }
 
 th, td {
-  border: 1.5px solid #7209B7;
+  border: 1.5px solid #FFF;
   text-align: left;
   padding: 10px;
 }
