@@ -43,3 +43,34 @@ function ranGen() {
   var max = Math.floor(quotes.length);
   return Math.floor(Math.random() * max);
 }
+
+// function doCalc() {
+//   val = document.getElementById('values').value;
+//   var valueArray = val.split(',');
+//   outputMin = document.getElementById('min');
+//   outputMax = document.getElementById('max');
+//   outputSum = document.getElementById('sum');
+//   var aMax = 0;
+//   var aMin = 999;
+//   var sum = 0;
+//
+//   for (let i = 0; i < valueArray.length; i++) {
+//     if (valueArray[i]>aMax) {
+//       aMax = valueArray[i];
+//     }
+//     if (valueArray[i]<aMin) {
+//       aMin = valueArray[i];
+//     }
+//   }
+//
+//
+//   if(val>aMax) {
+//     aMax = val;
+//   }
+//   if(val<aMin) {
+//     aMin = val;
+//   }
+//
+//   outputMin.innerHTML = aMin;
+//   outputMax.innerHTML = aMax;
+// }
