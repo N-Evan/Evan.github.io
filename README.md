@@ -1,2 +1,1 @@
-# dummyPortfolio.github.io
- Assignment 1 of CSE391
+A basic portfolio to track progress and portray my works. 
