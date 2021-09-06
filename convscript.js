@@ -19,8 +19,45 @@ function convert() {
   }
 }
 
-var data = document.getElementById("values").value;
+function sumNums(inp) {
+  var sum = 0;
+  for (let x = 0; x < inp.length; x++) {
+    sum += inp[x];
+  }
+  return sum;
+}
 
-var sum = data.split(",").reduce(function(prev,curr){
-  return parseInt(prev,10) + parseInt(curr,10);
-});
+function reverse(inp) {
+  var r_array = [];
+  for (let x = inp.length-1 ; x>=0; x--) {
+    r_array.push(inp[x])
+  }
+  return r_array;
+}
+
+var sum = 0;
+
+var inpTarg = document.getElementById('calc_inp')
+
+inpTarg.addEventListener("keyup", calculate);
+inpTarg.addEventListener("change", calculate);
+
+function calculate() {
+  var m_inp = document.getElementById('calc_inp').value;
+  var split_inps = m_inp.split(",").map(Number);
+  if(split_inps[split_inps.length-1] == 0) {
+    split_inps.pop();
+  }
+
+  sum = sumNums(split_inps);
+  var avg = (sum/split_inps.length).toFixed(3);
+  var min = Math.min.apply(null, split_inps);
+  var max = Math.max.apply(null, split_inps);
+  var rev_array = reverse(split_inps);
+
+  document.getElementById("sum_otp").value = sum;
+  document.getElementById("avg_otp").innerHTML = avg;
+  document.getElementById("min_otp").innerHTML = min;
+  document.getElementById("max_otp").innerHTML = max;
+  document.getElementById("rev_val").innerHTML = rev_array;
+}

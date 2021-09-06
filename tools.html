@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Reach Evan</title>
+  <title>Some Handy Tools</title>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -34,6 +34,21 @@
       </div>
   </section>
 
+  <section id="about">
+    <div class="inner-wrapper">
+      <h2 class="category"><u>Unit Converter</u></h2>
+      <div class="content calcs">
+        <input type="text" placeholder="Enter values" id="calc_inp" oninput="calculate()">
+        <span></span>
+        <output type="text" placeholder="Sum" id="sum_otp">Sum</output>
+        <p id="avg_otp" placeHolder="Average">Average</p>
+        <p id="min_otp" placeHolder="Minimum">Minimum</p>
+        <p id="max_otp" placeHolder="Maximum">Maximum</p>
+        <p id="rev_val" placeHolder="Reversed">Reversed Inputs</p>
+      </div>
+  </section>
+
+
   <footer>
     <p>Took quite a few cups of coffee and a lot of Googling.</p>
     <p><small>Find me on following platforms.</small></p>
@@ -51,7 +66,5 @@
     </script>
   </footer>
   <script src="convscript.js"></script>
-  <script src="script.js"></script>
 </body>
-
 </html>
