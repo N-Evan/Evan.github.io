@@ -1,3 +1,12 @@
+// progressive RGB Bloom Scrollbar (Looks so out of place tho lmao)
+
+let progress = document.getElementById('progressbar');
+let totalHeight = document.body.scrollHeight - window.innerHeight;
+window.onscroll = function() {
+  let progressHeight = (window.pageYOffset / totalHeight) * 100;
+  progress.style.height = progressHeight + "%";
+}
+
 let target = document.querySelector('#quotes') //targeting quote box
 
 let btnTGreen = document.querySelector('#tgreen');
@@ -43,6 +52,7 @@ function ranGen() {
   var max = Math.floor(quotes.length);
   return Math.floor(Math.random() * max);
 }
+
 
 // function doCalc() {
 //   val = document.getElementById('values').value;
