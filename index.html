@@ -7,21 +7,35 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap" rel="stylesheet">
   <link href="bootstrap.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="style.css" rel="stylesheet">
 </head>
 
 <body>
+  <header class="bg-primary">
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+      <div class="container-fluid">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a href="index.html"  class="nav-link" rel="noopener noreferrer" >Home</a></li>
+          <li class="nav-item"><a href="aboutme.html"  class="nav-link" rel="noopener noreferrer">About Me</a></li>
+          <!-- <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li> -->
+        </ul> 
+      </div>
+    </nav>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+      <div class="container-fluid">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a href="#SilentScream"  class="nav-link" rel="noopener noreferrer" >Silent Scream</a></li>
+          <li class="nav-item"><a href="#HighNoon"  class="nav-link" rel="noopener noreferrer" >High Noon</a></li>
+          <li class="nav-item"><a href="#NullRunner"  class="nav-link" rel="noopener noreferrer" >Null Runner</a></li>
+          <li class="nav-item"><a href="#Aetherfall"  class="nav-link" rel="noopener noreferrer" >Aetherfall</a></li>
+          <li class="nav-item"><a href="#VRFootball"  class="nav-link" rel="noopener noreferrer" >VR Football</a></li>
+          <li class="nav-item"><a href="#AbyssCrawler"  class="nav-link" rel="noopener noreferrer" >Abyss Crawler</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
   <div id="progressbar"></div>
   <div id="scrollpath"></div>
-  <header>
-    <ul class="nav-wrap">
-      <li id="icon">Placeholder</li>
-      <li class="navbar"><a href="contact.html">Contact</a></li>
-      <li class="navbar"><a href="aboutme.html" rel="noopener noreferrer">About Me</a></li>
-      <li class="navbar"><a href="index.html" class="active" rel="noopener noreferrer">Home</a></li>
-    </ul>
-  </header>
-
   <section id="banner">
     <div class="greeting-main">
       <div class="greeting-text-div">
@@ -30,101 +44,167 @@
         <p class="intro-text">I am a gameplay programmer, level designer, creative artist and VFX artist with over 2 years of professional experience.</br>
           The aim is to create unforgettable gaming experiences that will leave a lasting mark for all of the players. 
           I recently had the privilege to work on <a href="https://store.steampowered.com/app/1955750/SILENT_SCREAM/" target="_blank">Silent Scream</a> in a professional capacity with my team.
-          We are also actively working on porting the game to XBox platform. My last personal project is <a href="https://n0tlucifer.itch.io/retromazemadness" target="_blank">Null Runner</a> with
+          We are also actively working on porting the game to XBox platform. My latest personal project is <a href="https://n0tlucifer.itch.io/retromazemadness" target="_blank">Null Runner</a> with
           a unique twist in your regular maze runner game!
         </p>
         <div class="sm-links">
-          <a href="https://www.facebook.com/N0tLucifer/" class="sm-fb" rel="noopener noreferrer"><img src="image/icons8-facebook-64.png" alt="#" class="sm"></a>
-          <a href="https://github.com/N-Evan" class="sm-github" rel="noopener noreferrer"><img src="image/icons8-github-64.png" alt="#" class="sm"></a>
-          <a href="https://www.linkedin.com/in/n-evan/" class="sm-github" rel="noopener noreferrer"><img src="image/icons8-linkedin-circled-64.png" alt="#" class="sm"></a>
-          <!-- <a href="https://twitter.com/NotLuc1fer" class="sm-twitter" rel="noopener noreferrer"><img src="image/icons8-twitter-64.png" alt="#" class="sm"></a> -->
-          <a href="https://www.deviantart.com/n0tlucifer" class="sm-deviantart" rel="noopener noreferrer"><img src="image/icons8-deviantart-64.png" alt="#" class="sm"></a>
+          <a href="https://www.facebook.com/N0tLucifer/" class="sm-fb" rel="noopener noreferrer"><img src="image/icons/icons8-facebook-64.png" alt="#" class="sm"></a>
+          <a href="https://github.com/N-Evan" class="sm-github" rel="noopener noreferrer"><img src="image/icons/icons8-github-64.png" alt="#" class="sm"></a>
+          <a href="https://www.linkedin.com/in/n-evan/" class="sm-github" rel="noopener noreferrer"><img src="image/icons/icons8-linkedin-circled-64.png" alt="#" class="sm"></a>
+          <!-- <a href="https://twitter.com/NotLuc1fer" class="sm-twitter" rel="noopener noreferrer"><img src="image/icons/icons8-twitter-64.png" alt="#" class="sm"></a> -->
+          <a href="https://www.deviantart.com/n0tlucifer" class="sm-deviantart" rel="noopener noreferrer"><img src="image/icons/icons8-deviantart-64.png" alt="#" class="sm"></a>
+          <a href="mailto:nurusshafievan@gmail.com" class="sm-twitter" rel="noopener noreferrer"><img src="image/icons/icons8-email-64.png" alt="#" class="sm"></a>
         </div>
-        <p>Go to the <a href="#table">end</a></p>
+        <!-- <p>Go to the <a href="#table">end</a></p> -->
       </div>
       <img src="https://i.pinimg.com/originals/78/5a/1b/785a1b9c359640da6bc9cfe3670b42ba.png" alt="#" width="600" height="600" style="padding-right: 50px">
     </div>
     <div class="container" style="background-color: transparent;">
 
       <div class="card-section">
-        <div class="card border-success mb-5" style="max-width: 32rem;">
+        <!-- Silent Scream -->
+        <div class="card border-success mb-5" style="max-width: 32rem;" id="SilentScream">
           <div class="card-header">
             <h3>Silent Scream</h3></div>
           <div class="card-body">
-            <!-- <center><img src="https://i.pinimg.com/originals/78/5a/1b/785a1b9c359640da6bc9cfe3670b42ba.png" width="300" height="300"></center> -->
-            <center><iframe src="https://store.steampowered.com/widget/1955750/" frameborder="0" width="380" height="253.33"></iframe></center>
+            <center><a href="https://store.steampowered.com/widget/1955750/" target="_blank"><img src="image/Thumbs/Silent_Scream_Title.png" width="300" height="150"></a></center>
             <p class="card-text">
               <br>
-              <p>Link: <a href="#">Project Link</a></p>
-              <p>Link: <a href="">Placeholder Link</a></p>
-              <p>What I did: Lorem ipsum sit amet it dolores. Hakuna matata</p>
-              <p>Studio: Studio - 23 (Employee)</p>
-              <p>Platform: Windows</p>
-              <p>Team Size: 5</p>
-              <p>Project Duration: 1 year</p>
-              <p>Engine & Tools: Unity Engine, Blender</p>
+              <p class="text-warning">What I did
+                <p class="text-light">Collaborated with a team of 5 while aiding in the development of key systems of the game. Throughout the development period we also 
+                  came up with open source packages for Unity to speed up development. I was also responsible for working on the game feel as we ported the game to XBox platform. 
+                </p>
+              </p>
+              <p class="text-warning">Studio: <a href="https://studio-23.xyz/" target="_blank">Studio - 23</a> (Employee)</p>
+              <p class="text-warning">Platform: Windows, XBox (upcoming)</p>
+              <p class="text-warning">Team Size: 5</p>
+              <p class="text-warning">Link: <a class="text-success" href="https://store.steampowered.com/widget/1955750/">Project Link</a></p>
+              <p class="text-warning">Project Duration: 1 year</p>
+              <p class="text-warning">Engine & Tools: Unity Engine, Blender</p>
             </p>
           </div>
         </div>
-
-        <div class="card border-success mb-5" style="max-width: 32rem;">
+        <!-- High Noon -->
+        <div class="card border-success mb-5" style="max-width: 32rem;" id="HighNoon">
           <div class="card-header">
             <h4 >High Noon</h4>
           </div>
           <div class="card-body">
-            <center><img src="https://img.itch.zone/aW1nLzkyMDE1NzgucG5n/original/cwSA%2BF.png" width="380" height="253.33"></center>
+            <center><img src="image/Thumbs/HighNoon_Title_Transparent.png" width="300" height="150"></center>
             <p class="card-text">
               <br>
-              <p>Link: <a href="#">Project Link</a></p>
-              <p>Link: <a href="">Placeholder Link</a></p>
-              <p>What I did: Lorem ipsum sit amet it dolores. Hakuna matata</p>
-              <p>Studio: Studio - 23 (Employee)</p>
-              <p>Platform: Windows</p>
-              <p>Team Size: 5</p>
-              <p>Project Duration: 1 year</p>
-              <p>Engine & Tools: Unity Engine, Blender</p>
+              <p class="text-warning">What I did
+                <p class="text-light">Built a realtime player versus player dueling game using Photon Unity Networking backend and developed all systems from scratch. Explored 
+                  design ideas to make the game more fun and engaging for players with the support of 3D artists and designers from the team. Design owner of the UI & UX on PC 
+                  platform. 
+                </p>
+              </p>
+              <p class="text-warning">Studio: <a href="https://studio-23.xyz/" target="_blank">Studio - 23</a> (Employee)</p>
+              <p class="text-warning">Platform: Windows</p>
+              <p class="text-warning">Team Size: 2</p>
+              <p class="text-warning">Link: <a class="text-success" href="https://brainstation23.itch.io/high-noon" target="_blank">Project Link</a></p>
+              <p class="text-warning">Project Duration: 4 months</p>
+              <p class="text-warning">Engine & Tools: Unity Engine, Blender</p>
             </p>
           </div>
         </div>
       </div>
 
       <div class="card-section">
-        <div class="card border-success mb-5" style="max-width: 32rem;">
+        <!-- Null Runner -->
+        <div class="card border-success mb-5" style="max-width: 32rem;" id="NullRunner">
           <div class="card-header">
-            <h4 class="card-title">Silent Scream</h4></div>
+            <h3>Null Runner</h3></div>
           <div class="card-body">
-            <!-- <center><img src="https://i.pinimg.com/originals/78/5a/1b/785a1b9c359640da6bc9cfe3670b42ba.png" width="300" height="300"></center> -->
-            <center><iframe src="https://store.steampowered.com/widget/1955750/" frameborder="0" width="380" height="253.33"></iframe></center>
+            <center><a href="https://n0tlucifer.itch.io/retromazemadness" target="_blank"><img src="image/Thumbs/Null_Runner_Title_v2.png" width="300" height="150"></a></center>
             <p class="card-text">
               <br>
-              <p>Link: <a href="#">Project Link</a></p>
-              <p>Link: <a href="">Placeholder Link</a></p>
-              <p>What I did: Lorem ipsum sit amet it dolores. Hakuna matata</p>
-              <p>Studio: Studio - 23 (Employee)</p>
-              <p>Platform: Windows</p>
-              <p>Team Size: 5</p>
-              <p>Project Duration: 1 year</p>
-              <p>Engine & Tools: Unity Engine, Blender</p>
+              <p class="text-warning">What I did
+                <p class="text-light">Created the entire game design and idea following the concept of light and dark. Handcrafted the maze to add interesting spin to it as well 
+                  as the unique mechanic of navigating through the unknown all with freely available assets and all systems from scratch. This also encapsulates the image of my 
+                  overall knowledge regarding various aspects of game design and development including both the visual and the backend. 
+                </p>
+              </p>
+              <p class="text-success">Personal Project</p>
+              <p class="text-warning">Platform: Windows, WebGL</p>
+              <p class="text-warning">Team Size: Individual</p>
+              <p class="text-warning">Link: <a class="text-success" href="https://n0tlucifer.itch.io/retromazemadness" target="_blank">Project Link</a></p>
+              <p class="text-warning">Project Duration: 1 week</p>
+              <p class="text-warning">Engine & Tools: Unity Engine, Blender</p>
             </p>
           </div>
         </div>
 
-        <div class="card border-success mb-5" style="max-width: 32rem;">
+        <!-- Aetherfall -->
+        <div class="card border-success mb-5" style="max-width: 32rem;" id="Aetherfall">
           <div class="card-header">
-            <h4 class="card-title">High Noon</h4>
+            <h4 >Aetherfall</h4>
           </div>
           <div class="card-body">
-            <center><img src="https://img.itch.zone/aW1nLzkyMDE1NzgucG5n/original/cwSA%2BF.png" width="380" height="253.33"></center>
+            <center><img src="image/Thumbs/Aetherfall_Title.png" width="300" height="150"></center>
             <p class="card-text">
               <br>
-              <p>Link: <a href="#">Project Link</a></p>
-              <p>Link: <a href="">Placeholder Link</a></p>
-              <p>What I did: Lorem ipsum sit amet it dolores. Hakuna matata</p>
-              <p>Studio: Studio - 23 (Employee)</p>
-              <p>Platform: Windows</p>
-              <p>Team Size: 5</p>
-              <p>Project Duration: 1 year</p>
-              <p>Engine & Tools: Unity Engine, Blender</p>
+              <p class="text-warning">What I did
+                <p class="text-light">Aetherfall is a personal passion project to develop my very own adventure RPG in a small and realistic scale for a solo developer. There is 
+                  no end goal for this project and I plan to keep on interating on it as I write out more of the story and slowly see this turn into a complete game in the future. 
+                  All of it has been done in my free-time with free design resources on the internet. 
+                </p>
+              </p>
+              <p class="text-success">Personal Project</p>
+              <p class="text-warning">Platform: Windows</p>
+              <p class="text-warning">Team Size: Individual</p>
+              <p class="text-warning">Link: <a class="text-success" href="https://n0tlucifer.itch.io/retromazemadness" target="_blank">Project Link</a></p>
+              <p class="text-warning">Project Duration: N/A</p>
+              <p class="text-warning">Engine & Tools: Unity Engine, Blender, Substance Painter</p>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card-section">
+        <!-- VR Football -->
+        <div class="card border-success mb-5" style="max-width: 32rem;" id="#VRFootball">
+          <div class="card-header">
+            <h3>VR Football</h3></div>
+          <div class="card-body">
+            <center><a href="https://store.steampowered.com/widget/1955750/" target="_blank"><img src="image/Thumbs/Silent_Scream_Title.png" width="300" height="150"></a></center>
+            <p class="card-text">
+              <br>
+              <p class="text-warning">What I did
+                <p class="text-light">Collaborated with a team of 5 while aiding in the development of key systems of the game. Throughout the development period we also 
+                  came up with open source packages for Unity to speed up development. I was also responsible for working on the game feel as we ported the game to XBox platform. 
+                </p>
+              </p>
+              <p class="text-warning">Studio: <a href="https://studio-23.xyz/" target="_blank">Studio - 23</a> (Employee)</p>
+              <p class="text-warning">Platform: Windows, XBox (upcoming)</p>
+              <p class="text-warning">Team Size: 5</p>
+              <p class="text-warning">Link: <a class="text-success" href="https://store.steampowered.com/widget/1955750/">Project Link</a></p>
+              <p class="text-warning">Project Duration: 1 year</p>
+              <p class="text-warning">Engine & Tools: Unity Engine, Blender</p>
+            </p>
+          </div>
+        </div>
+
+        <!-- Abyss Crawler -->
+        <div class="card border-success mb-5" style="max-width: 32rem;" id="#AbyssCrawler">
+          <div class="card-header">
+            <h4 >Abyss Crawler</h4>
+          </div>
+          <div class="card-body">
+            <center><img src="image/Thumbs/HighNoon_Title_Transparent.png" width="300" height="150"></center>
+            <p class="card-text">
+              <br>
+              <p class="text-warning">What I did
+                <p class="text-light">Built a realtime player versus player dueling game using Photon Unity Networking backend and developed all systems from scratch. Explored 
+                  design ideas to make the game more fun and engaging for players with the support of 3D artists and designers from the team. Design owner of the UI & UX on PC 
+                  platform. 
+                </p>
+              </p>
+              <p class="text-warning">Studio: <a href="https://studio-23.xyz/" target="_blank">Studio - 23</a> (Employee)</p>
+              <p class="text-warning">Platform: Windows</p>
+              <p class="text-warning">Team Size: 2</p>
+              <p class="text-warning">Link: <a class="text-success" href="https://brainstation23.itch.io/high-noon">Project Link</a></p>
+              <p class="text-warning">Project Duration: 4 months</p>
+              <p class="text-warning">Engine & Tools: Unity Engine, Blender</p>
             </p>
           </div>
         </div>
@@ -167,18 +247,7 @@
         </tr>
       </table>
     </div>
-    <p style="text-align: center">Back to <a href="#banner">top</a></p>
-    <div class="quote">
-      <div class="quotebox" id="quotes">
-        <p id="quotehere" onclick="printQuote()">
-          Click to get your daily quote!
-        </p>
-      </div>
-      <button id="tgreen" style="background-color: #B7E4C7;"></button>
-      <button id="ogreen" style="background-color: #74C69D;"></button>
-      <button id="emerald" style="background-color: #40916C;"></button>
-      <button id="black" style="background-color: #000;"></button>
-    </div>
+    <p style="text-align: center"><a href="#banner">Back to top</a></p>
   </section>
 
   <footer>
