@@ -91,7 +91,7 @@ li a:hover {
 .greeting-main {
   display: flex;
   text-align: left;
-  padding: 5rem 1rem;
+  padding: 5rem 4rem;
 }
 
 .greeting-text-div {
