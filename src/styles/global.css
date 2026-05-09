@@ -47,12 +47,26 @@
   display: grid;
   place-items: center;
   overflow: hidden;
+  visibility: hidden;
+}
+/* Incoming-page state: overlay is opaque from first paint; body content is
+   hidden until the JS triggers the fade-out. Keeps the wipe seamless across
+   navigations (no flash of new content before the script boots). */
+html.is-page-incoming body {
+  visibility: hidden;
+}
+html.is-page-incoming .page-wipe {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 .page-wipe.is-out {
+  visibility: visible;
   pointer-events: auto;
   animation: pw-out 460ms steps(8) forwards;
 }
 .page-wipe.is-fading {
+  visibility: visible;
   animation: pw-fade-in 600ms ease-out forwards;
   pointer-events: none;
 }

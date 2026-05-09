@@ -9,6 +9,7 @@ import SkyGlow from "../components/chrome/SkyGlow.astro";
 import MouseSpotlight from "../components/chrome/MouseSpotlight.astro";
 import CustomCursor from "../components/chrome/CustomCursor.astro";
 import ToastStack from "../components/chrome/ToastStack.astro";
+import PageWipe from "../components/chrome/PageWipe.astro";
 
 interface Props {
   title: string;
@@ -50,8 +51,18 @@ const ogImageUrl = new URL(ogImage, Astro.site).toString();
     <meta name="twitter:image" content={ogImageUrl} />
 
     <title>{title}</title>
+
+    <!-- Render-blocking flag: detect incoming page transition before paint -->
+    <script is:inline>
+      try {
+        if (sessionStorage.getItem("evan:in-transition") === "1") {
+          document.documentElement.classList.add("is-page-incoming");
+        }
+      } catch (_) {}
+    </script>
   </head>
   <body class="text-text-soft">
+    <PageWipe />
     <Starfield />
     <ShootingStars />
     <SkyGlow />

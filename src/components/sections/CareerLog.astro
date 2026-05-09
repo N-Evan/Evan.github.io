@@ -276,12 +276,59 @@ const entries: Entry[] = [
   .tl-body { color: var(--text-soft); line-height: 1.6; font-size: 0.95rem; }
 
   @media (max-width: 768px) {
-    .timeline { --connector-w: 22px; }
-    .timeline__rail { left: 18px; transform: none; }
-    .tl-entry { grid-template-columns: 36px 1fr; }
-    .tl-node { grid-column: 1; }
-    .tl-entry .tl-card { grid-column: 2; text-align: left !important; }
-    .tl-entry .tl-card::after { left: calc(var(--connector-w) * -1) !important; right: auto !important; }
-    .tl-entry .tl-stamp { flex-direction: row !important; }
+    .timeline {
+      --connector-w: 18px;
+      --node-y: 20px;
+      --node-size: 16px;
+    }
+    .timeline__rail {
+      left: 18px !important;
+      transform: none !important;
+    }
+    .tl-entry,
+    .tl-entry.is-left,
+    .tl-entry.is-right {
+      grid-template-columns: 40px 1fr !important;
+      margin-bottom: 1.6rem;
+    }
+    .tl-entry .tl-node,
+    .tl-entry.is-left .tl-node,
+    .tl-entry.is-right .tl-node {
+      grid-column: 1 !important;
+      margin-inline: auto !important;
+    }
+    /* Milestone nodes shrink slightly on mobile so they fit the rail column */
+    .tl-entry--milestone .tl-node {
+      width: 22px !important;
+      height: 22px !important;
+      margin-top: calc(var(--node-y) - 3px) !important;
+    }
+    .tl-entry .tl-card,
+    .tl-entry.is-left .tl-card,
+    .tl-entry.is-right .tl-card {
+      grid-column: 2 !important;
+      text-align: left !important;
+      min-width: 0;
+    }
+    .tl-entry .tl-card::after,
+    .tl-entry.is-left .tl-card::after,
+    .tl-entry.is-right .tl-card::after {
+      left: calc(var(--connector-w) * -1) !important;
+      right: auto !important;
+    }
+    .tl-entry .tl-stamp,
+    .tl-entry.is-left .tl-stamp,
+    .tl-entry.is-right .tl-stamp {
+      flex-direction: row !important;
+    }
+    .tl-stamp__id, .tl-stamp__date {
+      font-size: 0.7rem;
+    }
+    .tl-title {
+      font-size: 0.85rem;
+      word-wrap: break-word;
+    }
+    .tl-org { font-size: 0.85rem; }
+    .tl-body { font-size: 0.9rem; }
   }
 </style>
