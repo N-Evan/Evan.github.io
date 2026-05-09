@@ -1,0 +1,26 @@
+---
+// src/layouts/BaseLayout.astro
+import "../styles/global.css";
+import ScanlineOverlay from "../components/chrome/ScanlineOverlay.astro";
+import CRTVignette from "../components/chrome/CRTVignette.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "Md. Nurusshafi Evan — gameplay programmer, level designer, VFX artist." } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-bg-void text-text-soft">
+    <slot />
+    <ScanlineOverlay />
+    <CRTVignette />
+  </body>
+</html>
