@@ -4,15 +4,22 @@ interface Props {
   href?: string;
   tone?: "magenta" | "cyan";
   type?: "button" | "submit";
+  target?: string;
+  rel?: string;
   class?: string;
 }
-const { href, tone = "magenta", type = "button", class: extraClass = "" } = Astro.props;
+const { href, tone = "magenta", type = "button", target, rel, class: extraClass = "" } = Astro.props;
 const colorVar = tone === "cyan" ? "var(--neon-cyan)" : "var(--neon-magenta)";
+const isExternal = href && /^https?:\/\//.test(href);
 const Tag = href ? "a" : "button";
+const finalRel = href ? (rel ?? (isExternal ? "noopener noreferrer" : undefined)) : undefined;
+const finalTarget = href ? (target ?? (isExternal ? "_blank" : undefined)) : undefined;
 ---
 <Tag
   href={href}
   type={!href ? type : undefined}
+  target={finalTarget}
+  rel={finalRel}
   class={`neon-btn font-terminal uppercase tracking-wider ${extraClass}`}
   style={`--glow-color: ${colorVar};`}
 >

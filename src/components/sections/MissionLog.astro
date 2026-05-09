@@ -1,0 +1,51 @@
+---
+import { getCollection } from "astro:content";
+import PixelFrame from "../chrome/PixelFrame.astro";
+import DataChip from "../chrome/DataChip.astro";
+import GlitchText from "../chrome/GlitchText.astro";
+import { sortByOrder } from "../../lib/projectNav";
+
+const projects = sortByOrder(await getCollection("projects"));
+---
+<section id="missions" class="missions py-24 px-6 max-w-6xl mx-auto">
+  <GlitchText as="h2" text="// MISSION LOG" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-10" />
+
+  <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    {projects.map((p) => (
+      <li>
+        <a href={`/projects/${p.id}`} class="mission-card group block">
+          <PixelFrame tone="magenta">
+            <div class="aspect-[2/1] overflow-hidden bg-bg-void grid place-items-center mb-3">
+              <img
+                src={p.data.thumb}
+                alt={`${p.data.title} title art`}
+                width="600"
+                height="300"
+                class="w-full h-full object-contain"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <h3 class="font-terminal text-2xl text-text-soft leading-tight">{p.data.title}</h3>
+            <p class="font-terminal text-text-muted text-base mt-1">{p.data.tagline}</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <DataChip>{p.data.year}</DataChip>
+              {p.data.platforms.slice(0, 2).map((pl) => <DataChip>{pl}</DataChip>)}
+              <DataChip tone={p.data.status === "shipped" ? "cyan" : "yellow"}>
+                {p.data.status.toUpperCase()}
+              </DataChip>
+            </div>
+            <span class="enter font-terminal text-neon-magenta mt-3 inline-block opacity-0 group-hover:opacity-100 transition-opacity">
+              ▶ ENTER MISSION
+            </span>
+          </PixelFrame>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .mission-card { transition: transform 200ms ease; }
+  .mission-card:hover { transform: translateY(-4px); }
+</style>

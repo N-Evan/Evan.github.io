@@ -1,0 +1,24 @@
+---
+import PixelFrame from "../chrome/PixelFrame.astro";
+import GlitchText from "../chrome/GlitchText.astro";
+
+const entries = [
+  { stamp: "2023 – PRESENT", title: "Gameplay Programmer", body: "Studio-23 (Brain Station 23). Shipped Silent Scream and other titles." },
+  { stamp: "2022 – 2023",    title: "Trainee Gameplay Programmer", body: "Joined Studio-23 just before completing undergrad. Worked on VR Football and started High Noon." },
+  { stamp: "2018 – 2022",    title: "Undergraduate, Computer Science", body: "[ FILL ME IN: school, focus areas, formative projects ]" },
+];
+---
+<section id="career" class="career py-24 px-6 max-w-4xl mx-auto">
+  <GlitchText as="h2" text="// CAREER LOG" class="font-pixel text-neon-cyan text-2xl sm:text-3xl block mb-10" />
+  <ol class="space-y-6">
+    {entries.map((e) => (
+      <li>
+        <PixelFrame tone="muted">
+          <p class="font-terminal text-text-muted text-sm tracking-widest">{e.stamp}</p>
+          <h3 class="font-pixel text-neon-magenta text-base sm:text-lg mt-1">{e.title}</h3>
+          <p class="font-body text-text-soft mt-2 leading-relaxed">{e.body}</p>
+        </PixelFrame>
+      </li>
+    ))}
+  </ol>
+</section>

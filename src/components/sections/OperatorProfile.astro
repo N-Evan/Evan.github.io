@@ -1,0 +1,47 @@
+---
+import PixelFrame from "../chrome/PixelFrame.astro";
+import DataChip from "../chrome/DataChip.astro";
+import GlitchText from "../chrome/GlitchText.astro";
+---
+<section id="profile" class="profile py-24 px-6 max-w-6xl mx-auto">
+  <GlitchText as="h2" text="// OPERATOR PROFILE" class="font-pixel text-neon-cyan text-2xl sm:text-3xl block mb-10" />
+
+  <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-8 items-start">
+    <PixelFrame tone="cyan">
+      <dl class="font-terminal text-lg space-y-2">
+        <div><dt class="inline text-text-muted">CALLSIGN: </dt><dd class="inline">EVAN</dd></div>
+        <div><dt class="inline text-text-muted">CLASS: </dt><dd class="inline">GAMEPLAY PROGRAMMER</dd></div>
+        <div><dt class="inline text-text-muted">REGION: </dt><dd class="inline">DHAKA, BD</dd></div>
+        <div><dt class="inline text-text-muted">XP: </dt><dd class="inline">2+ YEARS</dd></div>
+      </dl>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <DataChip tone="magenta">UNITY</DataChip>
+        <DataChip tone="magenta">C#</DataChip>
+        <DataChip tone="cyan">BLENDER</DataChip>
+        <DataChip tone="cyan">PHOTON</DataChip>
+        <DataChip tone="yellow">VFX</DataChip>
+      </div>
+    </PixelFrame>
+
+    <div class="font-body leading-relaxed space-y-4 text-text-soft">
+      <p>
+        I'm Evan. I have been playing video games for as long as I can remember,
+        which led to me wondering what it would feel like to create such engaging
+        experiences for millions of others to enjoy.
+      </p>
+      <p>
+        My first step into game development started during my undergraduate studies
+        when I dabbled in Unity Engine and built an old-school text-based
+        choose-your-own-adventure game from a small story I had written. From then
+        on I followed indie game developers across multiple platforms to keep up
+        with the industry.
+      </p>
+      <p>
+        Right before completing my undergraduate degree I was fortunate enough to
+        secure a job at Brain Station 23 on the Studio-23 team as a trainee
+        gameplay programmer — that kick-started my career and pushed me to pursue
+        this craft to its fullest.
+      </p>
+    </div>
+  </div>
+</section>

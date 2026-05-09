@@ -1,0 +1,24 @@
+---
+import DataChip from "../chrome/DataChip.astro";
+import GlitchText from "../chrome/GlitchText.astro";
+
+const rows: { label: string; items: string[]; tone: "magenta" | "cyan" | "yellow" }[] = [
+  { label: "ENGINES",     items: ["Unity"],                                                 tone: "magenta" },
+  { label: "LANGUAGES",   items: ["C#", "JavaScript", "TypeScript"],                        tone: "cyan" },
+  { label: "TOOLS",       items: ["Blender", "Substance Painter", "Photon", "Adobe Photoshop", "Aseprite"], tone: "cyan" },
+  { label: "DISCIPLINES", items: ["Gameplay Programming", "Level Design", "VFX", "UI / UX"], tone: "yellow" },
+];
+---
+<section id="loadout" class="loadout py-24 px-6 max-w-6xl mx-auto">
+  <GlitchText as="h2" text="// TECH LOADOUT" class="font-pixel text-neon-yellow text-2xl sm:text-3xl block mb-10" />
+  <dl class="space-y-6">
+    {rows.map((row) => (
+      <div class="grid gap-3 md:grid-cols-[160px_1fr] items-start">
+        <dt class="font-terminal text-text-muted uppercase tracking-widest">{row.label}</dt>
+        <dd class="flex flex-wrap gap-2">
+          {row.items.map((it) => <DataChip tone={row.tone}>{it}</DataChip>)}
+        </dd>
+      </div>
+    ))}
+  </dl>
+</section>

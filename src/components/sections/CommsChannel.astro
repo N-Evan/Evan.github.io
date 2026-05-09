@@ -1,0 +1,41 @@
+---
+import NeonButton from "../chrome/NeonButton.astro";
+import GlitchText from "../chrome/GlitchText.astro";
+
+const socials = [
+  { label: "GITHUB",      href: "https://github.com/N-Evan" },
+  { label: "LINKEDIN",    href: "https://www.linkedin.com/in/n-evan/" },
+  { label: "DEVIANTART",  href: "https://www.deviantart.com/n0tlucifer" },
+  { label: "FACEBOOK",    href: "https://www.facebook.com/N0tLucifer/" },
+];
+---
+<section id="comms" class="comms py-24 px-6 max-w-4xl mx-auto text-center">
+  <GlitchText as="h2" text="// COMMS CHANNEL" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-10" />
+
+  <div class="flex flex-wrap justify-center gap-3 mb-8">
+    {socials.map((s) => (
+      <NeonButton href={s.href} tone="cyan">{s.label}</NeonButton>
+    ))}
+  </div>
+
+  <div class="flex flex-wrap justify-center gap-3 mb-12">
+    <NeonButton href="mailto:nurusshafievan@gmail.com" tone="magenta">[ TRANSMIT MESSAGE ]</NeonButton>
+    <NeonButton href="/files/resume.pdf" tone="cyan" target="_blank" rel="noopener noreferrer">[ DOWNLOAD RESUME.PDF ]</NeonButton>
+  </div>
+
+  <button id="replay-intro" class="font-terminal text-text-muted underline decoration-dotted hover:text-neon-cyan transition-colors">
+    ↻ REPLAY INTRO
+  </button>
+
+  <p class="font-terminal text-text-muted text-sm mt-12">
+    Took quite a few cups of coffee and a lot of Googling.
+  </p>
+</section>
+
+<script>
+  const KEY = "evan-portfolio:press-start-played";
+  document.getElementById("replay-intro")?.addEventListener("click", () => {
+    sessionStorage.removeItem(KEY);
+    window.location.href = "/";
+  });
+</script>
