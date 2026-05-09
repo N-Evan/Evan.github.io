@@ -1,0 +1,23 @@
+---
+import PixelFrame from "../chrome/PixelFrame.astro";
+import DataChip from "../chrome/DataChip.astro";
+
+interface Props {
+  title: string;
+  thumb: string;
+  year: number;
+  studio: string | null | undefined;
+  status: "shipped" | "in-development" | "concept";
+}
+const { title, thumb, year, studio, status } = Astro.props;
+---
+<PixelFrame tone="magenta">
+  <div class="aspect-[2/1] bg-bg-void grid place-items-center overflow-hidden mb-4">
+    <img src={thumb} alt={`${title} title art`} class="w-full h-full object-contain" width="800" height="400" />
+  </div>
+  <div class="flex flex-wrap gap-2">
+    <DataChip>{year}</DataChip>
+    {studio && <DataChip tone="cyan">{studio.toUpperCase()}</DataChip>}
+    <DataChip tone={status === "shipped" ? "cyan" : "yellow"}>{status.toUpperCase()}</DataChip>
+  </div>
+</PixelFrame>

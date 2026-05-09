@@ -1,0 +1,42 @@
+---
+import PixelFrame from "../chrome/PixelFrame.astro";
+import NeonButton from "../chrome/NeonButton.astro";
+
+interface ProjectLinks {
+  steam?: string;
+  itch?: string;
+  github?: string;
+  youtube?: string;
+  website?: string;
+}
+interface Props {
+  platforms: string[];
+  teamSize: number | "Individual";
+  duration: string;
+  role: string;
+  tech: string[];
+  links?: ProjectLinks;
+}
+const { platforms, teamSize, duration, role, tech, links = {} } = Astro.props;
+
+const linkItems: { label: string; href: string }[] = [];
+if (links.steam)   linkItems.push({ label: "STEAM", href: links.steam });
+if (links.itch)    linkItems.push({ label: "ITCH.IO", href: links.itch });
+if (links.github)  linkItems.push({ label: "GITHUB", href: links.github });
+if (links.youtube) linkItems.push({ label: "YOUTUBE", href: links.youtube });
+if (links.website) linkItems.push({ label: "WEBSITE", href: links.website });
+---
+<PixelFrame tone="cyan">
+  <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2 font-terminal text-base">
+    <div><dt class="inline text-text-muted">PLATFORMS: </dt><dd class="inline">{platforms.join(", ")}</dd></div>
+    <div><dt class="inline text-text-muted">TEAM SIZE: </dt><dd class="inline">{teamSize}</dd></div>
+    <div><dt class="inline text-text-muted">DURATION: </dt><dd class="inline">{duration}</dd></div>
+    <div><dt class="inline text-text-muted">ROLE: </dt><dd class="inline">{role}</dd></div>
+    <div class="sm:col-span-2"><dt class="inline text-text-muted">TECH: </dt><dd class="inline">{tech.join(" · ")}</dd></div>
+  </dl>
+  {linkItems.length > 0 && (
+    <div class="mt-4 flex flex-wrap gap-2">
+      {linkItems.map((l) => <NeonButton href={l.href} tone="magenta">{l.label}</NeonButton>)}
+    </div>
+  )}
+</PixelFrame>
