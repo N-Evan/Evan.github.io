@@ -1,8 +1,8 @@
 ---
-// src/layouts/BaseLayout.astro
 import "../styles/global.css";
 import ScanlineOverlay from "../components/chrome/ScanlineOverlay.astro";
 import CRTVignette from "../components/chrome/CRTVignette.astro";
+import HUDOverlay from "../components/chrome/HUDOverlay.astro";
 
 interface Props {
   title: string;
@@ -16,11 +16,16 @@ const { title, description = "Md. Nurusshafi Evan — gameplay programmer, level
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#07030f" />
     <title>{title}</title>
   </head>
   <body class="bg-bg-void text-text-soft">
     <slot />
+    <HUDOverlay />
     <ScanlineOverlay />
     <CRTVignette />
+    <script>
+      import "../scripts/app.client.ts";
+    </script>
   </body>
 </html>

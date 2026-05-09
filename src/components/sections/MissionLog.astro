@@ -1,51 +1,206 @@
 ---
 import { getCollection } from "astro:content";
-import PixelFrame from "../chrome/PixelFrame.astro";
 import DataChip from "../chrome/DataChip.astro";
 import GlitchText from "../chrome/GlitchText.astro";
+import RevealOnScroll from "../chrome/RevealOnScroll.astro";
+import MarqueeTicker from "../chrome/MarqueeTicker.astro";
 import { sortByOrder } from "../../lib/projectNav";
 
 const projects = sortByOrder(await getCollection("projects"));
+const tickerItems = [
+  `MISSIONS LOGGED :: ${projects.length}`,
+  "OPERATIONAL :: ALL SYSTEMS NOMINAL",
+  "FOCUS :: GAMEPLAY × LEVEL DESIGN × VFX",
+  "SIGNAL :: 433.92 MHz",
+  "BUILDS SHIPPED :: 5",
+];
 ---
-<section id="missions" class="missions py-24 px-6 max-w-6xl mx-auto">
-  <GlitchText as="h2" text="// MISSION LOG" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-10" />
+<section id="missions" class="missions relative">
+  <div class="px-6 max-w-6xl mx-auto pt-24">
+    <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
+      [ 02 ] &middot; MISSION LOG
+    </div>
+    <RevealOnScroll>
+      <GlitchText as="h2" text="// MISSION LOG" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-3" />
+    </RevealOnScroll>
+    <RevealOnScroll delay={120}>
+      <p class="font-terminal text-text-muted text-base sm:text-lg mb-10 max-w-2xl">
+        &gt; Six entries on file. Click any mission to access debrief, gallery, and behind-the-scenes data.
+      </p>
+    </RevealOnScroll>
+  </div>
 
-  <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-    {projects.map((p) => (
-      <li>
-        <a href={`/projects/${p.id}`} class="mission-card group block">
-          <PixelFrame tone="magenta">
-            <div class="aspect-[2/1] overflow-hidden bg-bg-void grid place-items-center mb-3">
-              <img
-                src={p.data.thumb}
-                alt={`${p.data.title} title art`}
-                width="600"
-                height="300"
-                class="w-full h-full object-contain"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <h3 class="font-terminal text-2xl text-text-soft leading-tight">{p.data.title}</h3>
-            <p class="font-terminal text-text-muted text-base mt-1">{p.data.tagline}</p>
-            <div class="mt-3 flex flex-wrap gap-2">
-              <DataChip>{p.data.year}</DataChip>
-              {p.data.platforms.slice(0, 2).map((pl) => <DataChip>{pl}</DataChip>)}
-              <DataChip tone={p.data.status === "shipped" ? "cyan" : "yellow"}>
-                {p.data.status.toUpperCase()}
-              </DataChip>
-            </div>
-            <span class="enter font-terminal text-neon-magenta mt-3 inline-block opacity-0 group-hover:opacity-100 transition-opacity">
-              ▶ ENTER MISSION
-            </span>
-          </PixelFrame>
-        </a>
-      </li>
-    ))}
-  </ul>
+  <MarqueeTicker items={tickerItems} tone="cyan" speed={32} />
+
+  <div class="px-6 max-w-6xl mx-auto pt-12 pb-24">
+    <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((p, idx) => (
+        <li>
+          <RevealOnScroll from="up" delay={idx * 80}>
+            <a href={`/projects/${p.id}`} class="mission-card group block" data-tilt>
+              <div class="mc-frame">
+                <div class="mc-id">M-{String(idx + 1).padStart(2, "0")}</div>
+                <div class="mc-status">
+                  <span class={`mc-status__dot ${p.data.status === "shipped" ? "is-shipped" : "is-dev"}`}></span>
+                  <span>{p.data.status === "shipped" ? "SHIPPED" : p.data.status.toUpperCase()}</span>
+                </div>
+
+                <div class="mc-thumb">
+                  <img
+                    src={p.data.thumb}
+                    alt={`${p.data.title} title art`}
+                    width="600"
+                    height="300"
+                    class="mc-thumb__img"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div class="mc-thumb__scan"></div>
+                  <div class="mc-thumb__grid"></div>
+                </div>
+
+                <div class="mc-body">
+                  <h3 class="mc-title font-terminal text-2xl">{p.data.title}</h3>
+                  <p class="mc-tagline font-terminal text-text-muted text-base">{p.data.tagline}</p>
+                  <div class="mc-chips mt-3 flex flex-wrap gap-2">
+                    <DataChip>{p.data.year}</DataChip>
+                    {p.data.platforms.slice(0, 2).map((pl) => <DataChip>{pl}</DataChip>)}
+                  </div>
+                  <div class="mc-cta font-terminal">
+                    <span class="mc-cta__bracket">[</span>
+                    <span>ENTER MISSION</span>
+                    <span class="mc-cta__arrow">▶</span>
+                    <span class="mc-cta__bracket">]</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </RevealOnScroll>
+        </li>
+      ))}
+    </ul>
+  </div>
 </section>
 
 <style>
-  .mission-card { transition: transform 200ms ease; }
-  .mission-card:hover { transform: translateY(-4px); }
+  .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+
+  .mission-card {
+    display: block;
+    transform-style: preserve-3d;
+    transition: transform 200ms ease-out;
+  }
+  .mc-frame {
+    position: relative;
+    background: linear-gradient(180deg, rgba(28,13,61,0.85), rgba(7,3,15,0.92));
+    border: 2px solid var(--neon-magenta);
+    box-shadow:
+      0 0 0 4px var(--bg-void),
+      0 0 18px rgba(255,46,136,0.25),
+      0 8px 24px rgba(0,0,0,0.6);
+    padding: 1rem 1rem 1.1rem;
+    transition: box-shadow 250ms ease, border-color 200ms ease;
+    overflow: hidden;
+  }
+  .mission-card:hover .mc-frame {
+    box-shadow:
+      0 0 0 4px var(--bg-void),
+      0 0 26px rgba(255,46,136,0.55),
+      0 0 50px rgba(255,46,136,0.25),
+      0 12px 30px rgba(0,0,0,0.7);
+  }
+  .mc-frame::before {
+    content: "";
+    position: absolute; inset: -1px;
+    background: linear-gradient(120deg, transparent 30%, rgba(0,240,255,0.18) 50%, transparent 70%);
+    transform: translateX(-100%);
+    pointer-events: none;
+    transition: transform 700ms ease;
+  }
+  .mission-card:hover .mc-frame::before { transform: translateX(100%); }
+
+  .mc-id {
+    position: absolute; top: 0.65rem; left: 0.85rem;
+    font-family: theme('fontFamily.pixel');
+    color: var(--neon-magenta);
+    font-size: 0.7rem;
+    text-shadow: 0 0 6px var(--neon-magenta);
+    letter-spacing: 0.1em;
+    z-index: 2;
+  }
+  .mc-status {
+    position: absolute; top: 0.65rem; right: 0.85rem;
+    font-family: theme('fontFamily.terminal');
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 0.4rem;
+    letter-spacing: 0.1em;
+    z-index: 2;
+  }
+  .mc-status__dot { width: 8px; height: 8px; border-radius: 50%; }
+  .mc-status__dot.is-shipped { background: var(--terminal-grn); box-shadow: 0 0 6px var(--terminal-grn); animation: m-pulse 2s ease-in-out infinite; }
+  .mc-status__dot.is-dev { background: var(--neon-yellow); box-shadow: 0 0 6px var(--neon-yellow); animation: m-pulse 1.2s ease-in-out infinite; }
+  @keyframes m-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .mc-thumb {
+    position: relative;
+    aspect-ratio: 2 / 1;
+    background: var(--bg-void);
+    margin-top: 1.8rem;
+    overflow: hidden;
+    border: 1px solid var(--neon-magenta);
+  }
+  .mc-thumb__img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    transition: transform 600ms cubic-bezier(.2,.8,.2,1), filter 400ms ease;
+    filter: saturate(0.8);
+  }
+  .mission-card:hover .mc-thumb__img { transform: scale(1.06); filter: saturate(1.2) brightness(1.1); }
+  .mc-thumb__scan {
+    position: absolute; left: 0; right: 0; height: 30%;
+    top: -30%;
+    background: linear-gradient(180deg, transparent, rgba(0,240,255,0.18), transparent);
+    pointer-events: none;
+  }
+  .mission-card:hover .mc-thumb__scan { animation: m-scan 1.4s ease-in-out infinite; }
+  @keyframes m-scan {
+    0% { top: -30%; }
+    100% { top: 110%; }
+  }
+  .mc-thumb__grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(0,240,255,0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,240,255,0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+    pointer-events: none;
+  }
+
+  .mc-body { padding-top: 0.9rem; }
+  .mc-title {
+    color: var(--text-soft);
+    line-height: 1.1;
+    text-shadow: 0 0 8px rgba(255,46,136,0.4);
+  }
+  .mc-tagline { margin-top: 0.25rem; line-height: 1.4; }
+
+  .mc-cta {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 0.9rem;
+    color: var(--neon-magenta);
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    opacity: 0.55;
+    transform: translateX(-4px);
+    transition: opacity 250ms ease, transform 250ms ease;
+  }
+  .mission-card:hover .mc-cta { opacity: 1; transform: translateX(0); }
+  .mc-cta__bracket { color: var(--text-muted); }
+  .mc-cta__arrow { animation: cta-arrow 1s ease-in-out infinite; }
+  @keyframes cta-arrow {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(3px); }
+  }
 </style>

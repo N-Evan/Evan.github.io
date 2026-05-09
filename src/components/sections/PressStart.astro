@@ -3,34 +3,61 @@ import DitherBg from "../chrome/DitherBg.astro";
 import GridFloor from "../chrome/GridFloor.astro";
 import GlitchText from "../chrome/GlitchText.astro";
 import NeonButton from "../chrome/NeonButton.astro";
+import ParticleField from "../chrome/ParticleField.astro";
 ---
 <section id="press-start" class="press-start relative min-h-dvh overflow-hidden">
   <DitherBg />
   <GridFloor />
+  <ParticleField count={60} />
+
+  <!-- Side decorations -->
+  <div class="hero-decor hero-decor--left" aria-hidden="true">
+    <div class="hero-decor__bracket">┌</div>
+    <div class="hero-decor__line"></div>
+    <div class="hero-decor__label">N E U R A L</div>
+    <div class="hero-decor__line hero-decor__line--short"></div>
+    <div class="hero-decor__label">L I N K</div>
+    <div class="hero-decor__line"></div>
+    <div class="hero-decor__bracket">└</div>
+  </div>
+
+  <div class="hero-decor hero-decor--right" aria-hidden="true">
+    <div class="hero-decor__readout">
+      <div><span class="rk">CPU</span> <span class="rv">▰▰▰▰▰▱▱</span></div>
+      <div><span class="rk">MEM</span> <span class="rv">▰▰▰▰▱▱▱</span></div>
+      <div><span class="rk">NET</span> <span class="rv">▰▰▰▰▰▰▱</span></div>
+      <div><span class="rk">PWR</span> <span class="rv">▰▰▰▰▰▰▰</span></div>
+      <div class="rsp"></div>
+      <div><span class="rk">UID</span> <span class="rv rv--mag">0xE V A N</span></div>
+      <div><span class="rk">LOC</span> <span class="rv">23.81N 90.41E</span></div>
+      <div><span class="rk">VER</span> <span class="rv">2.0.0-PIXEL</span></div>
+    </div>
+  </div>
 
   <div class="press-start__inner relative z-10 min-h-dvh grid place-items-center px-6">
     <div class="text-center max-w-4xl">
-      <pre class="boot font-terminal text-terminal-grn text-base sm:text-xl whitespace-pre leading-tight"><span data-line>&gt; BOOTING NEURAL LINK&hellip;</span>
-<span data-line>&gt; OPERATOR: EVAN [VERIFIED]</span>
-<span data-line>&gt; READY<span class="cursor">▮</span></span></pre>
+      <pre class="boot font-terminal text-terminal-grn text-base sm:text-xl whitespace-pre leading-tight"><span data-line>&gt; BOOTING NEURAL LINK&hellip;</span><br/><span data-line>&gt; OPERATOR: EVAN [VERIFIED]</span><br/><span data-line>&gt; READY<span class="cursor">▮</span></span></pre>
 
-      <div class="reveal mt-8 opacity-0">
+      <div class="reveal-hero mt-10 opacity-0">
+        <div class="hero-stamp font-terminal text-text-muted text-xs tracking-[0.4em] mb-4">
+          ━━ PORTFOLIO :: 2026 ━━
+        </div>
         <GlitchText
           as="h1"
           text="EVAN"
-          class="font-pixel text-5xl sm:text-7xl md:text-8xl text-neon-magenta inline-block"
+          class="font-pixel text-6xl sm:text-8xl md:text-9xl text-neon-magenta inline-block"
         />
-        <p class="mt-4 font-terminal text-text-soft text-lg sm:text-2xl tracking-wider">
+        <p class="mt-6 font-terminal text-text-soft text-lg sm:text-2xl tracking-wider">
           GAMEPLAY PROGRAMMER &middot; LEVEL DESIGNER &middot; VFX ARTIST
         </p>
-        <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <div class="mt-10 flex flex-wrap justify-center gap-3">
           <NeonButton href="#missions" tone="magenta">▶ NEW GAME</NeonButton>
           <NeonButton href="#profile"  tone="cyan">◆ PROFILE</NeonButton>
           <NeonButton href="#comms"    tone="cyan">◆ COMMS</NeonButton>
           <NeonButton href="/files/resume.pdf" tone="cyan" target="_blank" rel="noopener noreferrer">◆ RESUME.PDF</NeonButton>
         </div>
-        <p class="mt-10 font-terminal text-text-muted text-sm animate-blink">
-          PRESS ANY KEY OR SCROLL TO CONTINUE
+        <p class="mt-12 font-terminal text-text-muted text-sm animate-blink tracking-widest">
+          ▼ PRESS ANY KEY OR SCROLL TO CONTINUE ▼
         </p>
       </div>
     </div>
@@ -43,7 +70,7 @@ import NeonButton from "../chrome/NeonButton.astro";
   const KEY = "evan-portfolio:press-start-played";
   const root = document.querySelector<HTMLElement>(".press-start__inner");
   const lines = document.querySelectorAll<HTMLElement>(".boot [data-line]");
-  const reveal = document.querySelector<HTMLElement>(".reveal");
+  const reveal = document.querySelector<HTMLElement>(".reveal-hero");
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (root && reveal) {
@@ -55,20 +82,23 @@ import NeonButton from "../chrome/NeonButton.astro";
       sessionStorage.setItem(KEY, "1");
     } else {
       lines.forEach((l) => (l.style.opacity = "0"));
+      const flash = document.createElement("div");
+      flash.style.cssText = "position:fixed;inset:0;background:rgba(255,255,255,0.92);z-index:9999;pointer-events:none;";
+      document.body.appendChild(flash);
+      gsap.to(flash, { opacity: 0, duration: 0.45, ease: "power2.out", onComplete: () => flash.remove() });
+
       const tl = gsap.timeline({
-        defaults: { duration: 0.6, ease: "steps(8)" },
+        defaults: { duration: 0.55, ease: "steps(8)" },
         onComplete: () => sessionStorage.setItem(KEY, "1"),
       });
-      tl.set(root, { backgroundColor: "transparent" })
-        .to(root, { backgroundColor: "rgba(255,255,255,0.85)", duration: 0.05 })
-        .to(root, { backgroundColor: "transparent", duration: 0.25 })
-        .to(lines[0], { opacity: 1, duration: 0.2 })
+      tl.to(lines[0], { opacity: 1, duration: 0.2 }, "+=0.25")
         .to(lines[1], { opacity: 1, duration: 0.2 }, "+=0.25")
-        .to(lines[2], { opacity: 1, duration: 0.2 }, "+=0.25")
-        .to(reveal, { opacity: 1, y: 0, duration: 0.5 }, "+=0.2");
+        .to(lines[2], { opacity: 1, duration: 0.2 }, "+=0.3")
+        .fromTo(reveal, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "+=0.3");
 
       const skip = () => {
         tl.progress(1);
+        flash.remove();
         window.removeEventListener("keydown", skip);
         window.removeEventListener("pointerdown", skip);
         window.removeEventListener("wheel", skip);
@@ -82,7 +112,7 @@ import NeonButton from "../chrome/NeonButton.astro";
 
 <style>
   .press-start__inner { background: transparent; }
-  .boot [data-line]   { display: block; }
+  .boot [data-line]   { display: block; text-shadow: 0 0 8px var(--terminal-grn); }
   .cursor {
     display: inline-block;
     margin-left: 0.15ch;
@@ -92,5 +122,63 @@ import NeonButton from "../chrome/NeonButton.astro";
   @keyframes blink {
     0%, 49%   { opacity: 1; }
     50%, 100% { opacity: 0; }
+  }
+
+  .hero-stamp {
+    text-shadow: 0 0 6px var(--text-muted);
+  }
+
+  /* Side decorations */
+  .hero-decor {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    font-family: theme("fontFamily.terminal");
+    color: var(--neon-cyan);
+    pointer-events: none;
+    opacity: 0;
+    animation: hero-decor-fade 1.4s ease-out 1.6s forwards;
+  }
+  .hero-decor--left { left: 2vw; }
+  .hero-decor--right { right: 2vw; }
+  .hero-decor__bracket {
+    font-family: theme("fontFamily.pixel");
+    font-size: 1.4rem;
+    color: var(--neon-magenta);
+  }
+  .hero-decor__line {
+    height: 60px;
+    border-left: 1px dashed var(--neon-cyan);
+    margin-left: 0.4em;
+  }
+  .hero-decor__line--short { height: 30px; }
+  .hero-decor__label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+    margin: 0.5em 0;
+  }
+  .hero-decor__readout {
+    font-family: theme("fontFamily.terminal");
+    font-size: 0.95rem;
+    line-height: 1.7;
+    text-align: right;
+    color: var(--text-muted);
+  }
+  .hero-decor__readout > div { display: flex; justify-content: flex-end; gap: 0.6rem; }
+  .rk { color: var(--text-muted); letter-spacing: 0.15em; }
+  .rv { color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); letter-spacing: 0.1em; }
+  .rv--mag { color: var(--neon-magenta); text-shadow: 0 0 6px var(--neon-magenta); }
+  .rsp { height: 0.6rem; }
+
+  @keyframes hero-decor-fade {
+    from { opacity: 0; transform: translateY(-50%) translateX(0); }
+    to   { opacity: 0.8; transform: translateY(-50%) translateX(0); }
+  }
+  @media (max-width: 900px) {
+    .hero-decor { display: none; }
   }
 </style>

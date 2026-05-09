@@ -1,0 +1,58 @@
+---
+interface Props {
+  items: string[];
+  tone?: "magenta" | "cyan";
+  speed?: number;
+}
+const { items, tone = "cyan", speed = 35 } = Astro.props;
+const repeated = [...items, ...items, ...items, ...items];
+const color = tone === "magenta" ? "var(--neon-magenta)" : "var(--neon-cyan)";
+---
+<div class="ticker" style={`--ticker-color: ${color}; --ticker-speed: ${speed}s;`} aria-hidden="true">
+  <div class="ticker__track">
+    {repeated.map((it) => (
+      <span class="ticker__item">
+        <span class="ticker__dot">◆</span>
+        <span class="ticker__text">{it}</span>
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .ticker {
+    overflow: hidden;
+    border-block: 1px dashed var(--ticker-color);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.025), transparent);
+    padding: 0.55rem 0;
+    position: relative;
+  }
+  .ticker::before, .ticker::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0; width: 80px;
+    pointer-events: none; z-index: 2;
+  }
+  .ticker::before { left: 0; background: linear-gradient(to right, var(--bg-void), transparent); }
+  .ticker::after  { right: 0; background: linear-gradient(to left, var(--bg-void), transparent); }
+  .ticker__track {
+    display: flex;
+    gap: 2.5rem;
+    animation: ticker-scroll var(--ticker-speed) linear infinite;
+    width: max-content;
+    white-space: nowrap;
+    font-family: theme("fontFamily.terminal");
+    font-size: 1.05rem;
+    color: var(--ticker-color);
+    letter-spacing: 0.12em;
+  }
+  .ticker__item { display: inline-flex; gap: 0.7rem; align-items: center; }
+  .ticker__dot { color: var(--neon-magenta); text-shadow: 0 0 8px var(--neon-magenta); }
+  .ticker__text { text-shadow: 0 0 6px var(--ticker-color); }
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-25%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticker__track { animation: none; }
+  }
+</style>

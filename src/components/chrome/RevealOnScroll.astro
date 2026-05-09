@@ -1,0 +1,43 @@
+---
+interface Props {
+  delay?: number;
+  from?: "up" | "left" | "right" | "scale";
+  class?: string;
+}
+const { delay = 0, from = "up", class: extraClass = "" } = Astro.props;
+---
+<div
+  class={`reveal reveal--${from} ${extraClass}`}
+  style={`--reveal-delay: ${delay}ms;`}
+  data-reveal
+>
+  <slot />
+</div>
+
+<style>
+  .reveal {
+    opacity: 0;
+    transition:
+      opacity 850ms cubic-bezier(.2,.8,.2,1),
+      transform 850ms cubic-bezier(.2,.8,.2,1),
+      filter 850ms cubic-bezier(.2,.8,.2,1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+    filter: blur(6px);
+  }
+  .reveal--up    { transform: translate3d(0, 28px, 0); }
+  .reveal--left  { transform: translate3d(-28px, 0, 0); }
+  .reveal--right { transform: translate3d(28px, 0, 0); }
+  .reveal--scale { transform: scale(0.94); }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1; transform: none; filter: none; transition: none;
+    }
+  }
+</style>

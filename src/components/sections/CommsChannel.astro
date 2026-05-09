@@ -1,35 +1,80 @@
 ---
 import NeonButton from "../chrome/NeonButton.astro";
 import GlitchText from "../chrome/GlitchText.astro";
+import RevealOnScroll from "../chrome/RevealOnScroll.astro";
+import MarqueeTicker from "../chrome/MarqueeTicker.astro";
 
 const socials = [
-  { label: "GITHUB",      href: "https://github.com/N-Evan" },
-  { label: "LINKEDIN",    href: "https://www.linkedin.com/in/n-evan/" },
-  { label: "DEVIANTART",  href: "https://www.deviantart.com/n0tlucifer" },
-  { label: "FACEBOOK",    href: "https://www.facebook.com/N0tLucifer/" },
+  { label: "GITHUB",     href: "https://github.com/N-Evan",                 hint: "code" },
+  { label: "LINKEDIN",   href: "https://www.linkedin.com/in/n-evan/",       hint: "career" },
+  { label: "DEVIANTART", href: "https://www.deviantart.com/n0tlucifer",     hint: "art" },
+  { label: "FACEBOOK",   href: "https://www.facebook.com/N0tLucifer/",      hint: "social" },
+];
+
+const tickerItems = [
+  "FREQUENCY :: 433.92 MHz",
+  "PROTOCOL :: HTTPS",
+  "STATUS :: BROADCASTING",
+  "INBOX :: OPEN",
 ];
 ---
-<section id="comms" class="comms py-24 px-6 max-w-4xl mx-auto text-center">
-  <GlitchText as="h2" text="// COMMS CHANNEL" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-10" />
+<section id="comms" class="comms relative pt-20 pb-28">
+  <MarqueeTicker items={tickerItems} tone="magenta" speed={42} />
 
-  <div class="flex flex-wrap justify-center gap-3 mb-8">
-    {socials.map((s) => (
-      <NeonButton href={s.href} tone="cyan">{s.label}</NeonButton>
-    ))}
+  <div class="px-6 max-w-4xl mx-auto pt-16 text-center">
+    <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
+      [ 05 ] &middot; OUTBOUND
+    </div>
+    <RevealOnScroll>
+      <GlitchText as="h2" text="// COMMS CHANNEL" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-4" />
+    </RevealOnScroll>
+    <RevealOnScroll delay={120}>
+      <p class="font-terminal text-text-muted text-base sm:text-lg mb-2">
+        &gt; Open a channel. I'm always up for a chat about gameplay, level design, or the next weird idea.
+      </p>
+    </RevealOnScroll>
+
+    <!-- ASCII waveform -->
+    <RevealOnScroll delay={200}>
+      <pre class="waveform font-terminal" aria-hidden="true">
+░░▁▂▃▅▇█▇▅▃▂▁▂▃▅▇█▇▅▃▂▁▂▃▅▇█▇▅▃▂▁░░
+░▁▂▃▅▇█▇▅▃▂▁▂▃▅▇█▇▅▃▂▁▂▃▅▇█▇▅▃▂▁▂░
+</pre>
+    </RevealOnScroll>
+
+    <RevealOnScroll delay={260}>
+      <div class="flex flex-wrap justify-center gap-3 mt-8 mb-10">
+        {socials.map((s) => (
+          <a href={s.href} target="_blank" rel="noopener noreferrer" class="social-link">
+            <span class="social-link__bracket">[</span>
+            <span class="social-link__label font-terminal">{s.label}</span>
+            <span class="social-link__hint font-terminal">/{s.hint}</span>
+            <span class="social-link__bracket">]</span>
+          </a>
+        ))}
+      </div>
+    </RevealOnScroll>
+
+    <RevealOnScroll delay={340}>
+      <div class="flex flex-wrap justify-center gap-3 mb-10">
+        <NeonButton href="mailto:nurusshafievan@gmail.com" tone="magenta">[ TRANSMIT MESSAGE ]</NeonButton>
+        <NeonButton href="/files/resume.pdf" tone="cyan" target="_blank" rel="noopener noreferrer">[ DOWNLOAD RESUME.PDF ]</NeonButton>
+      </div>
+    </RevealOnScroll>
+
+    <RevealOnScroll delay={400}>
+      <button id="replay-intro" class="font-terminal text-text-muted underline decoration-dotted hover:text-neon-cyan transition-colors">
+        ↻ REPLAY INTRO SEQUENCE
+      </button>
+    </RevealOnScroll>
+
+    <p class="font-terminal text-text-muted text-sm mt-12 opacity-70">
+      &gt;_ Took quite a few cups of coffee and a lot of Googling.
+    </p>
+    <p class="font-terminal text-text-muted text-xs mt-2 opacity-50 tracking-widest">
+      &copy; EVAN // PORTFOLIO.exe // 2026 — END OF TRANSMISSION
+    </p>
   </div>
-
-  <div class="flex flex-wrap justify-center gap-3 mb-12">
-    <NeonButton href="mailto:nurusshafievan@gmail.com" tone="magenta">[ TRANSMIT MESSAGE ]</NeonButton>
-    <NeonButton href="/files/resume.pdf" tone="cyan" target="_blank" rel="noopener noreferrer">[ DOWNLOAD RESUME.PDF ]</NeonButton>
-  </div>
-
-  <button id="replay-intro" class="font-terminal text-text-muted underline decoration-dotted hover:text-neon-cyan transition-colors">
-    ↻ REPLAY INTRO
-  </button>
-
-  <p class="font-terminal text-text-muted text-sm mt-12">
-    Took quite a few cups of coffee and a lot of Googling.
-  </p>
 </section>
 
 <script>
@@ -39,3 +84,44 @@ const socials = [
     window.location.href = "/";
   });
 </script>
+
+<style>
+  .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+
+  .waveform {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+    font-size: 0.95rem;
+    line-height: 1.1;
+    margin: 1.5rem 0;
+    opacity: 0.75;
+    overflow-x: auto;
+    animation: wave-shift 8s linear infinite;
+  }
+  @keyframes wave-shift {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(-8px); }
+    100% { transform: translateX(0); }
+  }
+
+  .social-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.55rem 0.85rem;
+    border: 1px dashed var(--neon-cyan);
+    color: var(--text-soft);
+    transition: background 200ms ease, border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+    text-shadow: 0 0 6px transparent;
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+  }
+  .social-link:hover {
+    background: rgba(0,240,255,0.08);
+    border-color: var(--neon-magenta);
+    color: var(--neon-cyan);
+    transform: translateY(-2px);
+    box-shadow: 0 0 14px rgba(0,240,255,0.4);
+    text-shadow: 0 0 6px var(--neon-cyan);
+  }
+  .social-link__bracket { color: var(--text-muted); }
+  .social-link__hint { color: var(--neon-magenta); font-size: 0.85em; opacity: 0.7; }
+</style>
