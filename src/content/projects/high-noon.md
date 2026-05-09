@@ -17,6 +17,33 @@ links:
   itch: https://brainstation23.itch.io/high-noon
 keyInsights: []
 gallery: []
+snippets:
+  - title: "Authoritative duel-state replication"
+    language: csharp
+    caption: "Replace this with a real extract from your Photon networking layer."
+    code: |
+      using Photon.Pun;
+      using UnityEngine;
+
+      public class DuelStateSync : MonoBehaviourPun, IPunObservable
+      {
+          public DuelPhase Phase { get; private set; } = DuelPhase.Standoff;
+          public float CountdownRemaining { get; private set; }
+
+          public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+          {
+              if (stream.IsWriting)
+              {
+                  stream.SendNext((byte)Phase);
+                  stream.SendNext(CountdownRemaining);
+              }
+              else
+              {
+                  Phase = (DuelPhase)(byte)stream.ReceiveNext();
+                  CountdownRemaining = (float)stream.ReceiveNext();
+              }
+          }
+      }
 ---
 
 ## Role & Responsibilities

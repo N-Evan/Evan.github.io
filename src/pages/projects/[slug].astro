@@ -6,6 +6,7 @@ import HeroPanel from "../../components/project/HeroPanel.astro";
 import DetailsStrip from "../../components/project/DetailsStrip.astro";
 import KeyInsights from "../../components/project/KeyInsights.astro";
 import GalleryGrid from "../../components/project/GalleryGrid.astro";
+import CodeShowcase from "../../components/project/CodeShowcase.astro";
 import ProjectTechStrip from "../../components/project/ProjectTechStrip.astro";
 
 export async function getStaticPaths() {
@@ -45,6 +46,9 @@ const { prev, next } = getPrevNext(sorted, entry.id);
     />
     <KeyInsights items={entry.data.keyInsights ?? []} />
     <GalleryGrid images={entry.data.gallery ?? []} />
+    {entry.data.snippets && entry.data.snippets.length > 0 && (
+      <CodeShowcase snippets={entry.data.snippets} />
+    )}
     <div class="markdown-body">
       <Content />
     </div>

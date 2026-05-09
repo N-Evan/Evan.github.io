@@ -31,6 +31,16 @@ const projects = defineCollection({
     keyInsights: z.array(z.string()).max(4).optional(),
     gallery: z.array(z.string()).optional(),
     featured: z.boolean().optional(),
+    snippets: z
+      .array(
+        z.object({
+          title: z.string(),
+          language: z.string(),
+          code: z.string(),
+          caption: z.string().optional(),
+        })
+      )
+      .optional(),
   }),
 });
 
