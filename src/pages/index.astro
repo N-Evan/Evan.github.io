@@ -1,8 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import HoloDivider from "../components/chrome/HoloDivider.astro";
+import SectionDots from "../components/chrome/SectionDots.astro";
 import PressStart from "../components/sections/PressStart.astro";
 import AvailabilityBadge from "../components/sections/AvailabilityBadge.astro";
+import NowPlayingWidget from "../components/chrome/NowPlayingWidget.astro";
 import OperatorProfile from "../components/sections/OperatorProfile.astro";
 import MissionLog from "../components/sections/MissionLog.astro";
 import TechLoadout from "../components/sections/TechLoadout.astro";
@@ -10,9 +12,11 @@ import CareerLog from "../components/sections/CareerLog.astro";
 import CommsChannel from "../components/sections/CommsChannel.astro";
 ---
 <BaseLayout title="Md. Nurusshafi Evan — Pixel Portfolio">
+  <SectionDots />
   <main class="relative">
     <PressStart />
     <AvailabilityBadge />
+    <NowPlayingWidget />
     <HoloDivider />
     <OperatorProfile />
     <MissionLog />

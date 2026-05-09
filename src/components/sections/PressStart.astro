@@ -36,11 +36,7 @@ import ParticleField from "../chrome/ParticleField.astro";
 
   <div class="press-start__inner relative z-10 min-h-dvh grid place-items-center px-6">
     <div class="text-center max-w-4xl">
-      <pre class="boot font-terminal text-terminal-grn text-base sm:text-xl whitespace-pre leading-tight"
-           data-boot
-           data-line-1="&gt; BOOTING NEURAL LINK&hellip;"
-           data-line-2="&gt; OPERATOR: EVAN [VERIFIED]"
-           data-line-3="&gt; READY"><span data-line="0"></span>
+      <pre class="boot font-terminal text-terminal-grn text-base sm:text-xl whitespace-pre leading-tight" data-boot><span data-line="0"></span>
 <span data-line="1"></span>
 <span data-line="2"></span></pre>
 
@@ -81,15 +77,11 @@ import ParticleField from "../chrome/ParticleField.astro";
   const reveal = document.querySelector<HTMLElement>(".reveal-hero");
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const decode = (s: string) =>
-    s.replace(/&gt;/g, ">").replace(/&hellip;/g, "…").replace(/&amp;/g, "&");
-
-  const lineTexts: string[] = [];
-  if (boot) {
-    for (let i = 1; i <= 3; i++) {
-      lineTexts.push(decode(boot.dataset[`line${i}` as keyof DOMStringMap] as string ?? ""));
-    }
-  }
+  const lineTexts: string[] = [
+    "> BOOTING NEURAL LINK…",
+    "> OPERATOR: EVAN [VERIFIED]",
+    "> READY",
+  ];
 
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

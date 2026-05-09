@@ -328,8 +328,57 @@ if (!earned.__hint) {
       icon: "?",
       duration: 5500,
     });
-  }, 6000);
+  }, 7500);
 }
+
+// ------------------------------------------------------------------
+// Visit counter / first-time visitor welcome
+// ------------------------------------------------------------------
+const VISIT_KEY = "evan:visit-count";
+const SESSION_VISIT_KEY = "evan:visit-counted";
+
+let visitCount = 0;
+try {
+  visitCount = parseInt(localStorage.getItem(VISIT_KEY) ?? "0", 10) || 0;
+  if (!sessionStorage.getItem(SESSION_VISIT_KEY)) {
+    visitCount += 1;
+    localStorage.setItem(VISIT_KEY, String(visitCount));
+    sessionStorage.setItem(SESSION_VISIT_KEY, "1");
+  }
+} catch {}
+
+// Stamp the visit count into the bottom-left HUD corner
+function paintVisitCount() {
+  const tlBl = document.querySelector(".hud__bl");
+  if (tlBl) {
+    const stamp = document.createElement("span");
+    stamp.className = "hud__visit-tag";
+    stamp.textContent = ` · VISIT #${String(visitCount).padStart(3, "0")}`;
+    tlBl.appendChild(stamp);
+  }
+}
+paintVisitCount();
+
+// Welcome toast (once per session, regardless of state)
+setTimeout(() => {
+  if (visitCount === 1) {
+    showToast({
+      title: "WELCOME, NEW OPERATOR",
+      text: "First time logged. Make yourself at home.",
+      tone: "magenta",
+      icon: "★",
+      duration: 5500,
+    });
+  } else if (visitCount > 1) {
+    showToast({
+      title: `WELCOME BACK · VISIT #${visitCount}`,
+      text: "Thanks for stopping by again.",
+      tone: "cyan",
+      icon: "▲",
+      duration: 4200,
+    });
+  }
+}, 1400);
 
 // ------------------------------------------------------------------
 // Dev mode visual flair (toggled by Konami)

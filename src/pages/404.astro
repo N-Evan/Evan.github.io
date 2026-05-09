@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GlitchText from "../components/chrome/GlitchText.astro";
+import NeonButton from "../components/chrome/NeonButton.astro";
+import DitherBg from "../components/chrome/DitherBg.astro";
+import GridFloor from "../components/chrome/GridFloor.astro";
+import ParticleField from "../components/chrome/ParticleField.astro";
+---
+<BaseLayout title="// SIGNAL LOST :: 404 — Md. Nurusshafi Evan" description="Sector not found.">
+  <main class="err-page relative min-h-dvh overflow-hidden">
+    <DitherBg />
+    <GridFloor />
+    <ParticleField count={40} />
+
+    <div class="err-page__inner relative z-10 min-h-dvh grid place-items-center px-6 text-center">
+      <div class="max-w-2xl">
+        <p class="font-terminal text-text-muted text-sm tracking-[0.4em] mb-4">
+          [ ERR 404 :: SECTOR NOT FOUND ]
+        </p>
+        <GlitchText
+          as="h1"
+          text="SIGNAL LOST"
+          class="font-pixel text-5xl sm:text-7xl text-neon-magenta inline-block"
+        />
+        <pre class="err-page__diag font-terminal text-terminal-grn mt-8 mx-auto whitespace-pre">{`> attempting reconnect ...
+> route handler returned: 404
+> sector did not respond
+> recommendation :: return to home`}</pre>
+
+        <p class="font-terminal text-text-soft mt-8 text-lg">
+          The page you tried to access doesn't exist on this network.
+          It may have been moved, removed, or never existed at all.
+        </p>
+
+        <div class="mt-10 flex flex-wrap justify-center gap-3">
+          <NeonButton href="/" tone="magenta">▶ RETURN HOME</NeonButton>
+          <NeonButton href="/#missions" tone="cyan">◆ MISSION LOG</NeonButton>
+          <NeonButton href="/#comms" tone="cyan">◆ TRANSMIT</NeonButton>
+        </div>
+
+        <p class="font-terminal text-text-muted text-sm mt-12 animate-blink">
+          ▼ pick a destination above ▼
+        </p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .err-page__diag {
+    background: rgba(7, 3, 15, 0.55);
+    border: 1px dashed var(--terminal-grn);
+    padding: 1rem 1.4rem;
+    text-align: left;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    max-width: 520px;
+    text-shadow: 0 0 6px var(--terminal-grn);
+  }
+</style>
