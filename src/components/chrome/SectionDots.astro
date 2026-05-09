@@ -34,8 +34,9 @@ const { sections = defaultSections } = Astro.props;
 </nav>
 
 <script>
+  const dotsNav = document.querySelector<HTMLElement>(".section-dots");
   const dots = document.querySelectorAll<HTMLAnchorElement>(".section-dot");
-  if (dots.length) {
+  if (dots.length && dotsNav) {
     const targets: HTMLElement[] = [];
     dots.forEach((d) => {
       const el = d.dataset.section ? document.getElementById(d.dataset.section) : null;
@@ -51,7 +52,6 @@ const { sections = defaultSections } = Astro.props;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Pick the entry with the largest intersectionRatio
         let best: IntersectionObserverEntry | null = null;
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
@@ -62,6 +62,18 @@ const { sections = defaultSections } = Astro.props;
       { threshold: [0.3, 0.5, 0.7], rootMargin: "-15% 0px -25% 0px" }
     );
     targets.forEach((t) => observer.observe(t));
+
+    // Hide dots while the hero is in view (it has its own side decorations).
+    const hero = document.getElementById("press-start");
+    if (hero) {
+      const heroObs = new IntersectionObserver(
+        ([entry]) => {
+          dotsNav.classList.toggle("is-hidden", entry.intersectionRatio > 0.55);
+        },
+        { threshold: [0, 0.25, 0.55, 0.75, 1] }
+      );
+      heroObs.observe(hero);
+    }
   }
 </script>
 
@@ -73,7 +85,15 @@ const { sections = defaultSections } = Astro.props;
     transform: translateY(-50%);
     z-index: 95;
     pointer-events: none;
+    opacity: 1;
+    transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
   }
+  .section-dots.is-hidden {
+    opacity: 0;
+    transform: translateY(-50%) translateX(28px);
+    pointer-events: none;
+  }
+  .section-dots.is-hidden ul { pointer-events: none; }
   .section-dots ul {
     list-style: none;
     margin: 0; padding: 0;
