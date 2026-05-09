@@ -34,6 +34,7 @@ const ogImageUrl = new URL(ogImage, Astro.site).toString();
     <meta name="theme-color" content="#07030f" />
     <link rel="canonical" href={canonical} />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Md. Nurusshafi Evan — Devlog" href="/rss.xml" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -52,6 +53,9 @@ const ogImageUrl = new URL(ogImage, Astro.site).toString();
     <meta name="twitter:image" content={ogImageUrl} />
 
     <title>{title}</title>
+
+    <!-- Page-specific head injections (e.g., JSON-LD) -->
+    <slot name="head" />
 
     <!-- Render-blocking flag: detect incoming page transition before paint -->
     <script is:inline>
