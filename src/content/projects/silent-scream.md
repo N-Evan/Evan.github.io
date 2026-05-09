@@ -17,6 +17,7 @@ links:
   steam: https://store.steampowered.com/app/1955750/SILENT_SCREAM/
 keyInsights: []
 gallery: []
+featured: true
 ---
 
 ## Role & Responsibilities

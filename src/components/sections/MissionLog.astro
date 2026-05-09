@@ -6,19 +6,32 @@ import RevealOnScroll from "../chrome/RevealOnScroll.astro";
 import MarqueeTicker from "../chrome/MarqueeTicker.astro";
 import RetroSun from "../chrome/RetroSun.astro";
 import MountainRange from "../chrome/MountainRange.astro";
+import FeaturedProject from "./FeaturedProject.astro";
 import { sortByOrder } from "../../lib/projectNav";
 
-const projects = sortByOrder(await getCollection("projects"));
+const all = sortByOrder(await getCollection("projects"));
+const featured = all.filter((p) => p.data.featured);
+const rest = all.filter((p) => !p.data.featured);
+
 const tickerItems = [
-  `MISSIONS LOGGED :: ${projects.length}`,
+  `MISSIONS LOGGED :: ${all.length}`,
   "OPERATIONAL :: ALL SYSTEMS NOMINAL",
   "FOCUS :: GAMEPLAY × LEVEL DESIGN × VFX",
   "SIGNAL :: 433.92 MHz",
-  "BUILDS SHIPPED :: 5",
+  `SHIPPED :: ${all.filter((p) => p.data.status === "shipped").length}`,
 ];
+
+// Build filter chips: years, platforms, team types
+const yearSet  = new Set(rest.map((p) => p.data.year));
+const platformSet = new Set(rest.flatMap((p) => p.data.platforms));
+const years    = [...yearSet].sort((a, b) => b - a);
+const platforms = [...platformSet].sort();
+
+function platSlug(s: string) {
+  return s.toLowerCase().replace(/\s+/g, "-");
+}
 ---
 <section id="missions" class="missions relative">
-  <!-- Synthwave backdrop: sun anchored at horizon, layered mountain silhouettes in front -->
   <div class="missions__backdrop" aria-hidden="true">
     <RetroSun />
     <MountainRange />
@@ -33,21 +46,60 @@ const tickerItems = [
     </RevealOnScroll>
     <RevealOnScroll delay={120}>
       <p class="font-terminal text-text-muted text-base sm:text-lg mb-10 max-w-2xl">
-        &gt; Six entries on file. Click any mission to access debrief, gallery, and behind-the-scenes data.
+        &gt; {all.length} entries on file. Click any mission to access debrief, gallery, and behind-the-scenes data.
       </p>
     </RevealOnScroll>
+
+    {featured.length > 0 && (
+      <RevealOnScroll from="scale">
+        <FeaturedProject project={featured[0]} />
+      </RevealOnScroll>
+    )}
   </div>
 
   <div class="missions__ticker"><MarqueeTicker items={tickerItems} tone="cyan" speed={32} /></div>
 
   <div class="missions__content px-6 max-w-6xl mx-auto pt-12 pb-32">
-    <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((p, idx) => (
-        <li>
+    <!-- Filter chips -->
+    <RevealOnScroll>
+      <div class="filters" role="toolbar" aria-label="Filter missions">
+        <span class="filters__label font-terminal">FILTER ::</span>
+        <div class="filters__group" data-filter-group="all">
+          <button class="filter-chip is-active" type="button" data-filter-key="all" data-filter-value="all">
+            <span class="filter-chip__bracket">[</span>ALL<span class="filter-chip__count">{rest.length}</span><span class="filter-chip__bracket">]</span>
+          </button>
+        </div>
+        <span class="filters__divider">·</span>
+        <div class="filters__group" data-filter-group="year">
+          {years.map((y) => (
+            <button class="filter-chip" type="button" data-filter-key="year" data-filter-value={y}>
+              <span class="filter-chip__bracket">[</span>{y}<span class="filter-chip__bracket">]</span>
+            </button>
+          ))}
+        </div>
+        <span class="filters__divider">·</span>
+        <div class="filters__group" data-filter-group="platform">
+          {platforms.map((pl) => (
+            <button class="filter-chip" type="button" data-filter-key="platform" data-filter-value={platSlug(pl)}>
+              <span class="filter-chip__bracket">[</span>{pl.toUpperCase()}<span class="filter-chip__bracket">]</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </RevealOnScroll>
+
+    <ul class="mission-grid grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {rest.map((p, idx) => (
+        <li
+          class="mission-li"
+          data-year={p.data.year}
+          data-platforms={p.data.platforms.map(platSlug).join(" ")}
+          data-status={p.data.status}
+        >
           <RevealOnScroll from="up" delay={idx * 80}>
             <a href={`/projects/${p.id}`} class="mission-card group block" data-tilt>
               <div class="mc-frame">
-                <div class="mc-id">M-{String(idx + 1).padStart(2, "0")}</div>
+                <div class="mc-id">M-{String(idx + 2).padStart(2, "0")}</div>
                 <div class="mc-status">
                   <span class={`mc-status__dot ${p.data.status === "shipped" ? "is-shipped" : "is-dev"}`}></span>
                   <span>{p.data.status === "shipped" ? "SHIPPED" : p.data.status.toUpperCase()}</span>
@@ -87,8 +139,62 @@ const tickerItems = [
         </li>
       ))}
     </ul>
+
+    <p class="mission-empty font-terminal" hidden>
+      &gt; NO MISSIONS MATCH FILTER. <button id="reset-filters" class="reset-link">[ RESET ]</button>
+    </p>
   </div>
 </section>
+
+<script>
+  const chips = document.querySelectorAll<HTMLElement>(".filter-chip");
+  const items = document.querySelectorAll<HTMLElement>(".mission-li");
+  const empty = document.querySelector<HTMLElement>(".mission-empty");
+  const reset = document.querySelector<HTMLElement>("#reset-filters");
+
+  let activeKey = "all";
+  let activeValue = "all";
+
+  function applyFilter() {
+    let visible = 0;
+    items.forEach((li) => {
+      let match = activeKey === "all";
+      if (activeKey === "year") {
+        match = li.dataset.year === String(activeValue);
+      } else if (activeKey === "platform") {
+        match = (li.dataset.platforms ?? "").split(" ").includes(String(activeValue));
+      }
+      li.classList.toggle("is-hidden", !match);
+      if (match) visible++;
+    });
+    if (empty) empty.hidden = visible > 0;
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const key = chip.dataset.filterKey ?? "all";
+      const value = chip.dataset.filterValue ?? "all";
+      if (key === activeKey && value === activeValue && key !== "all") {
+        activeKey = "all"; activeValue = "all";
+      } else {
+        activeKey = key; activeValue = value;
+      }
+      chips.forEach((c) => c.classList.remove("is-active"));
+      const matchChip = Array.from(chips).find(
+        (c) => c.dataset.filterKey === activeKey && c.dataset.filterValue === activeValue
+      );
+      (matchChip ?? chips[0]).classList.add("is-active");
+      applyFilter();
+    });
+  });
+
+  reset?.addEventListener("click", () => {
+    activeKey = "all"; activeValue = "all";
+    chips.forEach((c) => c.classList.remove("is-active"));
+    chips[0].classList.add("is-active");
+    applyFilter();
+  });
+</script>
 
 <style>
   .section-tag { text-shadow: 0 0 6px var(--text-muted); }
@@ -109,6 +215,89 @@ const tickerItems = [
     position: relative;
     z-index: 2;
   }
+
+  /* Filter chips */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    background: rgba(7,3,15,0.5);
+    border: 1px dashed var(--neon-cyan);
+    margin-bottom: 1.5rem;
+  }
+  .filters__label {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+  }
+  .filters__group { display: contents; }
+  .filters__divider { color: var(--text-muted); padding: 0 0.2rem; }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.55rem;
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text-soft);
+    font-family: theme("fontFamily.terminal");
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    transition: background 200ms, border-color 200ms, color 200ms, box-shadow 200ms, transform 100ms;
+  }
+  .filter-chip:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+    box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+  }
+  .filter-chip.is-active {
+    background: var(--neon-magenta);
+    border-color: var(--neon-magenta);
+    color: var(--bg-void);
+    box-shadow: 0 0 8px var(--neon-magenta);
+    text-shadow: none;
+  }
+  .filter-chip__bracket { color: var(--text-muted); }
+  .filter-chip.is-active .filter-chip__bracket { color: var(--bg-void); }
+  .filter-chip__count {
+    color: var(--neon-magenta);
+    font-size: 0.8em;
+    margin-left: 0.25em;
+  }
+  .filter-chip.is-active .filter-chip__count { color: var(--bg-void); }
+
+  /* Grid + filtered transitions */
+  .mission-grid { transition: opacity 200ms ease; }
+  .mission-li {
+    transition: opacity 350ms ease, transform 350ms cubic-bezier(.2,.8,.2,1);
+  }
+  .mission-li.is-hidden {
+    opacity: 0;
+    transform: scale(0.92);
+    pointer-events: none;
+    position: absolute;
+    visibility: hidden;
+  }
+
+  .mission-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem;
+    font-size: 1rem;
+  }
+  .reset-link {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--neon-cyan);
+    font-family: inherit;
+    text-shadow: 0 0 6px var(--neon-cyan);
+    letter-spacing: 0.1em;
+  }
+  .reset-link:hover { text-decoration: underline; }
 
   .mission-card {
     display: block;
