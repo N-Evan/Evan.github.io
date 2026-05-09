@@ -1,0 +1,53 @@
+---
+// src/components/chrome/GlitchText.astro
+// RGB-split layered text that animates on hover and (via class) on view.
+interface Props {
+  text: string;
+  as?: "h1" | "h2" | "h3" | "h4" | "span";
+  class?: string;
+}
+const { text, as: Tag = "span", class: extraClass = "" } = Astro.props;
+---
+<Tag class={`glitch ${extraClass}`} data-text={text}>{text}</Tag>
+
+<style>
+  .glitch {
+    position: relative;
+    color: var(--text-soft);
+    display: inline-block;
+  }
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .glitch::before { color: var(--neon-magenta); transform: translate(0, 0); }
+  .glitch::after  { color: var(--neon-cyan);    transform: translate(0, 0); }
+
+  .glitch:hover::before,
+  .glitch.is-glitching::before {
+    animation: glitchA 0.8s steps(1) 1;
+  }
+  .glitch:hover::after,
+  .glitch.is-glitching::after {
+    animation: glitchB 0.8s steps(1) 1;
+  }
+
+  @keyframes glitchA {
+    0%, 100% { transform: translate(0,0); }
+    20% { transform: translate(-2px, 1px); }
+    40% { transform: translate(1px, -1px); }
+    60% { transform: translate(-1px, 2px); }
+    80% { transform: translate(2px, -1px); }
+  }
+  @keyframes glitchB {
+    0%, 100% { transform: translate(0,0); }
+    20% { transform: translate(2px, -1px); }
+    40% { transform: translate(-1px, 1px); }
+    60% { transform: translate(1px, -2px); }
+    80% { transform: translate(-2px, 1px); }
+  }
+</style>

@@ -1,11 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PixelFrame from "../components/chrome/PixelFrame.astro";
+import GlitchText from "../components/chrome/GlitchText.astro";
 ---
 <BaseLayout title="Evan — Pixel Portfolio">
-  <main class="min-h-dvh grid place-items-center p-8">
-    <PixelFrame>
-      <p class="font-terminal text-2xl">SYSTEM ONLINE</p>
-    </PixelFrame>
+  <main class="min-h-dvh grid place-items-center">
+    <GlitchText as="h1" text="EVAN" class="font-pixel text-6xl" />
   </main>
 </BaseLayout>
