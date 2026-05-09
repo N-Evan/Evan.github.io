@@ -1,0 +1,27 @@
+:root {
+  --bg-void:      #07030f;
+  --bg-deep:      #11062a;
+  --bg-panel:     #1c0d3d;
+  --neon-magenta: #ff2e88;
+  --neon-cyan:    #00f0ff;
+  --neon-yellow:  #f7d046;
+  --terminal-grn: #39ff14;
+  --text-soft:    #e8dcff;
+  --text-muted:   #8a7ab5;
+
+  --frame-thickness: 4px;
+  --scanline-opacity: 0.06;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --scanline-opacity: 0.03;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
