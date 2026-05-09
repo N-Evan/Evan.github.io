@@ -1,0 +1,29 @@
+{
+  "name": "evan-pixel-portfolio",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node src/scripts/generate-checklist.mjs && astro dev",
+    "build": "node src/scripts/generate-checklist.mjs && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/check": "^0.9.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "tailwindcss": "^3.4.0",
+    "gsap": "^3.12.5",
+    "@fontsource/press-start-2p": "^5.0.0",
+    "@fontsource/vt323": "^5.0.0",
+    "@fontsource-variable/inter": "^5.0.0",
+    "typescript": "^5.5.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

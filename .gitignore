@@ -1,2 +1,21 @@
 
 .vscode/settings.json
+
+# Astro
+.astro/
+dist/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Generated
+CONTENT-CHECKLIST.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
