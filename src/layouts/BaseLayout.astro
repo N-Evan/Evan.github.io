@@ -3,6 +3,8 @@ import "../styles/global.css";
 import ScanlineOverlay from "../components/chrome/ScanlineOverlay.astro";
 import CRTVignette from "../components/chrome/CRTVignette.astro";
 import HUDOverlay from "../components/chrome/HUDOverlay.astro";
+import Starfield from "../components/chrome/Starfield.astro";
+import ShootingStars from "../components/chrome/ShootingStars.astro";
 
 interface Props {
   title: string;
@@ -19,7 +21,9 @@ const { title, description = "Md. Nurusshafi Evan — gameplay programmer, level
     <meta name="theme-color" content="#07030f" />
     <title>{title}</title>
   </head>
-  <body class="bg-bg-void text-text-soft">
+  <body class="text-text-soft">
+    <Starfield />
+    <ShootingStars />
     <slot />
     <HUDOverlay />
     <ScanlineOverlay />

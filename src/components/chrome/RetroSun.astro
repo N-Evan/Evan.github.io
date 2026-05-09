@@ -1,0 +1,86 @@
+---
+// The classic synthwave sun — magenta-to-yellow gradient half-disc with
+// horizontal bars cutting through the lower portion. Pure CSS, decorative.
+---
+<div class="retrosun" aria-hidden="true">
+  <div class="retrosun__halo"></div>
+  <div class="retrosun__disc"></div>
+</div>
+
+<style>
+  .retrosun {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(820px, 92vw);
+    aspect-ratio: 1.4 / 1;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .retrosun__halo {
+    position: absolute;
+    inset: -60px;
+    background:
+      radial-gradient(ellipse 60% 60% at 50% 80%, rgba(255, 46, 136, 0.30), transparent 65%),
+      radial-gradient(ellipse 40% 35% at 50% 88%, rgba(247, 208, 70, 0.18), transparent 65%);
+    filter: blur(18px);
+    opacity: 0.85;
+  }
+  .retrosun__disc {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    margin: auto;
+    width: 78%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 70%,
+      #fff5b6 0%,
+      var(--neon-yellow) 18%,
+      #ff9bb8 38%,
+      var(--neon-magenta) 62%,
+      rgba(140, 24, 80, 0.35) 80%,
+      transparent 90%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 50%,
+      transparent 51%, transparent 53%,
+      black 53%, black 58%,
+      transparent 58%, transparent 61%,
+      black 61%, black 65%,
+      transparent 65%, transparent 70%,
+      black 70%, black 73%,
+      transparent 73%, transparent 80%,
+      black 80%, black 82%,
+      transparent 82%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 50%,
+      transparent 51%, transparent 53%,
+      black 53%, black 58%,
+      transparent 58%, transparent 61%,
+      black 61%, black 65%,
+      transparent 65%, transparent 70%,
+      black 70%, black 73%,
+      transparent 73%, transparent 80%,
+      black 80%, black 82%,
+      transparent 82%
+    );
+    filter: blur(0.6px) saturate(1.1);
+    opacity: 0.55;
+    animation: sun-pulse 7s ease-in-out infinite;
+  }
+  @keyframes sun-pulse {
+    0%, 100% { filter: blur(0.6px) saturate(1.1) brightness(1);    }
+    50%      { filter: blur(0.6px) saturate(1.2) brightness(1.12); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .retrosun__disc { animation: none; }
+  }
+</style>

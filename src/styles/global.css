@@ -6,9 +6,11 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    background-color: var(--bg-void);
+  }
   html, body {
     margin: 0;
-    background-color: var(--bg-void);
     color: var(--text-soft);
     font-family: theme("fontFamily.body");
     -webkit-font-smoothing: antialiased;
@@ -16,6 +18,7 @@
   body {
     min-height: 100dvh;
     overflow-x: hidden;
+    background: transparent;
   }
   ::selection {
     background: var(--neon-magenta);

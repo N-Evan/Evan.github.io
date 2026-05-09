@@ -4,6 +4,8 @@ import DataChip from "../chrome/DataChip.astro";
 import GlitchText from "../chrome/GlitchText.astro";
 import RevealOnScroll from "../chrome/RevealOnScroll.astro";
 import MarqueeTicker from "../chrome/MarqueeTicker.astro";
+import RetroSun from "../chrome/RetroSun.astro";
+import MountainRange from "../chrome/MountainRange.astro";
 import { sortByOrder } from "../../lib/projectNav";
 
 const projects = sortByOrder(await getCollection("projects"));
@@ -16,7 +18,13 @@ const tickerItems = [
 ];
 ---
 <section id="missions" class="missions relative">
-  <div class="px-6 max-w-6xl mx-auto pt-24">
+  <!-- Synthwave backdrop: sun anchored at horizon, layered mountain silhouettes in front -->
+  <div class="missions__backdrop" aria-hidden="true">
+    <RetroSun />
+    <MountainRange />
+  </div>
+
+  <div class="missions__content px-6 max-w-6xl mx-auto pt-24">
     <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
       [ 02 ] &middot; MISSION LOG
     </div>
@@ -30,9 +38,9 @@ const tickerItems = [
     </RevealOnScroll>
   </div>
 
-  <MarqueeTicker items={tickerItems} tone="cyan" speed={32} />
+  <div class="missions__ticker"><MarqueeTicker items={tickerItems} tone="cyan" speed={32} /></div>
 
-  <div class="px-6 max-w-6xl mx-auto pt-12 pb-24">
+  <div class="missions__content px-6 max-w-6xl mx-auto pt-12 pb-32">
     <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((p, idx) => (
         <li>
@@ -84,6 +92,23 @@ const tickerItems = [
 
 <style>
   .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+
+  .missions {
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .missions__backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .missions__content,
+  .missions__ticker {
+    position: relative;
+    z-index: 2;
+  }
 
   .mission-card {
     display: block;

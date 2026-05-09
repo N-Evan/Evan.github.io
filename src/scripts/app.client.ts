@@ -96,3 +96,31 @@ function setupTilt() {
 setupTilt();
 const tiltMo = new MutationObserver(setupTilt);
 tiltMo.observe(document.body, { childList: true, subtree: true });
+
+// Parallax: translate [data-parallax-speed] elements based on their parent
+// section's offset from the viewport center. Higher speed = moves more.
+const parallaxEls = () =>
+  document.querySelectorAll<HTMLElement>("[data-parallax-speed]");
+
+let parallaxTicking = false;
+function applyParallax() {
+  parallaxTicking = false;
+  const vh = window.innerHeight;
+  parallaxEls().forEach((el) => {
+    const parent = el.parentElement;
+    if (!parent) return;
+    const rect = parent.getBoundingClientRect();
+    const progress = (rect.top + rect.height / 2 - vh / 2) / vh;
+    const speed = parseFloat(el.dataset.parallaxSpeed ?? "0.1");
+    const shift = -progress * speed * 320;
+    el.style.transform = `translate3d(0, ${shift.toFixed(1)}px, 0)`;
+  });
+}
+function onScrollParallax() {
+  if (parallaxTicking) return;
+  parallaxTicking = true;
+  requestAnimationFrame(applyParallax);
+}
+applyParallax();
+window.addEventListener("scroll", onScrollParallax, { passive: true });
+window.addEventListener("resize", onScrollParallax);

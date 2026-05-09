@@ -1,0 +1,63 @@
+---
+// Three-layer parallax mountain silhouettes. Each layer carries
+// data-parallax-speed; the global script (app.client.ts) translates them
+// based on scroll position.
+---
+<div class="mountains" aria-hidden="true">
+  <svg
+    class="mtn mtn--back"
+    viewBox="0 0 1600 220"
+    preserveAspectRatio="none"
+    data-parallax-speed="0.05"
+  >
+    <path
+      d="M0,220 L80,110 L170,150 L260,80 L360,130 L470,70 L590,140 L720,100 L850,50 L960,130 L1090,90 L1210,160 L1340,80 L1470,140 L1600,110 L1600,220 Z"
+      fill="#160838"
+    />
+  </svg>
+  <svg
+    class="mtn mtn--mid"
+    viewBox="0 0 1600 200"
+    preserveAspectRatio="none"
+    data-parallax-speed="0.12"
+  >
+    <path
+      d="M0,200 L100,90 L200,150 L300,50 L400,130 L500,70 L600,150 L700,100 L800,40 L900,130 L1000,80 L1100,160 L1200,60 L1300,140 L1400,100 L1500,170 L1600,110 L1600,200 Z"
+      fill="#0b041e"
+    />
+  </svg>
+  <svg
+    class="mtn mtn--front"
+    viewBox="0 0 1600 160"
+    preserveAspectRatio="none"
+    data-parallax-speed="0.22"
+  >
+    <path
+      d="M0,160 L60,100 L130,120 L210,60 L290,100 L380,40 L470,100 L560,60 L660,90 L760,30 L860,80 L970,50 L1080,100 L1180,40 L1300,90 L1400,60 L1500,100 L1600,50 L1600,160 Z"
+      fill="#04020c"
+    />
+  </svg>
+</div>
+
+<style>
+  .mountains {
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 260px;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .mtn {
+    position: absolute;
+    bottom: 0;
+    left: -8%;
+    width: 116%;
+    height: 100%;
+    will-change: transform;
+  }
+  .mtn--back  { bottom: 60px; opacity: 0.9; }
+  .mtn--mid   { bottom: 28px; opacity: 0.95; }
+  .mtn--front { bottom: 0;    opacity: 1;    filter: drop-shadow(0 0 6px rgba(255, 46, 136, 0.18)); }
+</style>
