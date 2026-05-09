@@ -1,0 +1,49 @@
+---
+// src/components/chrome/NeonButton.astro
+interface Props {
+  href?: string;
+  tone?: "magenta" | "cyan";
+  type?: "button" | "submit";
+  class?: string;
+}
+const { href, tone = "magenta", type = "button", class: extraClass = "" } = Astro.props;
+const colorVar = tone === "cyan" ? "var(--neon-cyan)" : "var(--neon-magenta)";
+const Tag = href ? "a" : "button";
+---
+<Tag
+  href={href}
+  type={!href ? type : undefined}
+  class={`neon-btn font-terminal uppercase tracking-wider ${extraClass}`}
+  style={`--glow-color: ${colorVar};`}
+>
+  <slot />
+</Tag>
+
+<style>
+  .neon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: var(--text-soft);
+    background: transparent;
+    border: 2px solid var(--glow-color);
+    text-shadow: 0 0 6px var(--glow-color);
+    box-shadow: 0 0 6px var(--glow-color), inset 0 0 6px rgba(255,255,255,0.05);
+    transition: transform 80ms steps(2), box-shadow 200ms ease;
+    cursor: pointer;
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+  .neon-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow:
+      0 0 12px var(--glow-color),
+      0 0 24px var(--glow-color),
+      inset 0 0 8px rgba(255,255,255,0.08);
+  }
+  .neon-btn:focus-visible {
+    outline: 2px dashed var(--glow-color);
+    outline-offset: 4px;
+  }
+</style>
