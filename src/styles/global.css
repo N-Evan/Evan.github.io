@@ -35,3 +35,109 @@
     text-shadow: 0 0 8px var(--neon-cyan);
   }
 }
+
+/* Page transition glitch wipe */
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--bg-void);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.page-wipe.is-out {
+  pointer-events: auto;
+  animation: pw-out 460ms steps(8) forwards;
+}
+.page-wipe.is-fading {
+  animation: pw-fade-in 600ms ease-out forwards;
+  pointer-events: none;
+}
+.page-wipe__bars {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 46, 136, 0.5) 0,
+    rgba(255, 46, 136, 0.5) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  mix-blend-mode: screen;
+  animation: pw-bars 460ms linear;
+}
+.page-wipe__rgb-r,
+.page-wipe__rgb-c {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.6;
+}
+.page-wipe__rgb-r {
+  background: radial-gradient(circle at 30% 50%, rgba(255, 46, 136, 0.55), transparent 60%);
+  animation: pw-rgb-r 460ms linear;
+}
+.page-wipe__rgb-c {
+  background: radial-gradient(circle at 70% 50%, rgba(0, 240, 255, 0.55), transparent 60%);
+  animation: pw-rgb-c 460ms linear;
+}
+.page-wipe__label {
+  position: relative;
+  font-family: "Press Start 2P", monospace;
+  font-size: 1rem;
+  color: var(--neon-magenta);
+  text-shadow: 0 0 12px var(--neon-magenta);
+  letter-spacing: 0.2em;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.page-wipe__bracket { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+.page-wipe__cursor {
+  color: var(--terminal-grn);
+  text-shadow: 0 0 8px var(--terminal-grn);
+  animation: pw-blink 0.4s steps(1) infinite;
+}
+
+@keyframes pw-out {
+  0%   { opacity: 0; clip-path: inset(0); transform: translateX(0); }
+  10%  { opacity: 0.9; clip-path: inset(20% 0 60% 0); transform: translateX(-6px); }
+  25%  { clip-path: inset(50% 0 30% 0); transform: translateX(8px); }
+  40%  { clip-path: inset(40% 0 40% 0); transform: translateX(-4px); }
+  60%  { clip-path: inset(0); transform: translateX(0); opacity: 1; }
+  100% { opacity: 1; }
+}
+@keyframes pw-bars {
+  0%   { transform: translateY(0); opacity: 0.0; }
+  20%  { transform: translateY(0); opacity: 0.7; }
+  100% { transform: translateY(40px); opacity: 0.4; }
+}
+@keyframes pw-rgb-r {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(-30px); }
+  100% { transform: translateX(0); }
+}
+@keyframes pw-rgb-c {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(30px); }
+  100% { transform: translateX(0); }
+}
+@keyframes pw-fade-in {
+  0%   { opacity: 1; }
+  60%  { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+@keyframes pw-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-wipe.is-out { animation-duration: 160ms; }
+  .page-wipe.is-fading { animation-duration: 200ms; }
+  .page-wipe__bars, .page-wipe__rgb-r, .page-wipe__rgb-c { animation: none; }
+}

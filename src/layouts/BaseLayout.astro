@@ -8,6 +8,7 @@ import ShootingStars from "../components/chrome/ShootingStars.astro";
 import SkyGlow from "../components/chrome/SkyGlow.astro";
 import MouseSpotlight from "../components/chrome/MouseSpotlight.astro";
 import CustomCursor from "../components/chrome/CustomCursor.astro";
+import ToastStack from "../components/chrome/ToastStack.astro";
 
 interface Props {
   title: string;
@@ -57,11 +58,14 @@ const ogImageUrl = new URL(ogImage, Astro.site).toString();
     <MouseSpotlight />
     <slot />
     <CustomCursor />
+    <ToastStack />
     <HUDOverlay />
     <ScanlineOverlay />
     <CRTVignette />
     <script>
       import "../scripts/app.client.ts";
+      import "../scripts/page-transition.client.ts";
+      import "../scripts/easter-eggs.client.ts";
     </script>
   </body>
 </html>
