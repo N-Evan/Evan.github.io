@@ -1,0 +1,88 @@
+---
+// Pixel-style cursor with a fading magenta/cyan trail.
+// SVG cursors injected via CSS; trail dots created on demand by JS pool.
+---
+<style is:global>
+  /* Default cursor — magenta crosshair with cyan center */
+  body {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><rect x='11' y='2' width='2' height='5' fill='%23ff2e88'/><rect x='11' y='17' width='2' height='5' fill='%23ff2e88'/><rect x='2' y='11' width='5' height='2' fill='%23ff2e88'/><rect x='17' y='11' width='5' height='2' fill='%23ff2e88'/><rect x='11' y='11' width='2' height='2' fill='%2300f0ff'/></svg>") 12 12, auto;
+  }
+  /* Hand cursor — cyan target ring */
+  a, button, [role="button"], summary, label[for], input[type="checkbox"], input[type="radio"], select, [data-tilt] {
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'><rect x='13' y='3' width='2' height='4' fill='%2300f0ff'/><rect x='13' y='21' width='2' height='4' fill='%2300f0ff'/><rect x='3' y='13' width='4' height='2' fill='%2300f0ff'/><rect x='21' y='13' width='4' height='2' fill='%2300f0ff'/><rect x='8' y='8' width='12' height='2' fill='%23ff2e88'/><rect x='8' y='18' width='12' height='2' fill='%23ff2e88'/><rect x='8' y='8' width='2' height='12' fill='%23ff2e88'/><rect x='18' y='8' width='2' height='12' fill='%23ff2e88'/></svg>") 14 14, pointer;
+  }
+  /* Text inputs keep the standard text cursor */
+  input[type="text"], input[type="email"], input[type="search"], input[type="url"], textarea {
+    cursor: text;
+  }
+  /* Trail layer */
+  .cursor-trail {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9997;
+  }
+  .ct-dot {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    will-change: opacity, transform;
+    transition: opacity 600ms linear, transform 600ms linear;
+  }
+  .ct-dot--magenta { background: var(--neon-magenta); box-shadow: 0 0 6px var(--neon-magenta); }
+  .ct-dot--cyan    { background: var(--neon-cyan);    box-shadow: 0 0 6px var(--neon-cyan); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-trail { display: none; }
+  }
+  /* Hide trail on touch devices */
+  @media (hover: none) {
+    body, a, button { cursor: auto; }
+    .cursor-trail { display: none; }
+  }
+</style>
+
+<div class="cursor-trail" aria-hidden="true"></div>
+
+<script>
+  const layer = document.querySelector<HTMLElement>(".cursor-trail");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isTouch = window.matchMedia("(hover: none)").matches;
+
+  if (layer && !reduced && !isTouch) {
+    const POOL = 14;
+    const dots: HTMLElement[] = [];
+    for (let i = 0; i < POOL; i++) {
+      const d = document.createElement("span");
+      d.className = `ct-dot ct-dot--${i % 2 === 0 ? "magenta" : "cyan"}`;
+      d.style.opacity = "0";
+      layer.appendChild(d);
+      dots.push(d);
+    }
+    let cursor = 0;
+    let lastX = -1, lastY = -1;
+    let lastEmit = 0;
+    window.addEventListener("mousemove", (e) => {
+      const now = performance.now();
+      if (now - lastEmit < 24) return;
+      lastEmit = now;
+      const dx = lastX < 0 ? 0 : e.clientX - lastX;
+      const dy = lastY < 0 ? 0 : e.clientY - lastY;
+      if (Math.abs(dx) + Math.abs(dy) < 6) return;
+      lastX = e.clientX; lastY = e.clientY;
+
+      const d = dots[cursor];
+      cursor = (cursor + 1) % POOL;
+      d.style.transition = "none";
+      d.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%) scale(1)`;
+      d.style.opacity = "0.85";
+      requestAnimationFrame(() => {
+        d.style.transition = "opacity 700ms linear, transform 700ms cubic-bezier(.2,.8,.2,1)";
+        d.style.opacity = "0";
+        d.style.transform = `translate(${e.clientX + dx * 1.5}px, ${e.clientY + dy * 1.5}px) translate(-50%, -50%) scale(0.4)`;
+      });
+    }, { passive: true });
+  }
+</script>

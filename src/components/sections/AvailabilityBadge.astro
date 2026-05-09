@@ -1,0 +1,102 @@
+---
+import { status, STATE_META } from "../../data/status";
+const meta = STATE_META[status.current];
+const colorVar =
+  meta.color === "magenta" ? "var(--neon-magenta)" :
+  meta.color === "cyan"    ? "var(--neon-cyan)"    :
+  meta.color === "yellow"  ? "var(--neon-yellow)"  :
+                              "var(--text-muted)";
+---
+<aside class={`avail-badge ${meta.pulse ? "is-pulsing" : ""}`} style={`--avail-color: ${colorVar};`}>
+  <span class="avail-badge__rail" aria-hidden="true"></span>
+  <span class="avail-badge__dot" aria-hidden="true"></span>
+  <div class="avail-badge__text">
+    <strong class="avail-badge__label font-terminal">{meta.label}</strong>
+    {status.message && (
+      <span class="avail-badge__msg font-terminal">{status.message}</span>
+    )}
+  </div>
+  <a href="#comms" class="avail-badge__cta font-terminal">[ HIRE ME ]</a>
+</aside>
+
+<style>
+  .avail-badge {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 6xl;
+    margin: 1.5rem auto 0;
+    padding: 0.85rem 1rem 0.85rem 1.4rem;
+    background: linear-gradient(90deg, rgba(28,13,61,0.85), rgba(7,3,15,0.7));
+    border: 1px solid var(--avail-color);
+    border-left: 4px solid var(--avail-color);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--avail-color) 25%, transparent);
+    width: min(960px, calc(100% - 3rem));
+  }
+  .avail-badge__rail {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 4px;
+    background: var(--avail-color);
+    box-shadow: 0 0 12px var(--avail-color);
+  }
+  .avail-badge__dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--avail-color);
+    box-shadow: 0 0 8px var(--avail-color), 0 0 14px var(--avail-color);
+    flex-shrink: 0;
+  }
+  .avail-badge.is-pulsing .avail-badge__dot {
+    animation: avail-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes avail-pulse {
+    0%, 100% { transform: scale(1);   opacity: 1;   }
+    50%      { transform: scale(1.4); opacity: 0.5; }
+  }
+  .avail-badge__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .avail-badge__label {
+    color: var(--avail-color);
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    text-shadow: 0 0 6px var(--avail-color);
+  }
+  .avail-badge__msg {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+  }
+  .avail-badge__cta {
+    flex-shrink: 0;
+    color: var(--text-soft);
+    border: 1px dashed var(--avail-color);
+    padding: 0.4rem 0.7rem;
+    transition: background 200ms, color 200ms, transform 200ms;
+    letter-spacing: 0.12em;
+    font-size: 0.95rem;
+  }
+  .avail-badge__cta:hover {
+    background: var(--avail-color);
+    color: var(--bg-void);
+    transform: translateY(-1px);
+    text-shadow: none;
+  }
+  @media (max-width: 640px) {
+    .avail-badge {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+    .avail-badge__cta { align-self: stretch; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .avail-badge.is-pulsing .avail-badge__dot { animation: none; }
+  }
+</style>

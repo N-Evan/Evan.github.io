@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node src/scripts/generate-checklist.mjs && astro dev",
-    "build": "node src/scripts/generate-checklist.mjs && astro build",
+    "dev": "node src/scripts/generate-checklist.mjs && node src/scripts/generate-og.mjs && astro dev",
+    "build": "node src/scripts/generate-checklist.mjs && node src/scripts/generate-og.mjs && astro build",
+    "og": "node src/scripts/generate-og.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "test": "vitest run",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "autoprefixer": "^10.5.0",
+    "sharp": "^0.34.5",
     "vitest": "^2.0.0"
   }
 }

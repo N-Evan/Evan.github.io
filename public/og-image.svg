@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="monospace">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11062a"/>
+      <stop offset="1" stop-color="#07030f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="0%" r="60%">
+      <stop offset="0" stop-color="#ff2e88" stop-opacity="0.45"/>
+      <stop offset="0.6" stop-color="#ff2e88" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#ff2e88" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sun" cx="50%" cy="70%" r="60%">
+      <stop offset="0" stop-color="#fff5b6"/>
+      <stop offset="0.18" stop-color="#f7d046"/>
+      <stop offset="0.4" stop-color="#ff9bb8"/>
+      <stop offset="0.65" stop-color="#ff2e88"/>
+      <stop offset="0.85" stop-color="#11062a" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#11062a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="scan" width="2" height="3" patternUnits="userSpaceOnUse">
+      <rect width="2" height="1" fill="#ffffff" fill-opacity="0.04"/>
+    </pattern>
+    <pattern id="sunbars" x="0" y="0" width="1" height="14" patternUnits="userSpaceOnUse">
+      <rect width="1" height="6" fill="#000" fill-opacity="0.6"/>
+    </pattern>
+    <mask id="sunmask">
+      <rect width="1200" height="630" fill="white"/>
+      <g transform="translate(600 600)">
+        <rect x="-260" y="0" width="520" height="40" fill="black"/>
+        <rect x="-240" y="50" width="480" height="14" fill="black"/>
+        <rect x="-220" y="78" width="440" height="12" fill="black"/>
+        <rect x="-200" y="106" width="400" height="10" fill="black"/>
+      </g>
+    </mask>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- retro sun -->
+  <g mask="url(#sunmask)">
+    <circle cx="600" cy="600" r="320" fill="url(#sun)"/>
+  </g>
+
+  <!-- horizon grid floor -->
+  <g opacity="0.35" stroke="#00f0ff" stroke-width="1" fill="none">
+    <line x1="0" y1="540" x2="1200" y2="540"/>
+    <!-- perspective lines -->
+    <line x1="600" y1="540" x2="0"    y2="630"/>
+    <line x1="600" y1="540" x2="120"  y2="630"/>
+    <line x1="600" y1="540" x2="280"  y2="630"/>
+    <line x1="600" y1="540" x2="440"  y2="630"/>
+    <line x1="600" y1="540" x2="760"  y2="630"/>
+    <line x1="600" y1="540" x2="920"  y2="630"/>
+    <line x1="600" y1="540" x2="1080" y2="630"/>
+    <line x1="600" y1="540" x2="1200" y2="630"/>
+    <!-- horizontal grid lines (perspective-fading) -->
+    <line x1="0" y1="555" x2="1200" y2="555" stroke-opacity="0.7"/>
+    <line x1="0" y1="575" x2="1200" y2="575" stroke-opacity="0.55"/>
+    <line x1="0" y1="600" x2="1200" y2="600" stroke-opacity="0.4"/>
+  </g>
+
+  <!-- mountains silhouette -->
+  <path d="M0,540 L80,420 L170,470 L260,400 L360,460 L470,390 L590,460 L720,420 L850,370 L960,450 L1090,410 L1210,470 L1200,540 Z"
+        fill="#0b0420" opacity="0.85"/>
+  <path d="M0,540 L60,470 L130,490 L210,440 L290,480 L380,420 L470,480 L560,440 L660,460 L760,400 L860,450 L970,420 L1080,470 L1180,420 L1200,460 L1200,540 Z"
+        fill="#04020c"/>
+
+  <!-- scanlines overlay -->
+  <rect width="1200" height="630" fill="url(#scan)"/>
+
+  <!-- bracket frame -->
+  <g stroke="#ff2e88" stroke-width="3" fill="none" opacity="0.85">
+    <polyline points="40,40 40,90 90,90"/>
+    <polyline points="1160,40 1160,90 1110,90"/>
+    <polyline points="40,590 40,540 90,540"/>
+    <polyline points="1160,590 1160,540 1110,540"/>
+  </g>
+
+  <!-- accent labels -->
+  <text x="60" y="120" fill="#8a7ab5" font-size="22" letter-spacing="6" font-family="'Courier New', monospace">
+    [ PORTFOLIO :: 2026 ]
+  </text>
+
+  <!-- big name -->
+  <text x="60" y="280" fill="#ff2e88" font-size="120" font-weight="900" font-family="'Courier New', monospace" letter-spacing="6"
+        style="text-shadow: 0 0 20px #ff2e88;">
+    EVAN
+  </text>
+  <!-- glow duplicate (cyan offset) -->
+  <text x="64" y="280" fill="#00f0ff" font-size="120" font-weight="900" font-family="'Courier New', monospace" letter-spacing="6" opacity="0.5">
+    EVAN
+  </text>
+  <text x="60" y="280" fill="#ff2e88" font-size="120" font-weight="900" font-family="'Courier New', monospace" letter-spacing="6">
+    EVAN
+  </text>
+
+  <!-- tagline -->
+  <text x="60" y="345" fill="#e8dcff" font-size="28" letter-spacing="4" font-family="'Courier New', monospace">
+    GAMEPLAY PROGRAMMER
+  </text>
+  <text x="60" y="380" fill="#e8dcff" font-size="28" letter-spacing="4" font-family="'Courier New', monospace">
+    LEVEL DESIGNER · VFX ARTIST
+  </text>
+
+  <!-- separator -->
+  <line x1="60" y1="410" x2="540" y2="410" stroke="#00f0ff" stroke-width="1" stroke-dasharray="6,6" opacity="0.7"/>
+
+  <!-- bottom URL/tag -->
+  <text x="60" y="440" fill="#00f0ff" font-size="20" letter-spacing="3" font-family="'Courier New', monospace">
+    &gt; n-evan.github.io
+  </text>
+
+  <!-- corner ID -->
+  <text x="1140" y="120" text-anchor="end" fill="#00f0ff" font-size="18" letter-spacing="4" font-family="'Courier New', monospace">
+    UID :: 0xEVAN
+  </text>
+  <text x="1140" y="148" text-anchor="end" fill="#8a7ab5" font-size="16" letter-spacing="3" font-family="'Courier New', monospace">
+    LINK :: STABLE
+  </text>
+</svg>
