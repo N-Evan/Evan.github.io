@@ -1,9 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import DitherBg from "../components/chrome/DitherBg.astro";
+import GridFloor from "../components/chrome/GridFloor.astro";
 import GlitchText from "../components/chrome/GlitchText.astro";
 ---
 <BaseLayout title="Evan — Pixel Portfolio">
-  <main class="min-h-dvh grid place-items-center">
-    <GlitchText as="h1" text="EVAN" class="font-pixel text-6xl" />
+  <main class="relative min-h-dvh grid place-items-center overflow-hidden">
+    <DitherBg />
+    <GridFloor />
+    <GlitchText as="h1" text="EVAN" class="font-pixel text-7xl text-neon-magenta relative" />
   </main>
 </BaseLayout>
