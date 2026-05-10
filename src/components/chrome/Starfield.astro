@@ -1,0 +1,70 @@
+---
+// Page-wide twinkling starfield. Fixed-position, sits behind content.
+function rng(seed: number) {
+  return Math.abs(Math.sin(seed * 9301 + 49297) * 233280) % 1;
+}
+
+const TOTAL = 220;
+const stars = Array.from({ length: TOTAL }, (_, i) => {
+  const t = rng(i + 1);
+  const size = t < 0.78 ? 1 : t < 0.96 ? 2 : 3;
+  const bright = 0.35 + rng(i + 700) * 0.55;
+  const tint =
+    rng(i + 800) < 0.08 ? "magenta" :
+    rng(i + 900) < 0.12 ? "cyan" :
+    "white";
+  return {
+    x: rng(i + 100) * 100,
+    y: rng(i + 200) * 100,
+    size,
+    delay: rng(i + 300) * 7,
+    duration: 2.4 + rng(i + 400) * 4.2,
+    bright,
+    tint,
+  };
+});
+---
+<div class="starfield" aria-hidden="true">
+  {stars.map((s) => (
+    <span
+      class={`star star--${s.tint}`}
+      style={`left:${s.x.toFixed(2)}%;top:${s.y.toFixed(2)}%;width:${s.size}px;height:${s.size}px;animation-delay:-${s.delay.toFixed(2)}s;animation-duration:${s.duration.toFixed(2)}s;--bright:${s.bright.toFixed(2)};`}
+    />
+  ))}
+</div>
+
+<style>
+  .starfield {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle linear infinite;
+    will-change: opacity;
+  }
+  .star--white {
+    background: #ffffff;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+  }
+  .star--cyan {
+    background: var(--neon-cyan);
+    box-shadow: 0 0 5px var(--neon-cyan);
+  }
+  .star--magenta {
+    background: var(--neon-magenta);
+    box-shadow: 0 0 5px var(--neon-magenta);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.85); }
+    50%      { opacity: var(--bright, 0.6); transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .star { animation: none; opacity: calc(var(--bright, 0.6) * 0.7); }
+  }
+</style>

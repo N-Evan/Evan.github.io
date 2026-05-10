@@ -1,0 +1,47 @@
+---
+// Soft radial spotlight that follows the cursor. Fixed-position, behind content.
+---
+<div class="mouse-spot" aria-hidden="true"></div>
+
+<script>
+  const spot = document.querySelector<HTMLElement>(".mouse-spot");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isTouch = window.matchMedia("(hover: none)").matches;
+  if (spot && !reduced && !isTouch) {
+    let raf = 0;
+    let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
+    let cx = tx, cy = ty;
+    const lerp = () => {
+      cx += (tx - cx) * 0.12;
+      cy += (ty - cy) * 0.12;
+      spot.style.setProperty("--mx", `${cx.toFixed(0)}px`);
+      spot.style.setProperty("--my", `${cy.toFixed(0)}px`);
+      raf = requestAnimationFrame(lerp);
+    };
+    window.addEventListener("mousemove", (e) => {
+      tx = e.clientX; ty = e.clientY;
+      if (!raf) raf = requestAnimationFrame(lerp);
+    }, { passive: true });
+  }
+</script>
+
+<style>
+  .mouse-spot {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(
+        circle 320px at var(--mx, 50%) var(--my, 50%),
+        rgba(255, 46, 136, 0.10),
+        rgba(0, 240, 255, 0.04) 40%,
+        transparent 70%
+      );
+    mix-blend-mode: screen;
+    transition: background 80ms linear;
+  }
+  @media (prefers-reduced-motion: reduce), (hover: none) {
+    .mouse-spot { display: none; }
+  }
+</style>

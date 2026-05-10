@@ -1,0 +1,297 @@
+---
+import DitherBg from "../chrome/DitherBg.astro";
+import GridFloor from "../chrome/GridFloor.astro";
+import GlitchText from "../chrome/GlitchText.astro";
+import NeonButton from "../chrome/NeonButton.astro";
+import ParticleField from "../chrome/ParticleField.astro";
+import { withBase } from "../../lib/url";
+---
+<section id="press-start" class="press-start relative min-h-dvh overflow-hidden">
+  <DitherBg />
+  <GridFloor />
+  <ParticleField count={60} />
+
+  <!-- Side decorations -->
+  <div class="hero-decor hero-decor--left" aria-hidden="true">
+    <div class="hero-decor__bracket">┌</div>
+    <div class="hero-decor__line"></div>
+    <div class="hero-decor__label">N E U R A L</div>
+    <div class="hero-decor__line hero-decor__line--short"></div>
+    <div class="hero-decor__label">L I N K</div>
+    <div class="hero-decor__line"></div>
+    <div class="hero-decor__bracket">└</div>
+  </div>
+
+  <div class="hero-decor hero-decor--right" aria-hidden="true">
+    <div class="hero-decor__readout">
+      <div><span class="rk">CPU</span> <span class="rv">▰▰▰▰▰▱▱</span></div>
+      <div><span class="rk">MEM</span> <span class="rv">▰▰▰▰▱▱▱</span></div>
+      <div><span class="rk">NET</span> <span class="rv">▰▰▰▰▰▰▱</span></div>
+      <div><span class="rk">PWR</span> <span class="rv">▰▰▰▰▰▰▰</span></div>
+      <div class="rsp"></div>
+      <div><span class="rk">UID</span> <span class="rv rv--mag">0xE V A N</span></div>
+      <div><span class="rk">LOC</span> <span class="rv">23.81N 90.41E</span></div>
+      <div><span class="rk">VER</span> <span class="rv">2.0.0-PIXEL</span></div>
+    </div>
+  </div>
+
+  <div class="press-start__inner relative z-10 min-h-dvh grid place-items-center px-6">
+    <div class="text-center max-w-4xl">
+      <pre class="boot font-terminal text-terminal-grn text-base sm:text-xl whitespace-pre leading-tight" data-boot><span data-line="0"></span>
+<span data-line="1"></span>
+<span data-line="2"></span></pre>
+
+      <div class="reveal-hero mt-10 opacity-0">
+        <div class="hero-stamp font-terminal text-text-muted text-xs tracking-[0.4em] mb-4">
+          ━━ PORTFOLIO :: 2026 ━━
+        </div>
+        <GlitchText
+          as="h1"
+          text="EVAN"
+          class="font-pixel text-6xl sm:text-8xl md:text-9xl text-neon-magenta inline-block"
+        />
+        <p class="hero-fullname font-terminal text-neon-cyan mt-3 text-base sm:text-lg tracking-[0.35em]">
+          Md. Nurusshafi Evan
+        </p>
+        <p class="mt-6 font-terminal text-text-soft text-lg sm:text-2xl tracking-wider">
+          GAMEPLAY PROGRAMMER &middot; LEVEL DESIGNER &middot; VFX ARTIST
+        </p>
+        <div class="mt-10 flex flex-wrap justify-center gap-3">
+          <NeonButton href="#missions" tone="magenta">▶ NEW GAME</NeonButton>
+          <NeonButton href="#profile"  tone="cyan">◆ PROFILE</NeonButton>
+          <NeonButton href={withBase("/devlog")}   tone="cyan">◆ DEVLOG</NeonButton>
+          <NeonButton href="#comms"    tone="cyan">◆ COMMS</NeonButton>
+          <NeonButton href={withBase("/files/resume.pdf")} tone="cyan" target="_blank" rel="noopener noreferrer">◆ RESUME.PDF</NeonButton>
+        </div>
+        <p class="mt-12 font-terminal text-text-muted text-sm animate-blink tracking-widest">
+          ▼ PRESS ANY KEY OR SCROLL TO CONTINUE ▼
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const KEY = "evan-portfolio:press-start-played";
+  const root  = document.querySelector<HTMLElement>(".press-start__inner");
+  const boot  = document.querySelector<HTMLElement>("[data-boot]");
+  const lineEls = Array.from(document.querySelectorAll<HTMLElement>(".boot [data-line]"));
+  const reveal = document.querySelector<HTMLElement>(".reveal-hero");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const lineTexts: string[] = [
+    "> BOOTING NEURAL LINK…",
+    "> OPERATOR: EVAN [VERIFIED]",
+    "> READY",
+  ];
+
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  let skipped = false;
+
+  async function typeLine(el: HTMLElement, text: string, charDelay = 28) {
+    el.classList.add("is-active");
+    el.textContent = "";
+    for (let i = 0; i < text.length; i++) {
+      if (skipped) {
+        el.textContent = text;
+        break;
+      }
+      el.textContent += text[i];
+      await sleep(charDelay + (text[i] === " " ? 12 : 0));
+    }
+    el.classList.remove("is-active");
+  }
+
+  function fillAll() {
+    lineEls.forEach((el, i) => { el.textContent = lineTexts[i] ?? ""; el.classList.remove("is-active"); });
+  }
+
+  async function runIntro() {
+    if (!boot || !reveal) return;
+
+    if (reduced) {
+      fillAll();
+      reveal.style.opacity = "1";
+      sessionStorage.setItem(KEY, "1");
+      return;
+    }
+
+    // CRT power-on flash
+    const flash = document.createElement("div");
+    flash.style.cssText =
+      "position:fixed;inset:0;background:rgba(255,255,255,0.92);z-index:9999;pointer-events:none;mix-blend-mode:screen;";
+    document.body.appendChild(flash);
+    flash.animate(
+      [{ opacity: 1 }, { opacity: 0 }],
+      { duration: 420, easing: "ease-out", fill: "forwards" }
+    );
+    setTimeout(() => flash.remove(), 500);
+
+    await sleep(160);
+
+    // Typewriter each line
+    for (let i = 0; i < lineEls.length; i++) {
+      lineEls[i].classList.add("is-active");
+      await typeLine(lineEls[i], lineTexts[i]);
+      if (skipped) break;
+      await sleep(180);
+    }
+
+    if (skipped) {
+      fillAll();
+    } else {
+      // Cursor blink on the last line for a beat
+      lineEls[lineEls.length - 1].classList.add("is-active");
+      await sleep(700);
+    }
+
+    // Glitch-out the boot block, then collapse it
+    boot.classList.add("is-glitching-out");
+    await sleep(400);
+    boot.classList.add("is-hidden");
+
+    // Reveal hero (name + tagline + buttons)
+    reveal.animate(
+      [
+        { opacity: 0, transform: "translateY(14px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ],
+      { duration: 600, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" }
+    );
+    reveal.style.opacity = "1";
+
+    sessionStorage.setItem(KEY, "1");
+  }
+
+  function skipNow() {
+    skipped = true;
+    if (boot) {
+      boot.classList.remove("is-glitching-out");
+      boot.classList.add("is-hidden");
+    }
+    if (reveal) reveal.style.opacity = "1";
+    window.removeEventListener("keydown", skipNow);
+    window.removeEventListener("pointerdown", skipNow);
+    window.removeEventListener("wheel", skipNow as EventListener);
+  }
+
+  if (root && reveal) {
+    if (sessionStorage.getItem(KEY) === "1") {
+      // Already played this session — show the end state immediately.
+      fillAll();
+      if (boot) boot.classList.add("is-hidden");
+      reveal.style.opacity = "1";
+    } else {
+      window.addEventListener("keydown", skipNow);
+      window.addEventListener("pointerdown", skipNow);
+      window.addEventListener("wheel", skipNow as EventListener, { passive: true });
+      runIntro();
+    }
+  }
+</script>
+
+<style>
+  .press-start__inner { background: transparent; }
+
+  .boot {
+    transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+    min-height: 5em;
+  }
+  .boot [data-line] {
+    display: block;
+    text-shadow: 0 0 8px var(--terminal-grn);
+    min-height: 1.4em;
+  }
+  .boot [data-line].is-active::after {
+    content: "▮";
+    color: var(--terminal-grn);
+    margin-left: 0.15ch;
+    animation: blink 0.6s steps(1) infinite;
+  }
+  .boot.is-glitching-out {
+    animation: boot-glitch 380ms steps(6) forwards;
+  }
+  .boot.is-hidden {
+    opacity: 0;
+    transform: scale(0.96);
+    pointer-events: none;
+    height: 0;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+  @keyframes boot-glitch {
+    0%   { transform: translateX(0);  filter: none; }
+    20%  { transform: translateX(-4px); filter: hue-rotate(60deg) saturate(1.4); clip-path: inset(20% 0 60% 0); }
+    40%  { transform: translateX(6px);  filter: hue-rotate(-60deg) saturate(1.6); clip-path: inset(60% 0 20% 0); }
+    60%  { transform: translateX(-2px); filter: hue-rotate(120deg); clip-path: inset(40% 0 40% 0); }
+    80%  { transform: translateX(3px);  filter: invert(0.4); clip-path: inset(0); opacity: 0.4; }
+    100% { transform: translateX(0);    filter: none; opacity: 0; clip-path: inset(0); }
+  }
+
+  @keyframes blink {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  .hero-stamp { text-shadow: 0 0 6px var(--text-muted); }
+  .hero-fullname {
+    text-shadow: 0 0 8px var(--neon-cyan);
+    opacity: 0.85;
+  }
+
+  /* Side decorations */
+  .hero-decor {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    font-family: theme("fontFamily.terminal");
+    color: var(--neon-cyan);
+    pointer-events: none;
+    opacity: 0;
+    animation: hero-decor-fade 1.4s ease-out 1.6s forwards;
+  }
+  .hero-decor--left { left: 2vw; }
+  .hero-decor--right { right: 2vw; }
+  .hero-decor__bracket {
+    font-family: theme("fontFamily.pixel");
+    font-size: 1.4rem;
+    color: var(--neon-magenta);
+  }
+  .hero-decor__line {
+    height: 60px;
+    border-left: 1px dashed var(--neon-cyan);
+    margin-left: 0.4em;
+  }
+  .hero-decor__line--short { height: 30px; }
+  .hero-decor__label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+    margin: 0.5em 0;
+  }
+  .hero-decor__readout {
+    font-family: theme("fontFamily.terminal");
+    font-size: 0.95rem;
+    line-height: 1.7;
+    text-align: right;
+    color: var(--text-muted);
+  }
+  .hero-decor__readout > div { display: flex; justify-content: flex-end; gap: 0.6rem; }
+  .rk { color: var(--text-muted); letter-spacing: 0.15em; }
+  .rv { color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); letter-spacing: 0.1em; }
+  .rv--mag { color: var(--neon-magenta); text-shadow: 0 0 6px var(--neon-magenta); }
+  .rsp { height: 0.6rem; }
+
+  @keyframes hero-decor-fade {
+    from { opacity: 0; transform: translateY(-50%) translateX(0); }
+    to   { opacity: 0.8; transform: translateY(-50%) translateX(0); }
+  }
+  @media (max-width: 900px) {
+    .hero-decor { display: none; }
+  }
+</style>

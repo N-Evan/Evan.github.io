@@ -1,0 +1,16 @@
+---
+// Server-rendered overlay used for the page-transition glitch wipe.
+// Always present in the DOM so it can cover content from the very first
+// paint when arriving from a transition (no flicker).
+---
+<div class="page-wipe" aria-hidden="true">
+  <div class="page-wipe__bars"></div>
+  <div class="page-wipe__rgb-r"></div>
+  <div class="page-wipe__rgb-c"></div>
+  <div class="page-wipe__label">
+    <span class="page-wipe__bracket">[</span>
+    <span class="page-wipe__text">SIGNAL HOPPING</span>
+    <span class="page-wipe__cursor">▮</span>
+    <span class="page-wipe__bracket">]</span>
+  </div>
+</div>

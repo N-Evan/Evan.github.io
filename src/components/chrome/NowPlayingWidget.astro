@@ -1,0 +1,162 @@
+---
+import { nowPlaying } from "../../data/now-playing";
+const np = nowPlaying;
+---
+{np.enabled && (
+  <aside class="np-widget" aria-label="Currently playing">
+    <div class="np-widget__rail" aria-hidden="true"></div>
+    <div class="np-widget__cover" aria-hidden="true">
+      {np.cover ? (
+        <img src={np.cover} alt={`${np.game} cover art`} loading="lazy" decoding="async" />
+      ) : (
+        <span class="np-widget__cover-glyph">▶</span>
+      )}
+      <span class="np-widget__cover-pulse"></span>
+    </div>
+    <div class="np-widget__body">
+      <div class="np-widget__head">
+        <span class="np-widget__dot"></span>
+        <span class="np-widget__head-label font-terminal">NOW PLAYING</span>
+      </div>
+      <div class="np-widget__title font-pixel">{np.game}</div>
+      <div class="np-widget__meta font-terminal">
+        <span>{np.platform}</span>
+        {typeof np.hours === "number" && <span class="np-widget__divider">·</span>}
+        {typeof np.hours === "number" && <span>{np.hours}h logged</span>}
+      </div>
+      {np.status && <p class="np-widget__status font-terminal">&gt; {np.status}</p>}
+    </div>
+    {np.link && (
+      <a href={np.link} target="_blank" rel="noopener noreferrer" class="np-widget__link font-terminal" aria-label="More info">
+        ▣
+      </a>
+    )}
+  </aside>
+)}
+
+<style>
+  .np-widget {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.85rem;
+    width: min(960px, calc(100% - 3rem));
+    margin: 1rem auto 0;
+    padding: 0.85rem 1rem 0.85rem 1.4rem;
+    background: linear-gradient(90deg, rgba(28,13,61,0.85), rgba(7,3,15,0.7));
+    border: 1px solid var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.18);
+  }
+  .np-widget__rail {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 4px;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+  .np-widget__cover {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    background: var(--bg-void);
+    border: 1px solid var(--neon-magenta);
+    box-shadow: 0 0 8px rgba(255, 46, 136, 0.3);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .np-widget__cover img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+  }
+  .np-widget__cover-glyph {
+    color: var(--neon-magenta);
+    text-shadow: 0 0 8px var(--neon-magenta);
+    font-size: 1.5rem;
+  }
+  .np-widget__cover-pulse {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 46, 136, 0.35), transparent 70%);
+    animation: np-pulse 2.6s ease-in-out infinite;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+  @keyframes np-pulse {
+    0%, 100% { opacity: 0.25; }
+    50%      { opacity: 0.6;  }
+  }
+  .np-widget__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .np-widget__head {
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .np-widget__dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--terminal-grn);
+    box-shadow: 0 0 6px var(--terminal-grn);
+    animation: np-tick 1.4s ease-in-out infinite;
+  }
+  @keyframes np-tick { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .np-widget__head-label {
+    color: var(--terminal-grn);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 6px var(--terminal-grn);
+  }
+  .np-widget__title {
+    color: var(--neon-magenta);
+    font-size: 0.85rem;
+    line-height: 1.2;
+    text-shadow: 0 0 6px var(--neon-magenta);
+    margin-top: 0.15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .np-widget__meta {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    display: flex; gap: 0.4rem;
+  }
+  .np-widget__divider { color: var(--text-muted); }
+  .np-widget__status {
+    color: var(--text-soft);
+    font-size: 0.92rem;
+    margin-top: 0.2rem;
+    opacity: 0.8;
+  }
+  .np-widget__link {
+    color: var(--neon-cyan);
+    padding: 0.4rem 0.55rem;
+    border: 1px dashed var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+    transition: background 200ms, transform 200ms;
+  }
+  .np-widget__link:hover {
+    background: rgba(0,240,255,0.1);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 640px) {
+    .np-widget {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 0.7rem;
+      padding: 0.7rem 0.85rem 0.7rem 1.2rem;
+    }
+    .np-widget__cover { width: 48px; height: 48px; }
+    .np-widget__title { font-size: 0.7rem; }
+    .np-widget__link { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .np-widget__cover-pulse, .np-widget__dot { animation: none; }
+  }
+</style>

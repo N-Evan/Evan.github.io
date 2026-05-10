@@ -1,0 +1,19 @@
+---
+import PixelFrame from "../chrome/PixelFrame.astro";
+
+interface Props { items: string[] }
+const { items } = Astro.props;
+const list = items.length > 0 ? items : ["[ FILL ME IN: insight 1 ]", "[ FILL ME IN: insight 2 ]", "[ FILL ME IN: insight 3 ]"];
+---
+<section class="key-insights mt-10">
+  <h2 class="font-pixel text-neon-cyan text-xl sm:text-2xl mb-4">// KEY INSIGHTS</h2>
+  <ul class="grid gap-4 md:grid-cols-3">
+    {list.map((insight) => (
+      <li>
+        <PixelFrame tone="muted">
+          <p class="font-body leading-relaxed text-text-soft">{insight}</p>
+        </PixelFrame>
+      </li>
+    ))}
+  </ul>
+</section>

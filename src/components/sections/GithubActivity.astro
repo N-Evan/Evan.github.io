@@ -1,0 +1,260 @@
+---
+import { github } from "../../data/github";
+import GlitchText from "../chrome/GlitchText.astro";
+import RevealOnScroll from "../chrome/RevealOnScroll.astro";
+
+interface Day { date: string; count: number; level: number }
+
+let total = 0;
+let days: Day[] = [];
+let username = github.username;
+let fetchError = false;
+
+if (github.enabled) {
+  try {
+    const url = `${github.endpoint}/${github.username}?y=last`;
+    const res = await fetch(url, { headers: { "User-Agent": "evan-pixel-portfolio" } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    days = (json.contributions ?? []).map((d: any) => ({
+      date: d.date,
+      count: d.count ?? 0,
+      level: d.level ?? 0,
+    }));
+    total = json.total?.lastYear ?? days.reduce((s, d) => s + d.count, 0);
+  } catch (err) {
+    console.warn("[github-activity] fetch failed; section will render in offline state");
+    fetchError = true;
+  }
+}
+
+// Group days into weeks (columns of 7)
+const weeks: Day[][] = [];
+let currentWeek: Day[] = [];
+const startDay = days[0] ? new Date(days[0].date).getUTCDay() : 0;
+// pad first week so the first column starts on the correct day-of-week (Sun = 0)
+for (let p = 0; p < startDay; p++) currentWeek.push({ date: "", count: 0, level: 0 });
+for (const d of days) {
+  currentWeek.push(d);
+  if (currentWeek.length === 7) {
+    weeks.push(currentWeek);
+    currentWeek = [];
+  }
+}
+if (currentWeek.length) {
+  while (currentWeek.length < 7) currentWeek.push({ date: "", count: 0, level: 0 });
+  weeks.push(currentWeek);
+}
+
+// Streak math
+let currentStreak = 0;
+for (let i = days.length - 1; i >= 0; i--) {
+  if (days[i].count > 0) currentStreak++;
+  else break;
+}
+let longestStreak = 0;
+let run = 0;
+for (const d of days) {
+  if (d.count > 0) {
+    run++;
+    if (run > longestStreak) longestStreak = run;
+  } else {
+    run = 0;
+  }
+}
+const activeDays = days.filter((d) => d.count > 0).length;
+---
+{github.enabled && (
+  <section id="github-activity" class="ghx relative py-24 px-6 max-w-6xl mx-auto">
+    <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
+      [ EXT ] &middot; SIGNAL FROM ORIGIN
+    </div>
+    <RevealOnScroll>
+      <GlitchText
+        as="h2"
+        text="// GITHUB :: PUSH ACTIVITY"
+        class="font-pixel text-neon-cyan text-2xl sm:text-3xl block mb-3"
+      />
+    </RevealOnScroll>
+    <RevealOnScroll delay={120}>
+      <p class="font-terminal text-text-muted text-base sm:text-lg mb-8 max-w-2xl">
+        &gt; Last 12 months of public commits on
+        <a href={`https://github.com/${username}`} target="_blank" rel="noopener noreferrer" class="ghx__user">@{username}</a>.
+        Refreshes on every site build.
+      </p>
+    </RevealOnScroll>
+
+    {fetchError ? (
+      <div class="ghx__offline font-terminal">
+        &gt; signal lost :: could not reach origin server. Check back later.
+      </div>
+    ) : (
+      <RevealOnScroll>
+        <div class="ghx__panel">
+          <div class="ghx__stats">
+            <div class="ghx__stat">
+              <span class="ghx__stat-num font-pixel">{total.toLocaleString()}</span>
+              <span class="ghx__stat-label font-terminal">PUSHES // 365D</span>
+            </div>
+            <div class="ghx__stat">
+              <span class="ghx__stat-num ghx__stat-num--cyan font-pixel">{activeDays}</span>
+              <span class="ghx__stat-label font-terminal">ACTIVE DAYS</span>
+            </div>
+            <div class="ghx__stat">
+              <span class="ghx__stat-num ghx__stat-num--yellow font-pixel">{currentStreak}</span>
+              <span class="ghx__stat-label font-terminal">CURRENT STREAK</span>
+            </div>
+            <div class="ghx__stat">
+              <span class="ghx__stat-num ghx__stat-num--green font-pixel">{longestStreak}</span>
+              <span class="ghx__stat-label font-terminal">LONGEST STREAK</span>
+            </div>
+          </div>
+
+          <div class="ghx__heatmap-wrap">
+            <div class="ghx__weekdays font-terminal" aria-hidden="true">
+              <span></span>
+              <span>Mon</span>
+              <span></span>
+              <span>Wed</span>
+              <span></span>
+              <span>Fri</span>
+              <span></span>
+            </div>
+            <div class="ghx__heatmap" role="img" aria-label={`${total} contributions in the last year`}>
+              {weeks.map((week) => (
+                <div class="ghx__week">
+                  {week.map((d) => (
+                    <span
+                      class={`ghx__cell ghx__cell--${d.level}`}
+                      title={d.date ? `${d.date}: ${d.count} contribution${d.count === 1 ? "" : "s"}` : ""}
+                    ></span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class="ghx__legend font-terminal" aria-hidden="true">
+            <span>less</span>
+            <span class="ghx__cell ghx__cell--0"></span>
+            <span class="ghx__cell ghx__cell--1"></span>
+            <span class="ghx__cell ghx__cell--2"></span>
+            <span class="ghx__cell ghx__cell--3"></span>
+            <span class="ghx__cell ghx__cell--4"></span>
+            <span>more</span>
+          </div>
+        </div>
+      </RevealOnScroll>
+    )}
+  </section>
+)}
+
+<style>
+  .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+  .ghx__user {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+  }
+  .ghx__user:hover { text-shadow: 0 0 10px var(--neon-cyan); }
+
+  .ghx__panel {
+    border: 1px solid var(--neon-cyan);
+    background: linear-gradient(180deg, rgba(28,13,61,0.7), rgba(7,3,15,0.85));
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.18);
+    padding: 1.2rem 1rem 1rem;
+  }
+
+  .ghx__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+  @media (min-width: 700px) {
+    .ghx__stats { grid-template-columns: repeat(4, 1fr); }
+  }
+  .ghx__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px dashed var(--text-muted);
+    background: rgba(255,255,255,0.02);
+  }
+  .ghx__stat-num {
+    color: var(--neon-magenta);
+    font-size: 1.1rem;
+    text-shadow: 0 0 6px var(--neon-magenta);
+  }
+  .ghx__stat-num--cyan   { color: var(--neon-cyan);    text-shadow: 0 0 6px var(--neon-cyan);    }
+  .ghx__stat-num--yellow { color: var(--neon-yellow);  text-shadow: 0 0 6px var(--neon-yellow);  }
+  .ghx__stat-num--green  { color: var(--terminal-grn); text-shadow: 0 0 6px var(--terminal-grn); }
+  .ghx__stat-label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+  }
+
+  .ghx__heatmap-wrap {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding: 0.4rem 0;
+  }
+  .ghx__weekdays {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 2px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    align-items: center;
+    text-align: right;
+    padding-right: 0.3rem;
+  }
+  .ghx__heatmap {
+    display: flex;
+    gap: 2px;
+    min-width: max-content;
+  }
+  .ghx__week {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .ghx__cell {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+  }
+  .ghx__cell:hover {
+    transform: scale(1.4);
+    z-index: 2;
+  }
+  .ghx__cell--0 { background: rgba(255,255,255,0.04); }
+  .ghx__cell--1 { background: rgba(0, 240, 255, 0.30); border-color: rgba(0,240,255,0.5);  box-shadow: 0 0 4px rgba(0,240,255,0.4); }
+  .ghx__cell--2 { background: rgba(0, 240, 255, 0.55); border-color: rgba(0,240,255,0.8);  box-shadow: 0 0 6px rgba(0,240,255,0.6); }
+  .ghx__cell--3 { background: rgba(255, 46, 136, 0.55); border-color: rgba(255,46,136,0.8); box-shadow: 0 0 6px rgba(255,46,136,0.6); }
+  .ghx__cell--4 { background: rgba(255, 46, 136, 0.95); border-color: rgba(255,46,136,1);   box-shadow: 0 0 8px rgba(255,46,136,0.85), 0 0 14px rgba(255,46,136,0.5); }
+
+  .ghx__legend {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.8rem;
+    justify-content: flex-end;
+  }
+  .ghx__legend .ghx__cell:hover { transform: none; }
+
+  .ghx__offline {
+    padding: 1rem 1.2rem;
+    border: 1px dashed var(--text-muted);
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>

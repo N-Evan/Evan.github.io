@@ -1,0 +1,62 @@
+---
+interface Props {
+  count?: number;
+  class?: string;
+}
+const { count = 50, class: extraClass = "" } = Astro.props;
+
+function rng(seed: number) {
+  return Math.abs(Math.sin(seed * 9301 + 49297) * 233280) % 1;
+}
+
+const particles = Array.from({ length: count }, (_, i) => ({
+  x: rng(i + 1) * 100,
+  delay: rng(i + 100) * 14,
+  duration: 8 + rng(i + 200) * 16,
+  size: 1.2 + rng(i + 300) * 2.6,
+  hue: rng(i + 400) < 0.55 ? "magenta" : "cyan",
+}));
+---
+<div class={`particle-field ${extraClass}`} aria-hidden="true">
+  {particles.map((p) => (
+    <span
+      class={`particle particle--${p.hue}`}
+      style={`left:${p.x}%;animation-delay:${-p.delay}s;animation-duration:${p.duration}s;width:${p.size}px;height:${p.size}px;`}
+    />
+  ))}
+</div>
+
+<style>
+  .particle-field {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .particle {
+    position: absolute;
+    bottom: -20px;
+    border-radius: 50%;
+    animation: rise linear infinite;
+    opacity: 0;
+  }
+  .particle--magenta {
+    background: var(--neon-magenta);
+    box-shadow: 0 0 6px var(--neon-magenta), 0 0 12px var(--neon-magenta);
+  }
+  .particle--cyan {
+    background: var(--neon-cyan);
+    box-shadow: 0 0 6px var(--neon-cyan), 0 0 12px var(--neon-cyan);
+  }
+  @keyframes rise {
+    0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+    10%  { opacity: 0.7; }
+    50%  { transform: translate3d(8px, -55vh, 0); opacity: 0.4; }
+    90%  { opacity: 0.2; }
+    100% { transform: translate3d(-8px, -110vh, 0); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .particle { animation: none; opacity: 0.25; }
+  }
+</style>

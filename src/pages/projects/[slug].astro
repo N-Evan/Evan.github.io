@@ -1,0 +1,75 @@
+---
+import { getCollection, render } from "astro:content";
+import ProjectLayout from "../../layouts/ProjectLayout.astro";
+import { sortByOrder, getPrevNext } from "../../lib/projectNav";
+import { withBase } from "../../lib/url";
+import HeroPanel from "../../components/project/HeroPanel.astro";
+import DetailsStrip from "../../components/project/DetailsStrip.astro";
+import KeyInsights from "../../components/project/KeyInsights.astro";
+import GalleryGrid from "../../components/project/GalleryGrid.astro";
+import CodeShowcase from "../../components/project/CodeShowcase.astro";
+import ProjectTechStrip from "../../components/project/ProjectTechStrip.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry, all: projects },
+  }));
+}
+
+const { entry, all } = Astro.props;
+const { Content } = await render(entry);
+const sorted = sortByOrder(all);
+const { prev, next } = getPrevNext(sorted, entry.id);
+---
+<ProjectLayout title={entry.data.title} description={entry.data.tagline}>
+  <a href={withBase("/#missions")} class="font-terminal text-text-muted hover:text-neon-cyan">← BACK TO MISSION LOG</a>
+
+  <h1 class="font-pixel text-neon-magenta text-3xl sm:text-5xl mt-6 mb-2">{entry.data.title}</h1>
+  <p class="font-terminal text-text-muted text-lg sm:text-xl">&gt; {entry.data.tagline}</p>
+
+  <article class="prose-content mt-10 space-y-6">
+    <HeroPanel
+      title={entry.data.title}
+      thumb={entry.data.thumb}
+      year={entry.data.year}
+      studio={entry.data.studio ?? null}
+      status={entry.data.status}
+    />
+    <DetailsStrip
+      platforms={entry.data.platforms}
+      teamSize={entry.data.teamSize}
+      duration={entry.data.duration}
+      role={entry.data.role}
+      tech={entry.data.tech}
+      links={entry.data.links}
+    />
+    <KeyInsights items={entry.data.keyInsights ?? []} />
+    <GalleryGrid images={entry.data.gallery ?? []} />
+    {entry.data.snippets && entry.data.snippets.length > 0 && (
+      <CodeShowcase snippets={entry.data.snippets} />
+    )}
+    <div class="markdown-body">
+      <Content />
+    </div>
+    <ProjectTechStrip items={entry.data.tech} />
+  </article>
+
+  <nav class="mt-16 flex justify-between font-terminal text-text-muted gap-4">
+    <a href={prev ? withBase(`/projects/${prev.id}`) : "#"} class="hover:text-neon-cyan">◀ PREV: {prev?.data.title ?? "—"}</a>
+    <a href={next ? withBase(`/projects/${next.id}`) : "#"} class="hover:text-neon-cyan text-right">NEXT: {next?.data.title ?? "—"} ▶</a>
+  </nav>
+</ProjectLayout>
+
+<style is:global>
+  .markdown-body h2 {
+    font-family: theme("fontFamily.pixel");
+    color: var(--neon-cyan);
+    font-size: 1.25rem;
+    margin: 2.5rem 0 1rem;
+  }
+  .markdown-body p { margin: 0.75rem 0; line-height: 1.7; color: var(--text-soft); }
+  .markdown-body ul { margin: 0.75rem 0 0.75rem 1.25rem; list-style: square; }
+  .markdown-body li { margin: 0.25rem 0; }
+</style>

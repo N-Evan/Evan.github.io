@@ -1,0 +1,32 @@
+---
+// Fixed magenta-into-purple glow anchored at the top of the viewport.
+// Persists throughout the page so the cyberpunk atmosphere doesn't
+// disappear once you scroll past the hero. Decorative, behind content.
+---
+<div class="sky-glow" aria-hidden="true"></div>
+
+<style>
+  .sky-glow {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 65vh;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(
+        ellipse 80% 60% at 50% -10%,
+        rgba(255, 46, 136, 0.20),
+        rgba(140, 24, 120, 0.10) 35%,
+        transparent 65%
+      ),
+      radial-gradient(
+        ellipse 50% 40% at 75% 0%,
+        rgba(0, 240, 255, 0.08),
+        transparent 60%
+      );
+    filter: blur(2px);
+  }
+  @media (max-width: 640px) {
+    .sky-glow { height: 50vh; }
+  }
+</style>

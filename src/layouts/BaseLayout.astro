@@ -1,0 +1,90 @@
+---
+import "../styles/global.css";
+import ScanlineOverlay from "../components/chrome/ScanlineOverlay.astro";
+import CRTVignette from "../components/chrome/CRTVignette.astro";
+import HUDOverlay from "../components/chrome/HUDOverlay.astro";
+import Starfield from "../components/chrome/Starfield.astro";
+import ShootingStars from "../components/chrome/ShootingStars.astro";
+import SkyGlow from "../components/chrome/SkyGlow.astro";
+import MouseSpotlight from "../components/chrome/MouseSpotlight.astro";
+import CustomCursor from "../components/chrome/CustomCursor.astro";
+import ToastStack from "../components/chrome/ToastStack.astro";
+import PageWipe from "../components/chrome/PageWipe.astro";
+import { withBase } from "../lib/url";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+const {
+  title,
+  description = "Md. Nurusshafi Evan — gameplay programmer, level designer, VFX artist.",
+  ogImage = "/og-image.png",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImageUrl = new URL(withBase(ogImage), Astro.site).toString();
+const sitemapHref = withBase("/sitemap-index.xml");
+const rssHref = withBase("/rss.xml");
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#07030f" />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" type="application/xml" href={sitemapHref} />
+    <link rel="alternate" type="application/rss+xml" title="Md. Nurusshafi Evan — Devlog" href={rssHref} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Evan — Pixel Portfolio" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <title>{title}</title>
+
+    <!-- Page-specific head injections (e.g., JSON-LD) -->
+    <slot name="head" />
+
+    <!-- Render-blocking flag: detect incoming page transition before paint -->
+    <script is:inline>
+      try {
+        if (sessionStorage.getItem("evan:in-transition") === "1") {
+          document.documentElement.classList.add("is-page-incoming");
+        }
+      } catch (_) {}
+    </script>
+  </head>
+  <body class="text-text-soft">
+    <PageWipe />
+    <Starfield />
+    <ShootingStars />
+    <SkyGlow />
+    <MouseSpotlight />
+    <slot />
+    <CustomCursor />
+    <ToastStack />
+    <HUDOverlay />
+    <ScanlineOverlay />
+    <CRTVignette />
+    <script>
+      import "../scripts/app.client.ts";
+      import "../scripts/page-transition.client.ts";
+      import "../scripts/easter-eggs.client.ts";
+    </script>
+  </body>
+</html>

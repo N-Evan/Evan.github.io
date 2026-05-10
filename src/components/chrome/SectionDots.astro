@@ -1,0 +1,177 @@
+---
+interface SectionEntry {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  sections?: SectionEntry[];
+}
+
+const defaultSections: SectionEntry[] = [
+  { id: "press-start", label: "Hero" },
+  { id: "profile",     label: "Profile" },
+  { id: "missions",    label: "Missions" },
+  { id: "loadout",     label: "Loadout" },
+  { id: "career",      label: "Career" },
+  { id: "comms",       label: "Comms" },
+];
+
+const { sections = defaultSections } = Astro.props;
+---
+<nav class="section-dots" aria-label="Page sections">
+  <ul>
+    {sections.map((s, i) => (
+      <li>
+        <a href={`#${s.id}`} data-section={s.id} class="section-dot" aria-label={`Jump to ${s.label}`}>
+          <span class="section-dot__index">{String(i + 1).padStart(2, "0")}</span>
+          <span class="section-dot__pip"></span>
+          <span class="section-dot__label font-terminal">{s.label.toUpperCase()}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  const dotsNav = document.querySelector<HTMLElement>(".section-dots");
+  const dots = document.querySelectorAll<HTMLAnchorElement>(".section-dot");
+  if (dots.length && dotsNav) {
+    const targets: HTMLElement[] = [];
+    dots.forEach((d) => {
+      const el = d.dataset.section ? document.getElementById(d.dataset.section) : null;
+      if (el) targets.push(el);
+    });
+
+    let activeId = "";
+    function setActive(id: string) {
+      if (id === activeId) return;
+      activeId = id;
+      dots.forEach((d) => d.classList.toggle("is-active", d.dataset.section === id));
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let best: IntersectionObserverEntry | null = null;
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          if (!best || entry.intersectionRatio > best.intersectionRatio) best = entry;
+        }
+        if (best) setActive((best.target as HTMLElement).id);
+      },
+      { threshold: [0.3, 0.5, 0.7], rootMargin: "-15% 0px -25% 0px" }
+    );
+    targets.forEach((t) => observer.observe(t));
+
+    // Hide dots while the hero is in view (it has its own side decorations).
+    const hero = document.getElementById("press-start");
+    if (hero) {
+      const heroObs = new IntersectionObserver(
+        ([entry]) => {
+          dotsNav.classList.toggle("is-hidden", entry.intersectionRatio > 0.55);
+        },
+        { threshold: [0, 0.25, 0.55, 0.75, 1] }
+      );
+      heroObs.observe(hero);
+    }
+  }
+</script>
+
+<style>
+  .section-dots {
+    position: fixed;
+    right: 1.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 95;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.8,.2,1);
+  }
+  .section-dots.is-hidden {
+    opacity: 0;
+    transform: translateY(-50%) translateX(28px);
+    pointer-events: none;
+  }
+  .section-dots.is-hidden ul { pointer-events: none; }
+  .section-dots ul {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    pointer-events: auto;
+  }
+  .section-dot {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.25rem 0.4rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 200ms ease, transform 200ms ease;
+  }
+  .section-dot__index {
+    font-family: theme("fontFamily.terminal");
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 200ms ease, transform 200ms ease;
+    text-shadow: 0 0 6px currentColor;
+  }
+  .section-dot__pip {
+    width: 8px; height: 8px;
+    border: 1px solid var(--text-muted);
+    background: transparent;
+    transform: rotate(45deg);
+    transition: background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, width 200ms ease, height 200ms ease;
+  }
+  .section-dot__label {
+    position: absolute;
+    right: calc(100% + 0.4rem);
+    color: var(--neon-cyan);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-shadow: 0 0 6px var(--neon-cyan);
+    opacity: 0;
+    transform: translateX(6px);
+    transition: opacity 220ms ease, transform 220ms ease;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .section-dot:hover .section-dot__label,
+  .section-dot:focus-visible .section-dot__label,
+  .section-dot.is-active .section-dot__label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .section-dot:hover .section-dot__pip {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 6px var(--neon-cyan);
+  }
+  .section-dot.is-active .section-dot__pip {
+    width: 12px; height: 12px;
+    background: var(--neon-magenta);
+    border-color: var(--neon-magenta);
+    box-shadow: 0 0 8px var(--neon-magenta), 0 0 16px var(--neon-magenta);
+    animation: dot-pulse 2.4s ease-in-out infinite;
+  }
+  .section-dot.is-active .section-dot__index {
+    color: var(--neon-magenta);
+    opacity: 1;
+    transform: translateX(0);
+  }
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 8px var(--neon-magenta), 0 0 16px var(--neon-magenta); }
+    50%      { box-shadow: 0 0 14px var(--neon-magenta), 0 0 28px var(--neon-magenta); }
+  }
+
+  @media (max-width: 1024px) {
+    .section-dots { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .section-dot.is-active .section-dot__pip { animation: none; }
+  }
+</style>

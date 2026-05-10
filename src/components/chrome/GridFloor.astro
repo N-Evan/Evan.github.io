@@ -1,0 +1,42 @@
+---
+// src/components/chrome/GridFloor.astro
+// Animated synthwave perspective grid below hero content.
+---
+<div class="floor" aria-hidden="true">
+  <div class="floor__plane"></div>
+</div>
+
+<style>
+  .floor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 45%;
+    perspective: 600px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .floor__plane {
+    position: absolute;
+    left: -25%;
+    right: -25%;
+    bottom: -50%;
+    height: 200%;
+    transform: rotateX(60deg);
+    transform-origin: bottom center;
+    background-image:
+      linear-gradient(to right, var(--neon-cyan) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--neon-cyan) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: 0.45;
+    animation: gridScroll 8s linear infinite;
+    mask-image: linear-gradient(to top, black 30%, transparent 90%);
+    -webkit-mask-image: linear-gradient(to top, black 30%, transparent 90%);
+  }
+  @keyframes gridScroll {
+    from { background-position: 0 0; }
+    to   { background-position: 0 64px; }
+  }
+</style>

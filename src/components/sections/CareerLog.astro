@@ -1,0 +1,334 @@
+---
+import GlitchText from "../chrome/GlitchText.astro";
+import RevealOnScroll from "../chrome/RevealOnScroll.astro";
+
+type Tone = "magenta" | "cyan" | "yellow";
+type Kind = "role" | "milestone" | "education";
+
+interface Entry {
+  stamp: string;
+  title: string;
+  org?: string;
+  body: string;
+  tone: Tone;
+  kind: Kind;
+  icon?: string;
+}
+
+// Newest first. Add or remove entries — the timeline adapts automatically.
+const entries: Entry[] = [
+  {
+    stamp: "2024",
+    title: "XBOX PORT // SILENT SCREAM",
+    body: "Ported the horror cooking game to XBox; tuned controller feel, performance, and platform-specific UX.",
+    tone: "magenta",
+    kind: "milestone",
+    icon: "✦",
+  },
+  {
+    stamp: "2023 — PRESENT",
+    title: "Gameplay Programmer",
+    org: "Studio-23 · Brain Station 23",
+    body: "Built core gameplay systems, tooling, and game-feel polish across Silent Scream, High Noon, and other titles. Co-authored open-source Unity packages used team-wide.",
+    tone: "magenta",
+    kind: "role",
+  },
+  {
+    stamp: "2023",
+    title: "SHIPPED // SILENT SCREAM",
+    body: "Helped launch the studio's flagship horror cooking game on Steam.",
+    tone: "cyan",
+    kind: "milestone",
+    icon: "▲",
+  },
+  {
+    stamp: "2023",
+    title: "SHIPPED // HIGH NOON",
+    body: "Released a real-time PvP duel game powered by Photon networking. Owned UI/UX on the PC build.",
+    tone: "cyan",
+    kind: "milestone",
+    icon: "▲",
+  },
+  {
+    stamp: "2022 — 2023",
+    title: "Trainee Gameplay Programmer",
+    org: "Studio-23 · Brain Station 23",
+    body: "Joined the team while finishing undergrad. Worked on VR Football for Meta Quest 2 and started High Noon.",
+    tone: "cyan",
+    kind: "role",
+  },
+  {
+    stamp: "2022",
+    title: "FIRST VR PROJECT",
+    body: "Built a Meta Quest 2 penalty-shootout saver under senior guidance. First time wrangling spatial input.",
+    tone: "yellow",
+    kind: "milestone",
+    icon: "◆",
+  },
+  {
+    stamp: "2018 — 2022",
+    title: "B.Sc. Computer Science",
+    org: "[ FILL ME IN: school + focus areas ]",
+    body: "First serious dive into Unity, building text-based adventures, prototypes, and learning the craft.",
+    tone: "yellow",
+    kind: "education",
+  },
+  {
+    stamp: "2021",
+    title: "FIRST GAME // ABYSS CRAWLER",
+    body: "Released the first proper game I solo-built — a 2D platformer. Still up on itch.io.",
+    tone: "magenta",
+    kind: "milestone",
+    icon: "▲",
+  },
+];
+---
+<section id="career" class="career relative py-28 px-6 max-w-4xl mx-auto">
+  <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
+    [ 04 ] &middot; HISTORY
+  </div>
+  <RevealOnScroll>
+    <GlitchText as="h2" text="// CAREER LOG" class="font-pixel text-neon-cyan text-2xl sm:text-3xl block mb-3" />
+  </RevealOnScroll>
+  <RevealOnScroll delay={120}>
+    <p class="font-terminal text-text-muted text-base sm:text-lg mb-12 max-w-2xl">
+      &gt; Roles, shipped titles, and milestones — most recent first.
+    </p>
+  </RevealOnScroll>
+
+  <ol class="timeline">
+    <span class="timeline__rail" aria-hidden="true"></span>
+    {entries.map((e, i) => (
+      <RevealOnScroll from={i % 2 === 0 ? "left" : "right"} delay={Math.min(i * 70, 360)}>
+        <li class={`tl-entry tl-entry--${e.tone} tl-entry--${e.kind} ${i % 2 === 0 ? "is-left" : "is-right"}`}>
+          <span class="tl-node" aria-hidden="true">
+            {e.kind === "milestone" && e.icon && <span class="tl-node__icon">{e.icon}</span>}
+          </span>
+          <div class="tl-card">
+            <div class="tl-stamp font-terminal">
+              <span class="tl-stamp__id">
+                {e.kind === "role" ? "ROLE" : e.kind === "education" ? "EDU" : "EVENT"} ·
+                {String(entries.length - i).padStart(2, "0")}
+              </span>
+              <span class="tl-stamp__date">{e.stamp}</span>
+            </div>
+            <h3 class="tl-title font-pixel">{e.title}</h3>
+            {e.org && <p class="tl-org font-terminal">{e.org}</p>}
+            <p class="tl-body font-body">{e.body}</p>
+          </div>
+        </li>
+      </RevealOnScroll>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+  .timeline {
+    position: relative;
+    list-style: none;
+    margin: 0; padding: 0;
+    /* Single source of truth for vertical alignment */
+    --node-y: 22px;
+    --node-size: 18px;
+    --node-center: calc(var(--node-y) + var(--node-size) / 2);
+    --connector-w: 26px;
+  }
+  .timeline__rail {
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--neon-cyan) 0,
+      var(--neon-cyan) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    box-shadow: 0 0 8px var(--neon-cyan);
+    opacity: 0.6;
+  }
+
+  .tl-entry {
+    --tone: var(--neon-cyan);
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 36px 1fr;
+    align-items: start;
+    margin-bottom: 2rem;
+  }
+  .tl-entry--magenta { --tone: var(--neon-magenta); }
+  .tl-entry--cyan    { --tone: var(--neon-cyan); }
+  .tl-entry--yellow  { --tone: var(--neon-yellow); }
+
+  /* Diamond node aligned via shared --node-y */
+  .tl-node {
+    grid-column: 2;
+    width: var(--node-size);
+    height: var(--node-size);
+    margin-top: var(--node-y);
+    margin-inline: auto;
+    border: 2px solid var(--tone);
+    background: var(--bg-void);
+    box-shadow: 0 0 10px var(--tone), 0 0 18px color-mix(in srgb, var(--tone) 40%, transparent);
+    transform: rotate(45deg);
+    position: relative;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+  }
+  .tl-node::before {
+    content: "";
+    position: absolute; inset: 3px;
+    background: var(--tone);
+    box-shadow: 0 0 6px var(--tone);
+  }
+  /* Milestone nodes get a glyph and slightly larger size */
+  .tl-entry--milestone .tl-node {
+    width: 26px; height: 26px;
+    margin-top: calc(var(--node-y) - 4px); /* keep center aligned: 18 = 26 - 4*2 → recenter manually */
+  }
+  .tl-node__icon {
+    transform: rotate(-45deg);
+    font-family: theme("fontFamily.terminal");
+    font-size: 0.85rem;
+    line-height: 1;
+    color: var(--bg-void);
+    background: var(--tone);
+    text-shadow: none;
+    width: 100%; height: 100%;
+    display: grid;
+    place-items: center;
+  }
+  /* Educational/role pulse */
+  .tl-entry--role .tl-node      { animation: tl-pulse-strong 2.4s ease-in-out infinite; }
+  .tl-entry--education .tl-node { animation: tl-pulse-soft 3.2s ease-in-out infinite; }
+  @keyframes tl-pulse-strong {
+    0%, 100% { box-shadow: 0 0 10px var(--tone), 0 0 18px color-mix(in srgb, var(--tone) 40%, transparent); }
+    50%      { box-shadow: 0 0 14px var(--tone), 0 0 28px color-mix(in srgb, var(--tone) 60%, transparent); }
+  }
+  @keyframes tl-pulse-soft {
+    0%, 100% { box-shadow: 0 0 8px var(--tone); }
+    50%      { box-shadow: 0 0 14px var(--tone); }
+  }
+
+  .tl-card {
+    border: 1px solid var(--tone);
+    background: linear-gradient(180deg, rgba(28,13,61,0.85), rgba(7,3,15,0.9));
+    box-shadow: 0 0 14px color-mix(in srgb, var(--tone) 25%, transparent);
+    padding: 1rem 1.1rem;
+    position: relative;
+    transition: transform 250ms ease, box-shadow 250ms ease;
+  }
+  .tl-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--tone) 45%, transparent);
+  }
+  .tl-entry.is-left  .tl-card { grid-column: 1; text-align: right; }
+  .tl-entry.is-right .tl-card { grid-column: 3; text-align: left; }
+
+  /* Connector — vertically aligned with the node center via --node-center */
+  .tl-card::after {
+    content: "";
+    position: absolute;
+    top: var(--node-center);
+    width: var(--connector-w);
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--tone);
+    box-shadow: 0 0 8px var(--tone), 0 0 14px color-mix(in srgb, var(--tone) 50%, transparent);
+  }
+  .tl-entry.is-left  .tl-card::after { right: calc(var(--connector-w) * -1); }
+  .tl-entry.is-right .tl-card::after { left:  calc(var(--connector-w) * -1); }
+
+  /* Milestone cards: subtler, more compact */
+  .tl-entry--milestone .tl-card {
+    background: linear-gradient(180deg, rgba(28,13,61,0.6), rgba(7,3,15,0.75));
+    border-style: dashed;
+  }
+  .tl-entry--milestone .tl-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+  }
+
+  .tl-stamp {
+    display: flex; justify-content: space-between; gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    border-bottom: 1px dashed var(--text-muted);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+  }
+  .tl-entry.is-left  .tl-stamp { flex-direction: row-reverse; }
+  .tl-stamp__id { color: var(--tone); text-shadow: 0 0 6px var(--tone); }
+  .tl-title {
+    color: var(--neon-magenta);
+    font-size: 0.92rem;
+    line-height: 1.3;
+    text-shadow: 0 0 6px var(--neon-magenta);
+    margin-bottom: 0.3rem;
+  }
+  .tl-entry--milestone .tl-title { color: var(--tone); text-shadow: 0 0 6px var(--tone); }
+  .tl-org { color: var(--neon-cyan); font-size: 0.92rem; margin-bottom: 0.5rem; }
+  .tl-body { color: var(--text-soft); line-height: 1.6; font-size: 0.95rem; }
+
+  @media (max-width: 768px) {
+    .timeline {
+      --connector-w: 18px;
+      --node-y: 20px;
+      --node-size: 16px;
+    }
+    .timeline__rail {
+      left: 18px !important;
+      transform: none !important;
+    }
+    .tl-entry,
+    .tl-entry.is-left,
+    .tl-entry.is-right {
+      grid-template-columns: 40px 1fr !important;
+      margin-bottom: 1.6rem;
+    }
+    .tl-entry .tl-node,
+    .tl-entry.is-left .tl-node,
+    .tl-entry.is-right .tl-node {
+      grid-column: 1 !important;
+      margin-inline: auto !important;
+    }
+    /* Milestone nodes shrink slightly on mobile so they fit the rail column */
+    .tl-entry--milestone .tl-node {
+      width: 22px !important;
+      height: 22px !important;
+      margin-top: calc(var(--node-y) - 3px) !important;
+    }
+    .tl-entry .tl-card,
+    .tl-entry.is-left .tl-card,
+    .tl-entry.is-right .tl-card {
+      grid-column: 2 !important;
+      text-align: left !important;
+      min-width: 0;
+    }
+    .tl-entry .tl-card::after,
+    .tl-entry.is-left .tl-card::after,
+    .tl-entry.is-right .tl-card::after {
+      left: calc(var(--connector-w) * -1) !important;
+      right: auto !important;
+    }
+    .tl-entry .tl-stamp,
+    .tl-entry.is-left .tl-stamp,
+    .tl-entry.is-right .tl-stamp {
+      flex-direction: row !important;
+    }
+    .tl-stamp__id, .tl-stamp__date {
+      font-size: 0.7rem;
+    }
+    .tl-title {
+      font-size: 0.85rem;
+      word-wrap: break-word;
+    }
+    .tl-org { font-size: 0.85rem; }
+    .tl-body { font-size: 0.9rem; }
+  }
+</style>

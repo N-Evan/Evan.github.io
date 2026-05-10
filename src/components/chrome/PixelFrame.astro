@@ -1,0 +1,48 @@
+---
+// src/components/chrome/PixelFrame.astro
+// Chunky stepped-corner border around panels, cards, and images.
+// CSS-only — no images. Uses layered box-shadow to fake stepped pixel edges.
+
+interface Props {
+  tone?: "magenta" | "cyan" | "muted";
+  class?: string;
+}
+const { tone = "magenta", class: extraClass = "" } = Astro.props;
+
+const colorVar =
+  tone === "cyan"   ? "var(--neon-cyan)" :
+  tone === "muted"  ? "var(--text-muted)" :
+                      "var(--neon-magenta)";
+---
+<div class={`pixel-frame ${extraClass}`} style={`--frame-color: ${colorVar};`}>
+  <div class="pixel-frame__inner">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .pixel-frame {
+    --t: var(--frame-thickness);
+    position: relative;
+    background: var(--bg-panel);
+    /* stepped pixel corners via layered box-shadow inset rings */
+    box-shadow:
+      0 0 0 var(--t) var(--bg-void),
+      0 0 0 calc(var(--t) * 2) var(--frame-color),
+      0 0 18px rgba(0, 0, 0, 0.5);
+    margin: calc(var(--t) * 2);
+  }
+  .pixel-frame::before,
+  .pixel-frame::after {
+    content: "";
+    position: absolute;
+    width: var(--t);
+    height: var(--t);
+    background: var(--frame-color);
+  }
+  .pixel-frame::before { top: calc(var(--t) * -2); left: calc(var(--t) * -2); }
+  .pixel-frame::after  { bottom: calc(var(--t) * -2); right: calc(var(--t) * -2); }
+  .pixel-frame__inner {
+    padding: 1.25rem;
+  }
+</style>

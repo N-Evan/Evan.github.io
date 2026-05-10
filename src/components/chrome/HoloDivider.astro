@@ -1,0 +1,43 @@
+---
+// src/components/chrome/HoloDivider.astro
+---
+<div class="holo" aria-hidden="true">
+  <span class="bracket">[</span>
+  <span class="line"></span>
+  <span class="bracket">]</span>
+</div>
+
+<style>
+  .holo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 2rem 0;
+    color: var(--neon-cyan);
+  }
+  .bracket {
+    font-family: theme("fontFamily.terminal");
+    font-size: 1.25rem;
+    animation: flicker 7s steps(1) infinite;
+  }
+  .line {
+    flex: 1;
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--neon-cyan) 0,
+      var(--neon-cyan) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+  }
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    47%      { opacity: 1; }
+    48%      { opacity: 0.4; }
+    49%      { opacity: 1; }
+    50%      { opacity: 0.85; }
+    51%      { opacity: 1; }
+  }
+</style>

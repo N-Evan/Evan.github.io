@@ -1,0 +1,31 @@
+---
+// src/components/chrome/DataChip.astro
+interface Props {
+  tone?: "default" | "magenta" | "cyan" | "yellow";
+  class?: string;
+}
+const { tone = "default", class: extraClass = "" } = Astro.props;
+const color =
+  tone === "magenta" ? "var(--neon-magenta)" :
+  tone === "cyan"    ? "var(--neon-cyan)"    :
+  tone === "yellow"  ? "var(--neon-yellow)"  :
+                       "var(--text-muted)";
+---
+<span class={`chip font-terminal ${extraClass}`} style={`--chip-color: ${color};`}>
+  <slot />
+</span>
+
+<style>
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.55rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--chip-color);
+    border: 1px dashed var(--chip-color);
+    background: rgba(255, 255, 255, 0.02);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+// src/components/chrome/ScanlineOverlay.astro
+// Persistent CRT scanlines across the whole site.
+---
+<div class="scanlines" aria-hidden="true"></div>
+
+<style>
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, var(--scanline-opacity)) 0,
+      rgba(255, 255, 255, var(--scanline-opacity)) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    animation: scanlineDrift 6s linear infinite;
+    mix-blend-mode: overlay;
+  }
+  @keyframes scanlineDrift {
+    from { background-position: 0 0; }
+    to   { background-position: 0 6px; }
+  }
+</style>

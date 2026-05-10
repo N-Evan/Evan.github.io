@@ -1,0 +1,12 @@
+---
+import DataChip from "../chrome/DataChip.astro";
+
+interface Props { items: string[] }
+const { items } = Astro.props;
+---
+<section class="proj-tech mt-10">
+  <h2 class="font-pixel text-neon-cyan text-xl sm:text-2xl mb-4">// TECH LOADOUT</h2>
+  <div class="flex flex-wrap gap-2">
+    {items.map((it) => <DataChip tone="cyan">{it}</DataChip>)}
+  </div>
+</section>

@@ -1,0 +1,421 @@
+---
+import { getCollection } from "astro:content";
+import DataChip from "../chrome/DataChip.astro";
+import GlitchText from "../chrome/GlitchText.astro";
+import RevealOnScroll from "../chrome/RevealOnScroll.astro";
+import MarqueeTicker from "../chrome/MarqueeTicker.astro";
+import RetroSun from "../chrome/RetroSun.astro";
+import MountainRange from "../chrome/MountainRange.astro";
+import FeaturedProject from "./FeaturedProject.astro";
+import { sortByOrder } from "../../lib/projectNav";
+import { withBase } from "../../lib/url";
+
+const all = sortByOrder(await getCollection("projects"));
+const featured = all.filter((p) => p.data.featured);
+const rest = all.filter((p) => !p.data.featured);
+
+const tickerItems = [
+  `MISSIONS LOGGED :: ${all.length}`,
+  "OPERATIONAL :: ALL SYSTEMS NOMINAL",
+  "FOCUS :: GAMEPLAY × LEVEL DESIGN × VFX",
+  "SIGNAL :: 433.92 MHz",
+  `SHIPPED :: ${all.filter((p) => p.data.status === "shipped").length}`,
+];
+
+// Build filter chips: years, platforms, team types
+const yearSet  = new Set(rest.map((p) => p.data.year));
+const platformSet = new Set(rest.flatMap((p) => p.data.platforms));
+const years    = [...yearSet].sort((a, b) => b - a);
+const platforms = [...platformSet].sort();
+
+function platSlug(s: string) {
+  return s.toLowerCase().replace(/\s+/g, "-");
+}
+---
+<section id="missions" class="missions relative">
+  <div class="missions__backdrop" aria-hidden="true">
+    <RetroSun />
+    <MountainRange />
+  </div>
+
+  <div class="missions__content px-6 max-w-6xl mx-auto pt-24">
+    <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
+      [ 02 ] &middot; MISSION LOG
+    </div>
+    <RevealOnScroll>
+      <GlitchText as="h2" text="// MISSION LOG" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-3" />
+    </RevealOnScroll>
+    <RevealOnScroll delay={120}>
+      <p class="font-terminal text-text-muted text-base sm:text-lg mb-10 max-w-2xl">
+        &gt; {all.length} entries on file. Click any mission to access debrief, gallery, and behind-the-scenes data.
+      </p>
+    </RevealOnScroll>
+
+    {featured.length > 0 && (
+      <RevealOnScroll from="scale">
+        <FeaturedProject project={featured[0]} />
+      </RevealOnScroll>
+    )}
+  </div>
+
+  <div class="missions__ticker"><MarqueeTicker items={tickerItems} tone="cyan" speed={32} /></div>
+
+  <div class="missions__content px-6 max-w-6xl mx-auto pt-12 pb-32">
+    <!-- Filter chips -->
+    <RevealOnScroll>
+      <div class="filters" role="toolbar" aria-label="Filter missions">
+        <span class="filters__label font-terminal">FILTER ::</span>
+        <div class="filters__group" data-filter-group="all">
+          <button class="filter-chip is-active" type="button" data-filter-key="all" data-filter-value="all">
+            <span class="filter-chip__bracket">[</span>ALL<span class="filter-chip__count">{rest.length}</span><span class="filter-chip__bracket">]</span>
+          </button>
+        </div>
+        <span class="filters__divider">·</span>
+        <div class="filters__group" data-filter-group="year">
+          {years.map((y) => (
+            <button class="filter-chip" type="button" data-filter-key="year" data-filter-value={y}>
+              <span class="filter-chip__bracket">[</span>{y}<span class="filter-chip__bracket">]</span>
+            </button>
+          ))}
+        </div>
+        <span class="filters__divider">·</span>
+        <div class="filters__group" data-filter-group="platform">
+          {platforms.map((pl) => (
+            <button class="filter-chip" type="button" data-filter-key="platform" data-filter-value={platSlug(pl)}>
+              <span class="filter-chip__bracket">[</span>{pl.toUpperCase()}<span class="filter-chip__bracket">]</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </RevealOnScroll>
+
+    <ul class="mission-grid grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {rest.map((p, idx) => (
+        <li
+          class="mission-li"
+          data-year={p.data.year}
+          data-platforms={p.data.platforms.map(platSlug).join(" ")}
+          data-status={p.data.status}
+        >
+          <RevealOnScroll from="up" delay={idx * 80}>
+            <a href={withBase(`/projects/${p.id}`)} class="mission-card group block" data-tilt>
+              <div class="mc-frame">
+                <div class="mc-id">M-{String(idx + 2).padStart(2, "0")}</div>
+                <div class="mc-status">
+                  <span class={`mc-status__dot ${p.data.status === "shipped" ? "is-shipped" : "is-dev"}`}></span>
+                  <span>{p.data.status === "shipped" ? "SHIPPED" : p.data.status.toUpperCase()}</span>
+                </div>
+
+                <div class="mc-thumb">
+                  <img
+                    src={withBase(p.data.thumb)}
+                    alt={`${p.data.title} title art`}
+                    width="600"
+                    height="300"
+                    class="mc-thumb__img"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div class="mc-thumb__scan"></div>
+                  <div class="mc-thumb__grid"></div>
+                </div>
+
+                <div class="mc-body">
+                  <h3 class="mc-title font-terminal text-2xl">{p.data.title}</h3>
+                  <p class="mc-tagline font-terminal text-text-muted text-base">{p.data.tagline}</p>
+                  <div class="mc-chips mt-3 flex flex-wrap gap-2">
+                    <DataChip>{p.data.year}</DataChip>
+                    {p.data.platforms.slice(0, 2).map((pl) => <DataChip>{pl}</DataChip>)}
+                  </div>
+                  <div class="mc-cta font-terminal">
+                    <span class="mc-cta__bracket">[</span>
+                    <span>ENTER MISSION</span>
+                    <span class="mc-cta__arrow">▶</span>
+                    <span class="mc-cta__bracket">]</span>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </RevealOnScroll>
+        </li>
+      ))}
+    </ul>
+
+    <p class="mission-empty font-terminal" hidden>
+      &gt; NO MISSIONS MATCH FILTER. <button id="reset-filters" class="reset-link">[ RESET ]</button>
+    </p>
+  </div>
+</section>
+
+<script>
+  const chips = document.querySelectorAll<HTMLElement>(".filter-chip");
+  const items = document.querySelectorAll<HTMLElement>(".mission-li");
+  const empty = document.querySelector<HTMLElement>(".mission-empty");
+  const reset = document.querySelector<HTMLElement>("#reset-filters");
+
+  let activeKey = "all";
+  let activeValue = "all";
+
+  function applyFilter() {
+    let visible = 0;
+    items.forEach((li) => {
+      let match = activeKey === "all";
+      if (activeKey === "year") {
+        match = li.dataset.year === String(activeValue);
+      } else if (activeKey === "platform") {
+        match = (li.dataset.platforms ?? "").split(" ").includes(String(activeValue));
+      }
+      li.classList.toggle("is-hidden", !match);
+      if (match) visible++;
+    });
+    if (empty) empty.hidden = visible > 0;
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const key = chip.dataset.filterKey ?? "all";
+      const value = chip.dataset.filterValue ?? "all";
+      if (key === activeKey && value === activeValue && key !== "all") {
+        activeKey = "all"; activeValue = "all";
+      } else {
+        activeKey = key; activeValue = value;
+      }
+      chips.forEach((c) => c.classList.remove("is-active"));
+      const matchChip = Array.from(chips).find(
+        (c) => c.dataset.filterKey === activeKey && c.dataset.filterValue === activeValue
+      );
+      (matchChip ?? chips[0]).classList.add("is-active");
+      applyFilter();
+    });
+  });
+
+  reset?.addEventListener("click", () => {
+    activeKey = "all"; activeValue = "all";
+    chips.forEach((c) => c.classList.remove("is-active"));
+    chips[0].classList.add("is-active");
+    applyFilter();
+  });
+</script>
+
+<style>
+  .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+
+  .missions {
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .missions__backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .missions__content,
+  .missions__ticker {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Filter chips */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    background: rgba(7,3,15,0.5);
+    border: 1px dashed var(--neon-cyan);
+    margin-bottom: 1.5rem;
+  }
+  .filters__label {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+  }
+  .filters__group { display: contents; }
+  .filters__divider { color: var(--text-muted); padding: 0 0.2rem; }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.55rem;
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: var(--text-soft);
+    font-family: theme("fontFamily.terminal");
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    transition: background 200ms, border-color 200ms, color 200ms, box-shadow 200ms, transform 100ms;
+  }
+  .filter-chip:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+    box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+  }
+  .filter-chip.is-active {
+    background: var(--neon-magenta);
+    border-color: var(--neon-magenta);
+    color: var(--bg-void);
+    box-shadow: 0 0 8px var(--neon-magenta);
+    text-shadow: none;
+  }
+  .filter-chip__bracket { color: var(--text-muted); }
+  .filter-chip.is-active .filter-chip__bracket { color: var(--bg-void); }
+  .filter-chip__count {
+    color: var(--neon-magenta);
+    font-size: 0.8em;
+    margin-left: 0.25em;
+  }
+  .filter-chip.is-active .filter-chip__count { color: var(--bg-void); }
+
+  /* Grid + filtered transitions */
+  .mission-grid { transition: opacity 200ms ease; }
+  .mission-li {
+    transition: opacity 350ms ease, transform 350ms cubic-bezier(.2,.8,.2,1);
+  }
+  .mission-li.is-hidden {
+    opacity: 0;
+    transform: scale(0.92);
+    pointer-events: none;
+    position: absolute;
+    visibility: hidden;
+  }
+
+  .mission-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem;
+    font-size: 1rem;
+  }
+  .reset-link {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--neon-cyan);
+    font-family: inherit;
+    text-shadow: 0 0 6px var(--neon-cyan);
+    letter-spacing: 0.1em;
+  }
+  .reset-link:hover { text-decoration: underline; }
+
+  .mission-card {
+    display: block;
+    transform-style: preserve-3d;
+    transition: transform 200ms ease-out;
+  }
+  .mc-frame {
+    position: relative;
+    background: linear-gradient(180deg, rgba(28,13,61,0.85), rgba(7,3,15,0.92));
+    border: 2px solid var(--neon-magenta);
+    box-shadow:
+      0 0 0 4px var(--bg-void),
+      0 0 18px rgba(255,46,136,0.25),
+      0 8px 24px rgba(0,0,0,0.6);
+    padding: 1rem 1rem 1.1rem;
+    transition: box-shadow 250ms ease, border-color 200ms ease;
+    overflow: hidden;
+  }
+  .mission-card:hover .mc-frame {
+    box-shadow:
+      0 0 0 4px var(--bg-void),
+      0 0 26px rgba(255,46,136,0.55),
+      0 0 50px rgba(255,46,136,0.25),
+      0 12px 30px rgba(0,0,0,0.7);
+  }
+  .mc-frame::before {
+    content: "";
+    position: absolute; inset: -1px;
+    background: linear-gradient(120deg, transparent 30%, rgba(0,240,255,0.18) 50%, transparent 70%);
+    transform: translateX(-100%);
+    pointer-events: none;
+    transition: transform 700ms ease;
+  }
+  .mission-card:hover .mc-frame::before { transform: translateX(100%); }
+
+  .mc-id {
+    position: absolute; top: 0.65rem; left: 0.85rem;
+    font-family: theme('fontFamily.pixel');
+    color: var(--neon-magenta);
+    font-size: 0.7rem;
+    text-shadow: 0 0 6px var(--neon-magenta);
+    letter-spacing: 0.1em;
+    z-index: 2;
+  }
+  .mc-status {
+    position: absolute; top: 0.65rem; right: 0.85rem;
+    font-family: theme('fontFamily.terminal');
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 0.4rem;
+    letter-spacing: 0.1em;
+    z-index: 2;
+  }
+  .mc-status__dot { width: 8px; height: 8px; border-radius: 50%; }
+  .mc-status__dot.is-shipped { background: var(--terminal-grn); box-shadow: 0 0 6px var(--terminal-grn); animation: m-pulse 2s ease-in-out infinite; }
+  .mc-status__dot.is-dev { background: var(--neon-yellow); box-shadow: 0 0 6px var(--neon-yellow); animation: m-pulse 1.2s ease-in-out infinite; }
+  @keyframes m-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .mc-thumb {
+    position: relative;
+    aspect-ratio: 2 / 1;
+    background: var(--bg-void);
+    margin-top: 1.8rem;
+    overflow: hidden;
+    border: 1px solid var(--neon-magenta);
+  }
+  .mc-thumb__img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    transition: transform 600ms cubic-bezier(.2,.8,.2,1), filter 400ms ease;
+    filter: saturate(0.8);
+  }
+  .mission-card:hover .mc-thumb__img { transform: scale(1.06); filter: saturate(1.2) brightness(1.1); }
+  .mc-thumb__scan {
+    position: absolute; left: 0; right: 0; height: 30%;
+    top: -30%;
+    background: linear-gradient(180deg, transparent, rgba(0,240,255,0.18), transparent);
+    pointer-events: none;
+  }
+  .mission-card:hover .mc-thumb__scan { animation: m-scan 1.4s ease-in-out infinite; }
+  @keyframes m-scan {
+    0% { top: -30%; }
+    100% { top: 110%; }
+  }
+  .mc-thumb__grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(0,240,255,0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,240,255,0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+    pointer-events: none;
+  }
+
+  .mc-body { padding-top: 0.9rem; }
+  .mc-title {
+    color: var(--text-soft);
+    line-height: 1.1;
+    text-shadow: 0 0 8px rgba(255,46,136,0.4);
+  }
+  .mc-tagline { margin-top: 0.25rem; line-height: 1.4; }
+
+  .mc-cta {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-top: 0.9rem;
+    color: var(--neon-magenta);
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    opacity: 0.55;
+    transform: translateX(-4px);
+    transition: opacity 250ms ease, transform 250ms ease;
+  }
+  .mission-card:hover .mc-cta { opacity: 1; transform: translateX(0); }
+  .mc-cta__bracket { color: var(--text-muted); }
+  .mc-cta__arrow { animation: cta-arrow 1s ease-in-out infinite; }
+  @keyframes cta-arrow {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(3px); }
+  }
+</style>
