@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import ProjectLayout from "../../layouts/ProjectLayout.astro";
 import { sortByOrder, getPrevNext } from "../../lib/projectNav";
+import { withBase } from "../../lib/url";
 import HeroPanel from "../../components/project/HeroPanel.astro";
 import DetailsStrip from "../../components/project/DetailsStrip.astro";
 import KeyInsights from "../../components/project/KeyInsights.astro";
@@ -23,7 +24,7 @@ const sorted = sortByOrder(all);
 const { prev, next } = getPrevNext(sorted, entry.id);
 ---
 <ProjectLayout title={entry.data.title} description={entry.data.tagline}>
-  <a href="/#missions" class="font-terminal text-text-muted hover:text-neon-cyan">← BACK TO MISSION LOG</a>
+  <a href={withBase("/#missions")} class="font-terminal text-text-muted hover:text-neon-cyan">← BACK TO MISSION LOG</a>
 
   <h1 class="font-pixel text-neon-magenta text-3xl sm:text-5xl mt-6 mb-2">{entry.data.title}</h1>
   <p class="font-terminal text-text-muted text-lg sm:text-xl">&gt; {entry.data.tagline}</p>
@@ -56,8 +57,8 @@ const { prev, next } = getPrevNext(sorted, entry.id);
   </article>
 
   <nav class="mt-16 flex justify-between font-terminal text-text-muted gap-4">
-    <a href={prev ? `/projects/${prev.id}` : "#"} class="hover:text-neon-cyan">◀ PREV: {prev?.data.title ?? "—"}</a>
-    <a href={next ? `/projects/${next.id}` : "#"} class="hover:text-neon-cyan text-right">NEXT: {next?.data.title ?? "—"} ▶</a>
+    <a href={prev ? withBase(`/projects/${prev.id}`) : "#"} class="hover:text-neon-cyan">◀ PREV: {prev?.data.title ?? "—"}</a>
+    <a href={next ? withBase(`/projects/${next.id}`) : "#"} class="hover:text-neon-cyan text-right">NEXT: {next?.data.title ?? "—"} ▶</a>
   </nav>
 </ProjectLayout>
 

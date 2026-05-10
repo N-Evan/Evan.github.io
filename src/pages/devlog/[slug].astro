@@ -4,6 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import GlitchText from "../../components/chrome/GlitchText.astro";
 import DataChip from "../../components/chrome/DataChip.astro";
 import NeonButton from "../../components/chrome/NeonButton.astro";
+import { withBase } from "../../lib/url";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", ({ data }) =>
@@ -31,7 +32,7 @@ function formatDate(d: Date) {
 const wordCount = entry.body ? entry.body.trim().split(/\s+/).length : 0;
 const readMinutes = Math.max(1, Math.round(wordCount / 220));
 
-const canonical = new URL(`/devlog/${entry.id}`, Astro.site).toString();
+const canonical = new URL(withBase(`/devlog/${entry.id}`), Astro.site).toString();
 
 // JSON-LD article schema for SEO
 const jsonLd = {
@@ -52,7 +53,7 @@ const jsonLd = {
   },
   mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
   keywords: entry.data.tags.join(", "),
-  image: new URL(entry.data.cover ?? "/og-image.png", Astro.site).toString(),
+  image: new URL(withBase(entry.data.cover ?? "/og-image.png"), Astro.site).toString(),
 };
 ---
 <BaseLayout
@@ -62,7 +63,7 @@ const jsonLd = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
   <main class="post relative max-w-3xl mx-auto px-6 py-16">
-    <a href="/devlog" class="font-terminal text-text-muted hover:text-neon-cyan inline-block mb-8">← BACK TO DEVLOG</a>
+    <a href={withBase("/devlog")} class="font-terminal text-text-muted hover:text-neon-cyan inline-block mb-8">← BACK TO DEVLOG</a>
 
     <header class="post__header">
       <div class="font-terminal text-text-muted text-xs tracking-widest mb-3">
@@ -90,20 +91,20 @@ const jsonLd = {
       <hr class="post__rule" />
       <div class="post__author font-terminal">
         Written by
-        <a href="/" class="post__author-name">{entry.data.author}</a>
+        <a href={withBase("/")} class="post__author-name">{entry.data.author}</a>
         ·
-        <a href="/rss.xml" class="post__rss">RSS FEED</a>
+        <a href={withBase("/rss.xml")} class="post__rss">RSS FEED</a>
       </div>
 
       <nav class="post__nav">
         {prev ? (
-          <a href={`/devlog/${prev.id}`} class="post__nav-link post__nav-link--prev">
+          <a href={withBase(`/devlog/${prev.id}`)} class="post__nav-link post__nav-link--prev">
             <span class="post__nav-label font-terminal">◀ OLDER</span>
             <span class="post__nav-title font-pixel">{prev.data.title}</span>
           </a>
         ) : <span></span>}
         {next ? (
-          <a href={`/devlog/${next.id}`} class="post__nav-link post__nav-link--next">
+          <a href={withBase(`/devlog/${next.id}`)} class="post__nav-link post__nav-link--next">
             <span class="post__nav-label font-terminal">NEWER ▶</span>
             <span class="post__nav-title font-pixel">{next.data.title}</span>
           </a>
@@ -111,8 +112,8 @@ const jsonLd = {
       </nav>
 
       <div class="post__cta">
-        <NeonButton href="/#comms" tone="magenta">[ TRANSMIT REPLY ]</NeonButton>
-        <NeonButton href="/devlog" tone="cyan">◆ ALL ENTRIES</NeonButton>
+        <NeonButton href={withBase("/#comms")} tone="magenta">[ TRANSMIT REPLY ]</NeonButton>
+        <NeonButton href={withBase("/devlog")} tone="cyan">◆ ALL ENTRIES</NeonButton>
       </div>
     </footer>
   </main>

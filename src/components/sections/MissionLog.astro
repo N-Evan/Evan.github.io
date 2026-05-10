@@ -8,6 +8,7 @@ import RetroSun from "../chrome/RetroSun.astro";
 import MountainRange from "../chrome/MountainRange.astro";
 import FeaturedProject from "./FeaturedProject.astro";
 import { sortByOrder } from "../../lib/projectNav";
+import { withBase } from "../../lib/url";
 
 const all = sortByOrder(await getCollection("projects"));
 const featured = all.filter((p) => p.data.featured);
@@ -97,7 +98,7 @@ function platSlug(s: string) {
           data-status={p.data.status}
         >
           <RevealOnScroll from="up" delay={idx * 80}>
-            <a href={`/projects/${p.id}`} class="mission-card group block" data-tilt>
+            <a href={withBase(`/projects/${p.id}`)} class="mission-card group block" data-tilt>
               <div class="mc-frame">
                 <div class="mc-id">M-{String(idx + 2).padStart(2, "0")}</div>
                 <div class="mc-status">
@@ -107,7 +108,7 @@ function platSlug(s: string) {
 
                 <div class="mc-thumb">
                   <img
-                    src={p.data.thumb}
+                    src={withBase(p.data.thumb)}
                     alt={`${p.data.title} title art`}
                     width="600"
                     height="300"

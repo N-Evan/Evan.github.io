@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import DataChip from "../chrome/DataChip.astro";
 import NeonButton from "../chrome/NeonButton.astro";
+import { withBase } from "../../lib/url";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -26,10 +27,10 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
     <span class="font-pixel featured__badge-text">FEATURED MISSION</span>
   </div>
 
-  <a class="featured__inner" href={`/projects/${project.id}`}>
+  <a class="featured__inner" href={withBase(`/projects/${project.id}`)}>
     <div class="featured__thumb">
       <img
-        src={p.thumb}
+        src={withBase(p.thumb)}
         alt={`${p.title} title art`}
         width="900"
         height="450"
@@ -71,7 +72,7 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
 
   {linkItems.length > 0 && (
     <div class="featured__links">
-      <NeonButton href={`/projects/${project.id}`} tone="magenta">▶ ENTER MISSION</NeonButton>
+      <NeonButton href={withBase(`/projects/${project.id}`)} tone="magenta">▶ ENTER MISSION</NeonButton>
       {linkItems.map((l) => <NeonButton href={l.href} tone="cyan">{l.label}</NeonButton>)}
     </div>
   )}

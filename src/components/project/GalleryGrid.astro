@@ -1,5 +1,6 @@
 ---
 import PixelFrame from "../chrome/PixelFrame.astro";
+import { withBase } from "../../lib/url";
 
 interface Props { images: string[] }
 const { images } = Astro.props;
@@ -13,7 +14,7 @@ const slots: (string | null)[] = images.length > 0 ? images : Array(4).fill(null
         <PixelFrame tone="cyan">
           <div class="aspect-video bg-bg-void grid place-items-center overflow-hidden">
             {src ? (
-              <img src={src} alt={`Gallery image ${i + 1}`} class="w-full h-full object-cover" loading="lazy" />
+              <img src={withBase(src)} alt={`Gallery image ${i + 1}`} class="w-full h-full object-cover" loading="lazy" />
             ) : (
               <span class="font-terminal text-text-muted text-sm">[ SCREENSHOT 0{i + 1} ]</span>
             )}

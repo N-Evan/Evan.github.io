@@ -10,6 +10,7 @@ import MouseSpotlight from "../components/chrome/MouseSpotlight.astro";
 import CustomCursor from "../components/chrome/CustomCursor.astro";
 import ToastStack from "../components/chrome/ToastStack.astro";
 import PageWipe from "../components/chrome/PageWipe.astro";
+import { withBase } from "../lib/url";
 
 interface Props {
   title: string;
@@ -23,7 +24,9 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImageUrl = new URL(ogImage, Astro.site).toString();
+const ogImageUrl = new URL(withBase(ogImage), Astro.site).toString();
+const sitemapHref = withBase("/sitemap-index.xml");
+const rssHref = withBase("/rss.xml");
 ---
 <!doctype html>
 <html lang="en">
@@ -33,8 +36,8 @@ const ogImageUrl = new URL(ogImage, Astro.site).toString();
     <meta name="description" content={description} />
     <meta name="theme-color" content="#07030f" />
     <link rel="canonical" href={canonical} />
-    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
-    <link rel="alternate" type="application/rss+xml" title="Md. Nurusshafi Evan — Devlog" href="/rss.xml" />
+    <link rel="sitemap" type="application/xml" href={sitemapHref} />
+    <link rel="alternate" type="application/rss+xml" title="Md. Nurusshafi Evan — Devlog" href={rssHref} />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />

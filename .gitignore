@@ -19,3 +19,6 @@ Thumbs.db
 # Editor
 .vscode/
 .idea/
+
+# Local agent / tool config (machine-specific, not for shared repo)
+.claude/

@@ -4,6 +4,7 @@ import GridFloor from "../chrome/GridFloor.astro";
 import GlitchText from "../chrome/GlitchText.astro";
 import NeonButton from "../chrome/NeonButton.astro";
 import ParticleField from "../chrome/ParticleField.astro";
+import { withBase } from "../../lib/url";
 ---
 <section id="press-start" class="press-start relative min-h-dvh overflow-hidden">
   <DitherBg />
@@ -58,9 +59,9 @@ import ParticleField from "../chrome/ParticleField.astro";
         <div class="mt-10 flex flex-wrap justify-center gap-3">
           <NeonButton href="#missions" tone="magenta">▶ NEW GAME</NeonButton>
           <NeonButton href="#profile"  tone="cyan">◆ PROFILE</NeonButton>
-          <NeonButton href="/devlog"   tone="cyan">◆ DEVLOG</NeonButton>
+          <NeonButton href={withBase("/devlog")}   tone="cyan">◆ DEVLOG</NeonButton>
           <NeonButton href="#comms"    tone="cyan">◆ COMMS</NeonButton>
-          <NeonButton href="/files/resume.pdf" tone="cyan" target="_blank" rel="noopener noreferrer">◆ RESUME.PDF</NeonButton>
+          <NeonButton href={withBase("/files/resume.pdf")} tone="cyan" target="_blank" rel="noopener noreferrer">◆ RESUME.PDF</NeonButton>
         </div>
         <p class="mt-12 font-terminal text-text-muted text-sm animate-blink tracking-widest">
           ▼ PRESS ANY KEY OR SCROLL TO CONTINUE ▼

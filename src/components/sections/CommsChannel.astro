@@ -3,6 +3,7 @@ import NeonButton from "../chrome/NeonButton.astro";
 import GlitchText from "../chrome/GlitchText.astro";
 import RevealOnScroll from "../chrome/RevealOnScroll.astro";
 import MarqueeTicker from "../chrome/MarqueeTicker.astro";
+import { withBase } from "../../lib/url";
 
 const socials = [
   { label: "GITHUB",     href: "https://github.com/N-Evan",                 hint: "code" },
@@ -58,9 +59,9 @@ const tickerItems = [
     <RevealOnScroll delay={340}>
       <div class="flex flex-wrap justify-center gap-3 mb-10">
         <NeonButton href="mailto:nurusshafievan@gmail.com" tone="magenta">[ TRANSMIT MESSAGE ]</NeonButton>
-        <NeonButton href="/files/resume.pdf" tone="cyan" target="_blank" rel="noopener noreferrer">[ DOWNLOAD RESUME.PDF ]</NeonButton>
-        <NeonButton href="/devlog" tone="cyan">[ READ THE DEVLOG ]</NeonButton>
-        <NeonButton href="/rss.xml" tone="cyan">[ RSS FEED ]</NeonButton>
+        <NeonButton href={withBase("/files/resume.pdf")} tone="cyan" target="_blank" rel="noopener noreferrer">[ DOWNLOAD RESUME.PDF ]</NeonButton>
+        <NeonButton href={withBase("/devlog")} tone="cyan">[ READ THE DEVLOG ]</NeonButton>
+        <NeonButton href={withBase("/rss.xml")} tone="cyan">[ RSS FEED ]</NeonButton>
       </div>
     </RevealOnScroll>
 
@@ -83,7 +84,7 @@ const tickerItems = [
   const KEY = "evan-portfolio:press-start-played";
   document.getElementById("replay-intro")?.addEventListener("click", () => {
     sessionStorage.removeItem(KEY);
-    window.location.href = "/";
+    window.location.href = (import.meta.env.BASE_URL || "/");
   });
 </script>
 

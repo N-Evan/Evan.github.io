@@ -6,6 +6,7 @@ import RevealOnScroll from "../../components/chrome/RevealOnScroll.astro";
 import HoloDivider from "../../components/chrome/HoloDivider.astro";
 import DataChip from "../../components/chrome/DataChip.astro";
 import MarqueeTicker from "../../components/chrome/MarqueeTicker.astro";
+import { withBase } from "../../lib/url";
 
 const all = await getCollection("posts", ({ data }) => import.meta.env.PROD ? !data.draft : true);
 const posts = all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -35,7 +36,7 @@ function formatDate(d: Date) {
       <div class="font-terminal text-text-muted text-sm tracking-widest mb-3">
         [ DEV ] &middot; LIVE FEED
       </div>
-      <a href="/" class="font-terminal text-text-muted hover:text-neon-cyan inline-block mb-6">← BACK TO PORTFOLIO</a>
+      <a href={withBase("/")} class="font-terminal text-text-muted hover:text-neon-cyan inline-block mb-6">← BACK TO PORTFOLIO</a>
       <RevealOnScroll>
         <GlitchText
           as="h1"
@@ -51,7 +52,7 @@ function formatDate(d: Date) {
       </RevealOnScroll>
       <RevealOnScroll delay={200}>
         <div class="mt-6 flex flex-wrap gap-2">
-          <a href="/rss.xml" class="font-terminal text-neon-cyan hover:text-neon-magenta border border-dashed border-neon-cyan px-3 py-1 text-sm tracking-widest">
+          <a href={withBase("/rss.xml")} class="font-terminal text-neon-cyan hover:text-neon-magenta border border-dashed border-neon-cyan px-3 py-1 text-sm tracking-widest">
             ◆ RSS FEED
           </a>
           {tags.map((t) => <DataChip tone="cyan">#{t}</DataChip>)}
@@ -69,7 +70,7 @@ function formatDate(d: Date) {
           {posts.map((p, i) => (
             <li>
               <RevealOnScroll from="up" delay={i * 60}>
-                <a href={`/devlog/${p.id}`} class="devlog-card" data-tilt>
+                <a href={withBase(`/devlog/${p.id}`)} class="devlog-card" data-tilt>
                   <div class="devlog-card__head">
                     <span class="devlog-card__id font-pixel">ENTRY {String(posts.length - i).padStart(2, "0")}</span>
                     <span class="devlog-card__date font-terminal">{formatDate(p.data.date)}</span>

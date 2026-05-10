@@ -1,6 +1,7 @@
 ---
 import PixelFrame from "../chrome/PixelFrame.astro";
 import DataChip from "../chrome/DataChip.astro";
+import { withBase } from "../../lib/url";
 
 interface Props {
   title: string;
@@ -13,7 +14,7 @@ const { title, thumb, year, studio, status } = Astro.props;
 ---
 <PixelFrame tone="magenta">
   <div class="aspect-[2/1] bg-bg-void grid place-items-center overflow-hidden mb-4">
-    <img src={thumb} alt={`${title} title art`} class="w-full h-full object-contain" width="800" height="400" />
+    <img src={withBase(thumb)} alt={`${title} title art`} class="w-full h-full object-contain" width="800" height="400" />
   </div>
   <div class="flex flex-wrap gap-2">
     <DataChip>{year}</DataChip>
