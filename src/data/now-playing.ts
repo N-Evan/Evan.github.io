@@ -11,10 +11,10 @@ export const nowPlaying: {
   link?: string;
 } = {
   enabled: true,
-  game: "Hades II",
+  game: "Dota 2",
   platform: "Steam · PC",
-  hours: 42,
-  status: "Hunting for a Crystal Beam build.",
+  hours: 4020,
+  status: "Trying to not tilt",
   cover: undefined,
   link: undefined,
 };

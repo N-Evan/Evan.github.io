@@ -11,7 +11,7 @@ export const status: {
   current: AvailabilityState;
   message?: string;
 } = {
-  current: "open-to-collabs",
+  current: "available",
   message: "Open to gameplay programming roles, contract work, and collaborations.",
 };
 
