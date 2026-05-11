@@ -18,6 +18,10 @@
     <span class="hud__value">PORTFOLIO.exe v2.0</span>
   </div>
   <div class="hud__corner hud__br">
+    <span class="hud__coin" data-coin-counter>
+      <span class="hud__coin-icon">●</span>
+      <span class="hud__coin-count" data-coin-count>000</span>
+    </span>
     <span class="hud__value" data-bars>▁▂▃▅▇▅▃▂</span>
   </div>
 </div>
@@ -61,7 +65,20 @@
   .hud__tl { top: 0; left: 0; color: var(--neon-cyan); }
   .hud__tr { top: 0; right: 0; color: var(--neon-magenta); }
   .hud__bl { bottom: 0; left: 0; color: var(--text-muted); }
-  .hud__br { bottom: 0; right: 0; color: var(--terminal-grn); }
+  .hud__br { bottom: 0; right: 0; color: var(--terminal-grn); gap: 0.7rem; }
+  .hud__coin {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 6px var(--neon-yellow);
+    border: 1px solid var(--neon-yellow);
+    padding: 0.05rem 0.4rem;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .hud__coin.is-pop {
+    transform: scale(1.18);
+    box-shadow: 0 0 10px var(--neon-yellow);
+  }
+  .hud__coin-icon { display: inline-block; }
   .hud__bracket { color: currentColor; opacity: 0.6; }
   .hud__label { color: var(--text-muted); }
   .hud__value { text-shadow: 0 0 6px currentColor; }

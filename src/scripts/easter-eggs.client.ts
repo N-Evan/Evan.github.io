@@ -35,6 +35,41 @@ function showToast(opts: ToastOpts) {
 }
 
 // ------------------------------------------------------------------
+// Coin counter (Pacman/Mario easter eggs). Persisted in localStorage.
+// Increments on cheat finds, achievements, and explicit `evan:coin` events.
+// ------------------------------------------------------------------
+const COIN_KEY = "evan:coins";
+let coinCount = 0;
+try {
+  coinCount = parseInt(localStorage.getItem(COIN_KEY) ?? "0", 10) || 0;
+} catch {}
+
+function paintCoins() {
+  const el = document.querySelector<HTMLElement>("[data-coin-count]");
+  if (el) el.textContent = String(coinCount).padStart(3, "0");
+}
+
+function addCoins(n: number) {
+  coinCount += n;
+  try { localStorage.setItem(COIN_KEY, String(coinCount)); } catch {}
+  paintCoins();
+  const tag = document.querySelector<HTMLElement>("[data-coin-counter]");
+  if (tag) {
+    tag.classList.remove("is-pop");
+    void tag.offsetWidth;
+    tag.classList.add("is-pop");
+    setTimeout(() => tag.classList.remove("is-pop"), 240);
+  }
+}
+
+paintCoins();
+window.addEventListener("evan:coin", (e) => {
+  const detail = (e as CustomEvent).detail || {};
+  const n = typeof detail.n === "number" ? detail.n : 1;
+  addCoins(n);
+});
+
+// ------------------------------------------------------------------
 // Konami code: ↑↑↓↓←→←→BA
 // ------------------------------------------------------------------
 const KONAMI = [
@@ -47,6 +82,7 @@ let konamiIdx = 0;
 function activateDevMode() {
   document.body.classList.toggle("dev-mode");
   const on = document.body.classList.contains("dev-mode");
+  if (on) addCoins(5);
   showToast({
     title: on ? "DEV MODE :: ON" : "DEV MODE :: OFF",
     text: on
@@ -175,6 +211,68 @@ const CHEATS: Record<
         duration: 3500,
       }),
   },
+  // Pacman — power pellet
+  wakawaka: {
+    run: () => {
+      showToast({
+        title: "POWER PELLET",
+        text: "waka waka waka waka 👻",
+        tone: "yellow",
+        icon: "●",
+        duration: 4500,
+      });
+      addCoins(5);
+      const lane = document.querySelector<HTMLElement>(".pac-trail__lane");
+      if (lane) {
+        lane.classList.remove("is-running", "is-reverse");
+        void lane.offsetWidth;
+        lane.classList.add("is-running");
+      }
+    },
+  },
+  // Mario — invincibility
+  starman: {
+    run: () => {
+      showToast({
+        title: "STAR POWER!",
+        text: "Invincibility — 8 seconds. Run wild.",
+        tone: "yellow",
+        icon: "★",
+        duration: 5000,
+      });
+      document.body.classList.add("starman");
+      addCoins(3);
+      setTimeout(() => document.body.classList.remove("starman"), 8000);
+    },
+  },
+  // Mario — it's-a me!
+  itsame: {
+    run: () => {
+      showToast({
+        title: "IT'S-A ME, MARIO!",
+        text: "+1 coin. Bouncy.",
+        tone: "magenta",
+        icon: "♪",
+        duration: 4500,
+      });
+      document.body.classList.add("mario-jump");
+      addCoins(1);
+      setTimeout(() => document.body.classList.remove("mario-jump"), 1300);
+    },
+  },
+  // Pacman — open mini-game
+  pacman: {
+    run: () => {
+      showToast({
+        title: "READY!",
+        text: "PAC-MAN.exe booting…",
+        tone: "yellow",
+        icon: "●",
+        duration: 2500,
+      });
+      setTimeout(() => window.dispatchEvent(new CustomEvent("evan:open-pacman")), 600);
+    },
+  },
 };
 
 const CHEAT_KEYS = Object.keys(CHEATS).sort((a, b) => b.length - a.length);
@@ -195,7 +293,9 @@ function handleTypedKey(e: KeyboardEvent) {
     if (buffer.endsWith(phrase)) {
       CHEATS[phrase].run();
       buffer = "";
+      const wasNew = !foundSet.has(phrase);
       foundSet.add(phrase);
+      if (wasNew) addCoins(1);
       if (foundSet.size === 3) {
         setTimeout(() => {
           showToast({
@@ -305,7 +405,10 @@ const sectionObserver = new IntersectionObserver(
       if (!ach || earned[id]) continue;
       earned[id] = true;
       persistEarned();
-      setTimeout(() => showToast({ ...ach, duration: 4200 }), ach.delay ?? 0);
+      setTimeout(() => {
+        showToast({ ...ach, duration: 4200 });
+        addCoins(1);
+      }, ach.delay ?? 0);
     }
   },
   { threshold: 0.4 }
@@ -323,7 +426,7 @@ if (!earned.__hint) {
   setTimeout(() => {
     showToast({
       title: "TIP // EASTER EGGS",
-      text: "Try typing classic cheat codes — or the Konami code.",
+      text: "Try typing classic cheat codes — or hold ↓ for 3s.",
       tone: "orange",
       icon: "?",
       duration: 5500,

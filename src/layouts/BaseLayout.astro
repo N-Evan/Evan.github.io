@@ -10,6 +10,9 @@ import MouseSpotlight from "../components/chrome/MouseSpotlight.astro";
 import CustomCursor from "../components/chrome/CustomCursor.astro";
 import ToastStack from "../components/chrome/ToastStack.astro";
 import PageWipe from "../components/chrome/PageWipe.astro";
+import PacmanTrail from "../components/chrome/PacmanTrail.astro";
+import PacmanGame from "../components/chrome/PacmanGame.astro";
+import MarioWarp from "../components/chrome/MarioWarp.astro";
 import { withBase } from "../lib/url";
 
 interface Props {
@@ -79,6 +82,9 @@ const rssHref = withBase("/rss.xml");
     <CustomCursor />
     <ToastStack />
     <HUDOverlay />
+    <PacmanTrail />
+    <PacmanGame />
+    <MarioWarp />
     <ScanlineOverlay />
     <CRTVignette />
     <script>

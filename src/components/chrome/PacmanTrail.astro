@@ -1,0 +1,177 @@
+---
+// Ambient Pacman trail — Pacman chomps across the bottom edge of the
+// viewport with 4 ghosts trailing, then disappears off-screen.
+// Plays on a short, randomised interval. Honours reduced motion.
+---
+<div class="pac-trail" aria-hidden="true">
+  <div class="pac-trail__lane">
+    <div class="pac-dots"></div>
+    <div class="pac-pac"></div>
+    <div class="pac-ghost pac-ghost--blinky"></div>
+    <div class="pac-ghost pac-ghost--pinky"></div>
+    <div class="pac-ghost pac-ghost--inky"></div>
+    <div class="pac-ghost pac-ghost--clyde"></div>
+  </div>
+</div>
+
+<script>
+  const lane = document.querySelector<HTMLElement>(".pac-trail__lane");
+  if (lane) {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const MIN = reduced ? 45_000 : 15_000;
+    const MAX = reduced ? 90_000 : 25_000;
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+    function play() {
+      // Coin flip: forward or reverse direction.
+      const reverse = Math.random() < 0.35;
+      lane.classList.remove("is-running", "is-reverse");
+      // force reflow to restart animation
+      void lane.offsetWidth;
+      if (reverse) lane.classList.add("is-reverse");
+      lane.classList.add("is-running");
+      setTimeout(schedule, 7500);
+    }
+
+    function schedule() {
+      lane.classList.remove("is-running");
+      setTimeout(play, rand(MIN, MAX));
+    }
+
+    // First run after a short warmup
+    setTimeout(play, reduced ? 8000 : 4000);
+  }
+</script>
+
+<style>
+  .pac-trail {
+    position: fixed;
+    left: 0; right: 0; bottom: 18px;
+    height: 26px;
+    pointer-events: none;
+    z-index: 6;
+    overflow: hidden;
+  }
+  .pac-trail__lane {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
+  .pac-trail__lane.is-running { opacity: 1; }
+
+  /* Dot trail (10 pellets, faded) */
+  .pac-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(247,208,70,0.55) 0 2px, transparent 3px);
+    background-size: 40px 100%;
+    background-position: 8px 50%;
+    background-repeat: repeat-x;
+    opacity: 0;
+  }
+  .is-running .pac-dots {
+    animation: pac-dots-fade 7s linear forwards;
+  }
+  @keyframes pac-dots-fade {
+    0% { opacity: 0; }
+    10% { opacity: 1; }
+    65% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* Pacman — yellow chomping mouth via clip-path */
+  .pac-pac {
+    position: absolute;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: #f7d046;
+    box-shadow: 0 0 12px rgba(247,208,70,0.7), 0 0 4px #f7d046;
+    bottom: 0;
+    left: -40px;
+    animation: pac-chomp 0.22s steps(2) infinite;
+  }
+  .is-running .pac-pac {
+    animation: pac-chomp 0.22s steps(2) infinite, pac-run 7s linear forwards;
+  }
+  .is-reverse .pac-pac {
+    transform: scaleX(-1);
+    left: auto; right: -40px;
+    animation: pac-chomp 0.22s steps(2) infinite, pac-run-rev 7s linear forwards;
+  }
+
+  @keyframes pac-chomp {
+    0%   { clip-path: polygon(100% 50%, 30% 0,   0 0,   0 100%, 30% 100%); }
+    50%  { clip-path: polygon(100% 50%, 100% 0,  0 0,   0 100%, 100% 100%); }
+    100% { clip-path: polygon(100% 50%, 30% 0,   0 0,   0 100%, 30% 100%); }
+  }
+  @keyframes pac-run {
+    0%   { left: -40px; }
+    100% { left: calc(100% + 40px); }
+  }
+  @keyframes pac-run-rev {
+    0%   { right: -40px; }
+    100% { right: calc(100% + 40px); }
+  }
+
+  /* Ghosts */
+  .pac-ghost {
+    position: absolute;
+    width: 20px; height: 22px;
+    bottom: 0;
+    left: -160px;
+    background: var(--ghost);
+    border-radius: 10px 10px 2px 2px;
+    box-shadow: 0 0 10px var(--ghost), 0 0 4px var(--ghost);
+    animation: pac-bob 0.35s ease-in-out infinite alternate;
+    clip-path: polygon(
+      0 100%, 0 40%, 10% 0, 90% 0, 100% 40%, 100% 100%,
+      85% 80%, 70% 100%, 55% 80%, 40% 100%, 25% 80%, 10% 100%
+    );
+  }
+  .pac-ghost::before, .pac-ghost::after {
+    content: "";
+    position: absolute;
+    top: 30%;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .pac-ghost::before { left: 22%; }
+  .pac-ghost::after  { right: 22%; }
+  .pac-ghost--blinky { --ghost: #ff2e88; }
+  .pac-ghost--pinky  { --ghost: #ff8fd6; }
+  .pac-ghost--inky   { --ghost: #00f0ff; }
+  .pac-ghost--clyde  { --ghost: #ffb840; }
+
+  .is-running .pac-ghost { animation: pac-bob 0.35s ease-in-out infinite alternate, pac-ghost-run 7s linear forwards; }
+  .is-running .pac-ghost--blinky { animation-delay: 0s, 0.45s; }
+  .is-running .pac-ghost--pinky  { animation-delay: 0.05s, 0.75s; }
+  .is-running .pac-ghost--inky   { animation-delay: 0.1s, 1.05s; }
+  .is-running .pac-ghost--clyde  { animation-delay: 0.15s, 1.35s; }
+
+  .is-reverse .pac-ghost {
+    left: auto; right: -160px;
+  }
+  .is-reverse.is-running .pac-ghost {
+    animation: pac-bob 0.35s ease-in-out infinite alternate, pac-ghost-run-rev 7s linear forwards;
+  }
+
+  @keyframes pac-bob {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-2px); }
+  }
+  @keyframes pac-ghost-run {
+    0%   { left: -160px; }
+    100% { left: calc(100% + 40px); }
+  }
+  @keyframes pac-ghost-run-rev {
+    0%   { right: -160px; }
+    100% { right: calc(100% + 40px); }
+  }
+
+  @media (max-width: 640px) {
+    .pac-trail { bottom: 10px; height: 22px; }
+    .pac-pac, .pac-ghost { width: 16px; height: 16px; }
+  }
+</style>

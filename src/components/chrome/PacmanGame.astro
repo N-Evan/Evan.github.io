@@ -1,0 +1,387 @@
+---
+// Playable Pacman mini-game. Hidden by default. Open via the `pacman`
+// cheat which dispatches the `evan:open-pacman` window event.
+---
+<div class="pac-modal" data-pacman-modal hidden aria-hidden="true">
+  <div class="pac-modal__panel">
+    <div class="pac-modal__head">
+      <span class="pac-modal__title">PAC-MAN.exe</span>
+      <span class="pac-modal__score">SCORE <b data-pac-score>0</b></span>
+      <span class="pac-modal__lives">LIVES <b data-pac-lives>3</b></span>
+      <button class="pac-modal__close" data-pac-close aria-label="Close">×</button>
+    </div>
+    <canvas data-pac-canvas width="364" height="416"></canvas>
+    <div class="pac-modal__hint">
+      [ ARROWS / WASD ] move &nbsp;·&nbsp; [ ESC ] exit &nbsp;·&nbsp; [ R ] restart
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tile-based mini Pacman.
+  // 13 wide × 15 tall, tile = 28px. Maze legend:
+  //   # wall, . dot, o power pellet, ' empty, P pac spawn, G ghost spawn
+  const MAZE: string[] = [
+    "#############",
+    "#o....#....o#",
+    "#.##.#.#.##.#",
+    "#...........#",
+    "#.##.###.##.#",
+    "#....#.#....#",
+    "##.#.#.#.#.##",
+    "'..#.GGG.#..'",
+    "##.#.###.#.##",
+    "#....#.#....#",
+    "#.##.#.#.##.#",
+    "#...........#",
+    "#.##.#.#.##.#",
+    "#o.....P...o#",
+    "#############",
+  ];
+
+  const TILE = 28;
+  const COLS = MAZE[0].length;
+  const ROWS = MAZE.length;
+
+  type Cell = { x: number; y: number; t: string };
+  type Actor = { x: number; y: number; dx: number; dy: number; nx: number; ny: number; color: string; _acc?: number };
+
+  function open() {
+    const modal = document.querySelector<HTMLElement>("[data-pacman-modal]");
+    if (!modal) return;
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => modal.classList.add("is-open"));
+    boot();
+  }
+  function close() {
+    const modal = document.querySelector<HTMLElement>("[data-pacman-modal]");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    setTimeout(() => { modal.hidden = true; }, 240);
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+
+  document.querySelector<HTMLElement>("[data-pac-close]")?.addEventListener("click", close);
+  window.addEventListener("evan:open-pacman", open);
+
+  // Game state
+  let grid: Cell[][] = [];
+  let pac: Actor = { x: 0, y: 0, dx: 0, dy: 0, nx: 0, ny: 0, color: "#f7d046" };
+  let ghosts: Actor[] = [];
+  let score = 0;
+  let lives = 3;
+  let dotsRemaining = 0;
+  let mouth = 0;
+  let powerTime = 0; // frames remaining
+  let rafId = 0;
+  let lastT = 0;
+
+  function reset() {
+    grid = MAZE.map((row, y) => row.split("").map((t, x) => ({ x, y, t })));
+    dotsRemaining = 0;
+    for (const row of grid) for (const c of row) {
+      if (c.t === "." || c.t === "o") dotsRemaining++;
+      if (c.t === "P") { pac = { x: c.x, y: c.y, dx: 0, dy: 0, nx: 0, ny: 0, color: "#f7d046" }; c.t = "'"; }
+    }
+    const ghostColors = ["#ff2e88", "#ff8fd6", "#00f0ff", "#ffb840"];
+    ghosts = [];
+    let gi = 0;
+    for (const row of grid) for (const c of row) {
+      if (c.t === "G") {
+        ghosts.push({ x: c.x, y: c.y, dx: 1, dy: 0, nx: 1, ny: 0, color: ghostColors[gi % 4] });
+        gi++;
+        c.t = "'";
+      }
+    }
+    powerTime = 0;
+  }
+  function boot() {
+    reset();
+    score = 0;
+    lives = 3;
+    updateHud();
+    lastT = performance.now();
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function updateHud() {
+    const s = document.querySelector("[data-pac-score]");
+    const l = document.querySelector("[data-pac-lives]");
+    if (s) s.textContent = String(score);
+    if (l) l.textContent = String(lives);
+  }
+
+  function isWall(x: number, y: number) {
+    if (y < 0 || y >= ROWS) return true;
+    // horizontal wrap tunnels (row 7)
+    const xi = ((x % COLS) + COLS) % COLS;
+    return grid[y][xi].t === "#";
+  }
+
+  function tryTurn(actor: Actor) {
+    const tx = actor.x + actor.nx;
+    const ty = actor.y + actor.ny;
+    if (!isWall(tx, ty)) {
+      actor.dx = actor.nx;
+      actor.dy = actor.ny;
+    }
+  }
+
+  function step(actor: Actor) {
+    tryTurn(actor);
+    const tx = actor.x + actor.dx;
+    const ty = actor.y + actor.dy;
+    if (isWall(tx, ty)) { actor.dx = 0; actor.dy = 0; return; }
+    actor.x = ((tx % COLS) + COLS) % COLS;
+    actor.y = ty;
+  }
+
+  function moveGhost(g: Actor) {
+    // simple AI: continue forward; if blocked, pick a new random direction
+    // 25% chance to consider a turn at intersections
+    const dirs: Array<[number, number]> = [[1,0],[-1,0],[0,1],[0,-1]];
+    const ahead = isWall(g.x + g.dx, g.y + g.dy);
+    const choices = dirs.filter(([dx, dy]) =>
+      !isWall(g.x + dx, g.y + dy) && !(dx === -g.dx && dy === -g.dy)
+    );
+    if (ahead || (choices.length > 1 && Math.random() < 0.25)) {
+      const pick = choices[Math.floor(Math.random() * choices.length)] || [-g.dx, -g.dy];
+      g.dx = pick[0]; g.dy = pick[1];
+    }
+    const tx = g.x + g.dx;
+    const ty = g.y + g.dy;
+    if (!isWall(tx, ty)) {
+      g.x = ((tx % COLS) + COLS) % COLS;
+      g.y = ty;
+    }
+  }
+
+  function checkCollisions() {
+    for (const g of ghosts) {
+      if (g.x === pac.x && g.y === pac.y) {
+        if (powerTime > 0) {
+          // eat ghost — respawn at center
+          score += 200;
+          // find a G spawn-ish tile (row 7 center)
+          g.x = 6; g.y = 7;
+        } else {
+          lives -= 1;
+          updateHud();
+          if (lives <= 0) {
+            score = 0; lives = 3;
+            reset();
+            updateHud();
+          } else {
+            reset();
+          }
+          return;
+        }
+      }
+    }
+  }
+
+  function update(dt: number) {
+    // Pac moves every 160ms, ghosts every 200ms.
+    pac._acc = (pac._acc || 0) + dt;
+    if (pac._acc >= 160) {
+      pac._acc = 0;
+      step(pac);
+      const c = grid[pac.y][pac.x];
+      if (c.t === ".") { c.t = "'"; score += 10; dotsRemaining--; updateHud(); }
+      if (c.t === "o") { c.t = "'"; score += 50; dotsRemaining--; powerTime = 60; updateHud(); }
+      checkCollisions();
+      if (dotsRemaining === 0) { reset(); }
+    }
+    ghosts.forEach((g) => {
+      g._acc = (g._acc || 0) + dt;
+      if (g._acc >= 200) {
+        g._acc = 0;
+        moveGhost(g);
+        checkCollisions();
+      }
+    });
+    if (powerTime > 0) powerTime -= 1;
+    mouth = (mouth + 1) % 30;
+  }
+
+  function draw() {
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-pac-canvas]");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.fillStyle = "#07030f";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        const t = grid[y][x].t;
+        const px = x * TILE; const py = y * TILE;
+        if (t === "#") {
+          ctx.fillStyle = "#1c0d3d";
+          ctx.fillRect(px + 2, py + 2, TILE - 4, TILE - 4);
+          ctx.strokeStyle = "#00f0ff";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(px + 4, py + 4, TILE - 8, TILE - 8);
+        } else if (t === ".") {
+          ctx.fillStyle = "#f7d046";
+          ctx.beginPath();
+          ctx.arc(px + TILE / 2, py + TILE / 2, 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (t === "o") {
+          ctx.fillStyle = "#ff2e88";
+          ctx.shadowBlur = 8; ctx.shadowColor = "#ff2e88";
+          ctx.beginPath();
+          ctx.arc(px + TILE / 2, py + TILE / 2, 6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+    }
+
+    // Pacman
+    const pcx = pac.x * TILE + TILE / 2;
+    const pcy = pac.y * TILE + TILE / 2;
+    const open = (mouth < 15) ? 0.25 : 0.05;
+    const rot = pac.dx === 1 ? 0 : pac.dx === -1 ? Math.PI : pac.dy === 1 ? Math.PI / 2 : pac.dy === -1 ? -Math.PI / 2 : 0;
+    ctx.save();
+    ctx.translate(pcx, pcy);
+    ctx.rotate(rot);
+    ctx.fillStyle = pac.color;
+    ctx.shadowBlur = 10; ctx.shadowColor = pac.color;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, TILE / 2 - 2, Math.PI * open, Math.PI * (2 - open));
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+
+    // Ghosts
+    ghosts.forEach((g) => {
+      const gx = g.x * TILE + TILE / 2;
+      const gy = g.y * TILE + TILE / 2;
+      const scared = powerTime > 0;
+      ctx.fillStyle = scared ? "#1c2f7a" : g.color;
+      ctx.shadowBlur = 6; ctx.shadowColor = scared ? "#00f0ff" : g.color;
+      const r = TILE / 2 - 2;
+      ctx.beginPath();
+      ctx.arc(gx, gy - 2, r, Math.PI, 0);
+      ctx.lineTo(gx + r, gy + r - 2);
+      // wavy bottom
+      ctx.lineTo(gx + r * 0.66, gy + r - 6);
+      ctx.lineTo(gx + r * 0.33, gy + r - 2);
+      ctx.lineTo(gx, gy + r - 6);
+      ctx.lineTo(gx - r * 0.33, gy + r - 2);
+      ctx.lineTo(gx - r * 0.66, gy + r - 6);
+      ctx.lineTo(gx - r, gy + r - 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // eyes
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.arc(gx - 4, gy - 4, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(gx + 4, gy - 4, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = scared ? "#ff2e88" : "#1c0d3d";
+      ctx.beginPath(); ctx.arc(gx - 4 + g.dx, gy - 4 + g.dy, 1.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(gx + 4 + g.dx, gy - 4 + g.dy, 1.5, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+
+  function loop(t: number) {
+    const dt = t - lastT;
+    lastT = t;
+    update(dt);
+    draw();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  window.addEventListener("keydown", (e) => {
+    const modal = document.querySelector<HTMLElement>("[data-pacman-modal]");
+    if (!modal || modal.hidden) return;
+    if (e.key === "Escape") { close(); return; }
+    if (e.key.toLowerCase() === "r") { boot(); return; }
+    const map: Record<string, [number, number]> = {
+      ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
+      w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0],
+      W: [0, -1], S: [0, 1], A: [-1, 0], D: [1, 0],
+    };
+    const dir = map[e.key];
+    if (dir) {
+      e.preventDefault();
+      pac.nx = dir[0]; pac.ny = dir[1];
+    }
+  });
+</script>
+
+<style>
+  .pac-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99990;
+    background: rgba(7, 3, 15, 0.92);
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transition: opacity 220ms ease;
+    pointer-events: none;
+  }
+  .pac-modal.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .pac-modal__panel {
+    background: linear-gradient(180deg, rgba(28,13,61,0.95), rgba(7,3,15,0.98));
+    border: 2px solid var(--neon-cyan);
+    box-shadow: 0 0 24px rgba(0,240,255,0.45), inset 0 0 28px rgba(0,0,0,0.5);
+    padding: 1.2rem 1.4rem 1.4rem;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+  }
+  .pac-modal__head {
+    display: flex; align-items: center; gap: 1rem;
+    font-family: theme('fontFamily.terminal');
+    color: var(--text-soft);
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+  .pac-modal__title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.85rem;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px var(--neon-yellow);
+  }
+  .pac-modal__score, .pac-modal__lives { color: var(--text-muted); }
+  .pac-modal__score b { color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); margin-left: 0.4rem; }
+  .pac-modal__lives b { color: var(--neon-magenta); text-shadow: 0 0 6px var(--neon-magenta); margin-left: 0.4rem; }
+  .pac-modal__close {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--neon-magenta);
+    color: var(--neon-magenta);
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', monospace;
+    line-height: 1;
+    padding: 0;
+  }
+  .pac-modal__close:hover { background: var(--neon-magenta); color: var(--bg-void); }
+  .pac-modal canvas {
+    display: block;
+    image-rendering: pixelated;
+    border: 1px solid var(--neon-cyan);
+    background: var(--bg-void);
+  }
+  .pac-modal__hint {
+    margin-top: 0.7rem;
+    font-family: theme('fontFamily.terminal');
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+</style>

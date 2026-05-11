@@ -1,0 +1,382 @@
+---
+// Hidden Mario world warp.
+// Hold ↓ for 3 seconds → "WARPING TO WORLD 1-2…" → reveals a Mario
+// world overlay with bricks, pipe, walking goomba, scrolling sky.
+// Press Esc, click EXIT, or move down to a pipe to leave.
+---
+<div class="mario-charge" data-mario-charge aria-hidden="true">
+  <div class="mario-charge__ring"></div>
+  <div class="mario-charge__label">WARP <span data-mario-pct>0</span>%</div>
+</div>
+
+<div class="mario-world" data-mario-world hidden aria-hidden="true">
+  <div class="mario-world__sky">
+    <div class="mario-world__clouds"></div>
+    <div class="mario-world__hills"></div>
+  </div>
+  <div class="mario-world__title">
+    <span>WORLD 1-2 — UNDERGROUND TEST CHAMBER</span>
+    <button class="mario-world__exit" data-mario-exit>[ EXIT ↩ ]</button>
+  </div>
+  <div class="mario-world__stage">
+    <div class="mw-coin mw-coin--1"></div>
+    <div class="mw-coin mw-coin--2"></div>
+    <div class="mw-coin mw-coin--3"></div>
+    <div class="mw-brick mw-brick--1"></div>
+    <div class="mw-brick mw-brick--2"></div>
+    <div class="mw-brick mw-brick--3"></div>
+    <div class="mw-block mw-block--q"></div>
+    <div class="mw-pipe"></div>
+    <div class="mw-goomba"></div>
+    <div class="mw-ground"></div>
+  </div>
+  <div class="mario-world__hint">[ ESC ] to return to reality</div>
+</div>
+
+<script>
+  const charge = document.querySelector<HTMLElement>("[data-mario-charge]");
+  const world = document.querySelector<HTMLElement>("[data-mario-world]");
+  const pct = document.querySelector<HTMLElement>("[data-mario-pct]");
+  const exitBtn = document.querySelector<HTMLElement>("[data-mario-exit]");
+
+  const HOLD_MS = 3000;
+  let down = false;
+  let started = 0;
+  let raf = 0;
+  let warpedOnce = false;
+
+  function reset() {
+    down = false;
+    started = 0;
+    if (charge) {
+      charge.classList.remove("is-active");
+      if (pct) pct.textContent = "0";
+    }
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+
+  function tick() {
+    if (!down) return reset();
+    const dur = performance.now() - started;
+    const p = Math.min(1, dur / HOLD_MS);
+    if (charge && pct) pct.textContent = String(Math.floor(p * 100));
+    if (p >= 1) {
+      reset();
+      openWorld();
+      return;
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  function openWorld() {
+    if (!world) return;
+    world.hidden = false;
+    world.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => world.classList.add("is-open"));
+    if (!warpedOnce) {
+      warpedOnce = true;
+      window.dispatchEvent(new CustomEvent("evan:coin", { detail: { reason: "mario-warp" } }));
+    }
+  }
+  function closeWorld() {
+    if (!world) return;
+    world.classList.remove("is-open");
+    world.setAttribute("aria-hidden", "true");
+    setTimeout(() => { world.hidden = true; }, 280);
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (world && !world.hidden) {
+      if (e.key === "Escape") { closeWorld(); return; }
+    }
+    const target = e.target as HTMLElement | null;
+    const tag = target?.tagName?.toLowerCase();
+    if (tag === "input" || tag === "textarea" || target?.isContentEditable) return;
+    if (e.key !== "ArrowDown") return;
+    if (e.repeat) return;
+    if (down) return;
+    down = true;
+    started = performance.now();
+    if (charge) charge.classList.add("is-active");
+    raf = requestAnimationFrame(tick);
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowDown") reset();
+  });
+  // If user scrolls or clicks, cancel the charge
+  window.addEventListener("scroll", reset, { passive: true });
+  window.addEventListener("blur", reset);
+  exitBtn?.addEventListener("click", closeWorld);
+</script>
+
+<style>
+  .mario-charge {
+    position: fixed;
+    left: 50%; bottom: 50px;
+    transform: translateX(-50%);
+    z-index: 9994;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms ease;
+    display: grid;
+    place-items: center;
+    width: 90px; height: 90px;
+    font-family: theme('fontFamily.terminal');
+    color: var(--neon-yellow);
+    text-shadow: 0 0 6px var(--neon-yellow);
+  }
+  .mario-charge.is-active { opacity: 1; }
+  .mario-charge__ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background:
+      conic-gradient(var(--neon-yellow) calc(var(--p, 0) * 1%), transparent 0),
+      radial-gradient(circle at center, rgba(0,0,0,0.45) 60%, transparent 70%);
+    mask: radial-gradient(circle, transparent 30px, #000 32px);
+    -webkit-mask: radial-gradient(circle, transparent 30px, #000 32px);
+  }
+  .mario-charge.is-active .mario-charge__ring {
+    animation: mc-spin 1.2s linear infinite;
+  }
+  .mario-charge__label {
+    position: relative;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  @keyframes mc-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* World overlay */
+  .mario-world {
+    position: fixed;
+    inset: 0;
+    z-index: 99991;
+    opacity: 0;
+    transition: opacity 260ms ease;
+    pointer-events: none;
+    overflow: hidden;
+    background: #5c94fc;  /* SMB sky blue */
+    image-rendering: pixelated;
+  }
+  .mario-world.is-open { opacity: 1; pointer-events: auto; }
+  .mario-world__sky {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, #5c94fc 0%, #5c94fc 70%, #c84c0c 70%, #c84c0c 100%);
+  }
+  .mario-world__clouds {
+    position: absolute; top: 8%; left: 0; right: 0; height: 60px;
+    background-image:
+      radial-gradient(ellipse 26px 14px at 12% 50%, #fff 0 99%, transparent 100%),
+      radial-gradient(ellipse 18px 10px at 18% 35%, #fff 0 99%, transparent 100%),
+      radial-gradient(ellipse 26px 14px at 50% 70%, #fff 0 99%, transparent 100%),
+      radial-gradient(ellipse 22px 12px at 78% 45%, #fff 0 99%, transparent 100%);
+    background-repeat: repeat-x;
+    background-size: 600px 60px;
+    animation: mw-clouds 60s linear infinite;
+  }
+  .mario-world__hills {
+    position: absolute; bottom: 30%; left: 0; right: 0; height: 110px;
+    background:
+      radial-gradient(ellipse 140px 80px at 10% 100%, #00a800 0 99%, transparent 100%),
+      radial-gradient(ellipse 100px 60px at 38% 100%, #00a800 0 99%, transparent 100%),
+      radial-gradient(ellipse 180px 100px at 72% 100%, #00a800 0 99%, transparent 100%);
+    background-repeat: no-repeat;
+  }
+  .mario-world__title {
+    position: absolute;
+    top: 1rem; left: 1rem; right: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.85rem;
+    text-shadow: 2px 2px 0 #000;
+    z-index: 5;
+  }
+  .mario-world__exit {
+    background: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    text-shadow: 2px 2px 0 #000;
+  }
+  .mario-world__exit:hover { background: #ffd040; color: #000; }
+  .mario-world__hint {
+    position: absolute;
+    bottom: 1rem; left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: theme('fontFamily.terminal');
+    font-size: 0.85rem;
+    text-shadow: 2px 2px 0 #000;
+    z-index: 5;
+  }
+
+  /* Stage */
+  .mario-world__stage {
+    position: absolute;
+    inset: 0;
+  }
+  .mw-ground {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 30%;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 8px, rgba(0,0,0,0.18) 8px 9px),
+      #c84c0c;
+    border-top: 4px solid #000;
+  }
+  .mw-brick {
+    position: absolute;
+    width: 36px; height: 36px;
+    background:
+      linear-gradient(180deg, #c97a3b 0 2px, transparent 2px),
+      repeating-linear-gradient(0deg, #b0541b 0 16px, #000 16px 18px, #b0541b 18px 34px, #000 34px 36px),
+      repeating-linear-gradient(90deg, #b0541b 0 16px, #000 16px 18px, #b0541b 18px 34px, #000 34px 36px);
+    border: 2px solid #000;
+    box-shadow: inset 2px 2px 0 #e89c5e;
+  }
+  .mw-brick--1 { bottom: 32%; left: 22%; }
+  .mw-brick--2 { bottom: 32%; left: 27%; }
+  .mw-brick--3 { bottom: 32%; left: 32%; }
+  .mw-block--q {
+    position: absolute;
+    bottom: 32%; left: 50%;
+    width: 36px; height: 36px;
+    background: #f7d046;
+    border: 2px solid #000;
+    box-shadow: inset 2px 2px 0 #fff5b8, inset -2px -2px 0 #b07a00;
+    animation: mw-q-blink 1.2s steps(1) infinite;
+  }
+  .mw-block--q::after {
+    content: "?";
+    position: absolute;
+    inset: 0;
+    display: grid; place-items: center;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.2rem;
+    text-shadow: 2px 2px 0 #000;
+  }
+  @keyframes mw-q-blink {
+    0%, 70% { filter: brightness(1); }
+    71%, 80% { filter: brightness(1.4); }
+  }
+
+  .mw-pipe {
+    position: absolute;
+    bottom: 30%;
+    right: 12%;
+    width: 80px; height: 110px;
+    background:
+      linear-gradient(180deg, #00a800 0 12px, transparent 12px),
+      linear-gradient(90deg, #00a800 0 8px, #00d800 8px 24px, #00a800 24px 36px, transparent 36px) 0 0 / 100% 12px no-repeat,
+      repeating-linear-gradient(90deg, #00a800 0 12px, #00d800 12px 28px, #008400 28px 32px);
+    border: 3px solid #000;
+    border-radius: 4px 4px 0 0;
+  }
+  .mw-pipe::before {
+    content: "";
+    position: absolute;
+    top: -8px; left: -10px; right: -10px;
+    height: 18px;
+    background: repeating-linear-gradient(90deg, #00a800 0 12px, #00d800 12px 28px, #008400 28px 32px);
+    border: 3px solid #000;
+  }
+
+  .mw-goomba {
+    position: absolute;
+    bottom: 30%;
+    width: 30px; height: 28px;
+    background: #c84c0c;
+    border: 2px solid #000;
+    border-radius: 50% 50% 6px 6px;
+    box-shadow: inset 0 -8px 0 #8b3a08;
+    animation: mw-goomba-walk 6s linear infinite, mw-goomba-step 0.3s steps(2) infinite;
+  }
+  .mw-goomba::before, .mw-goomba::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    width: 6px; height: 8px;
+    background: #fff;
+    border: 1px solid #000;
+  }
+  .mw-goomba::before { left: 5px; }
+  .mw-goomba::after  { right: 5px; }
+  @keyframes mw-goomba-walk {
+    0%   { left: 80%; transform: scaleX(1); }
+    49%  { left: 8%;  transform: scaleX(1); }
+    50%  { left: 8%;  transform: scaleX(-1); }
+    99%  { left: 80%; transform: scaleX(-1); }
+    100% { left: 80%; transform: scaleX(1); }
+  }
+  @keyframes mw-goomba-step {
+    0%, 100% { transform-origin: center bottom; }
+  }
+
+  .mw-coin {
+    position: absolute;
+    width: 16px; height: 22px;
+    background: #f7d046;
+    border: 2px solid #b07a00;
+    border-radius: 4px;
+    box-shadow: inset 2px 0 0 #fff5b8, 0 0 8px rgba(247,208,70,0.8);
+    animation: mw-coin-spin 0.9s linear infinite, mw-coin-bob 1.6s ease-in-out infinite alternate;
+  }
+  .mw-coin--1 { bottom: 50%; left: 24%; }
+  .mw-coin--2 { bottom: 56%; left: 30%; }
+  .mw-coin--3 { bottom: 50%; left: 36%; animation-delay: 0.3s, 0.3s; }
+  @keyframes mw-coin-spin {
+    0%   { transform: scaleX(1); }
+    50%  { transform: scaleX(0.1); }
+    100% { transform: scaleX(1); }
+  }
+  @keyframes mw-coin-bob {
+    from { translate: 0 0; }
+    to   { translate: 0 -6px; }
+  }
+  @keyframes mw-clouds {
+    from { background-position: 0 0; }
+    to   { background-position: 600px 0; }
+  }
+
+  /* Itsame jump-bounce hook */
+  body.mario-jump {
+    animation: mario-jump-shake 1.2s cubic-bezier(.2,.7,.2,1) 1;
+  }
+  @keyframes mario-jump-shake {
+    0%   { transform: translateY(0); }
+    20%  { transform: translateY(-30px); }
+    35%  { transform: translateY(0); }
+    45%  { transform: translateY(-12px); }
+    60%  { transform: translateY(0); }
+    100% { transform: translateY(0); }
+  }
+
+  /* Starman invincibility flair */
+  body.starman {
+    animation: mario-starman 0.18s linear 0s 44;
+  }
+  @keyframes mario-starman {
+    0%   { filter: hue-rotate(0deg)   saturate(1.4); }
+    25%  { filter: hue-rotate(90deg)  saturate(1.4); }
+    50%  { filter: hue-rotate(180deg) saturate(1.4); }
+    75%  { filter: hue-rotate(270deg) saturate(1.4); }
+    100% { filter: hue-rotate(360deg) saturate(1.4); }
+  }
+
+  @media (max-width: 640px) {
+    .mw-pipe { width: 60px; height: 90px; right: 8%; }
+    .mw-brick { width: 28px; height: 28px; }
+    .mw-block--q { width: 28px; height: 28px; }
+    .mario-world__title { font-size: 0.65rem; }
+    .mario-world__exit { font-size: 0.65rem; }
+  }
+</style>
