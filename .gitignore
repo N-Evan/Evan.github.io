@@ -22,3 +22,19 @@ Thumbs.db
 
 # Local agent / tool config (machine-specific, not for shared repo)
 .claude/
+
+# Secrets / credentials — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+.netrc
+credentials.json
+service-account*.json
+secrets/
+

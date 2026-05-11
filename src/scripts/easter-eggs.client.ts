@@ -441,12 +441,14 @@ const VISIT_KEY = "evan:visit-count";
 const SESSION_VISIT_KEY = "evan:visit-counted";
 
 let visitCount = 0;
+let isFreshSession = false;
 try {
   visitCount = parseInt(localStorage.getItem(VISIT_KEY) ?? "0", 10) || 0;
   if (!sessionStorage.getItem(SESSION_VISIT_KEY)) {
     visitCount += 1;
     localStorage.setItem(VISIT_KEY, String(visitCount));
     sessionStorage.setItem(SESSION_VISIT_KEY, "1");
+    isFreshSession = true;
   }
 } catch {}
 
@@ -462,8 +464,9 @@ function paintVisitCount() {
 }
 paintVisitCount();
 
-// Welcome toast (once per session, regardless of state)
+// Welcome toast — only on fresh session entry, not on subsequent navigations.
 setTimeout(() => {
+  if (!isFreshSession) return;
   if (visitCount === 1) {
     showToast({
       title: "WELCOME, NEW OPERATOR",
