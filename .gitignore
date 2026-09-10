@@ -12,6 +12,9 @@ npm-debug.log*
 # Generated
 CONTENT-CHECKLIST.md
 
+# Studio deletes land here before unlink (recoverable, never committed)
+.studio-trash/
+
 # OS
 .DS_Store
 Thumbs.db
