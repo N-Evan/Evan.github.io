@@ -19,6 +19,23 @@
     min-height: 100dvh;
     overflow-x: hidden;
     background: transparent;
+    /* Containing block for the full-document decoration layers. Without it
+       an absolute child resolves against the viewport and stops after the
+       first screenful. */
+    position: relative;
+  }
+  /* Ambient texture. Empty in dark (the starfield does this job); in light
+     it's the A.T. Field hex wash that replaces it. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-image: var(--field-image);
+    background-size: 56px 48px;
+    opacity: var(--field-opacity);
+    transition: opacity 300ms ease;
   }
   ::selection {
     background: var(--neon-magenta);
@@ -34,6 +51,43 @@
   a:hover {
     text-shadow: 0 0 8px var(--neon-cyan);
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * Light mode: the night sky stands down.
+ * The starfield is dots-on-bone (reads as dirt), the dither/particles are
+ * synthwave atmosphere, and the arcade easter eggs are a different
+ * franchise's joke inside a NERV terminal. The hex field replaces them.
+ * ------------------------------------------------------------------ */
+:root[data-theme="light"] .starfield,
+:root[data-theme="light"] .shooters,
+:root[data-theme="light"] .particle-field,
+:root[data-theme="light"] .dither,
+:root[data-theme="light"] .sky-glow,
+:root[data-theme="light"] .pac-trail,
+:root[data-theme="light"] .mario-warp,
+:root[data-theme="light"] .pac-game {
+  display: none !important;
+}
+
+/* The grid floor survives as a schematic ground plane. */
+:root[data-theme="light"] .floor__plane {
+  opacity: 0.28;
+  filter: none;
+}
+
+/* Panels lose their bloom and gain a hairline, the way a MAGI readout is
+   drawn. Cheaper than unpicking box-shadow in ~30 components. */
+:root[data-theme="light"] [class*="panel"],
+:root[data-theme="light"] [class*="card"],
+:root[data-theme="light"] [class*="__box"] {
+  box-shadow: none;
+  border-color: var(--hairline);
+}
+
+:root[data-theme="light"] a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* Page transition glitch wipe */
@@ -75,8 +129,8 @@ html.is-page-incoming .page-wipe {
   inset: 0;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(255, 46, 136, 0.5) 0,
-    rgba(255, 46, 136, 0.5) 4px,
+    color-mix(in srgb, var(--neon-magenta) 50%, transparent) 0,
+    color-mix(in srgb, var(--neon-magenta) 50%, transparent) 4px,
     transparent 4px,
     transparent 12px
   );
@@ -92,11 +146,11 @@ html.is-page-incoming .page-wipe {
   opacity: 0.6;
 }
 .page-wipe__rgb-r {
-  background: radial-gradient(circle at 30% 50%, rgba(255, 46, 136, 0.55), transparent 60%);
+  background: radial-gradient(circle at 30% 50%, color-mix(in srgb, var(--neon-magenta) 55%, transparent), transparent 60%);
   animation: pw-rgb-r 460ms linear;
 }
 .page-wipe__rgb-c {
-  background: radial-gradient(circle at 70% 50%, rgba(0, 240, 255, 0.55), transparent 60%);
+  background: radial-gradient(circle at 70% 50%, color-mix(in srgb, var(--neon-cyan) 55%, transparent), transparent 60%);
   animation: pw-rgb-c 460ms linear;
 }
 .page-wipe__label {

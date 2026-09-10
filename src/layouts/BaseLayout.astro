@@ -4,6 +4,7 @@ import ScanlineOverlay from "../components/chrome/ScanlineOverlay.astro";
 import CRTVignette from "../components/chrome/CRTVignette.astro";
 import HUDOverlay from "../components/chrome/HUDOverlay.astro";
 import Starfield from "../components/chrome/Starfield.astro";
+import ATFieldMarks from "../components/chrome/ATFieldMarks.astro";
 import ShootingStars from "../components/chrome/ShootingStars.astro";
 import SkyGlow from "../components/chrome/SkyGlow.astro";
 import MouseSpotlight from "../components/chrome/MouseSpotlight.astro";
@@ -37,6 +38,8 @@ const rssHref = withBase("/rss.xml");
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <!-- Literal, not a token: meta content can't resolve var(). The inline
+         script below and ThemeToggle keep it in step with the active theme. -->
     <meta name="theme-color" content="#07030f" />
     <link rel="canonical" href={canonical} />
     <link rel="sitemap" type="application/xml" href={sitemapHref} />
@@ -70,11 +73,23 @@ const rssHref = withBase("/rss.xml");
           document.documentElement.classList.add("is-page-incoming");
         }
       } catch (_) {}
+
+      // Theme, applied before first paint. Mirrors resolveTheme() in
+      // src/lib/theme.ts — dark for anything that isn't exactly "light",
+      // so a corrupt value can never flash a white page.
+      try {
+        if (localStorage.getItem("evan:theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute("content", "#ece6d8");
+        }
+      } catch (_) {}
     </script>
   </head>
   <body class="text-text-soft">
     <PageWipe />
     <Starfield />
+    <ATFieldMarks />
     <ShootingStars />
     <SkyGlow />
     <MouseSpotlight />

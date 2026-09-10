@@ -124,7 +124,7 @@ const jsonLd = {
     border: 0;
     border-top: 1px dashed var(--neon-cyan);
     margin: 2rem 0;
-    box-shadow: 0 0 6px rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--neon-cyan) 30%, transparent);
   }
   .post__body { color: var(--text-soft); font-size: 1.05rem; line-height: 1.75; }
   .post__body h2 {
@@ -160,20 +160,20 @@ const jsonLd = {
   .post__body ul::marker, .post__body ol::marker { color: var(--neon-magenta); }
   .post__body li { margin: 0.4rem 0; }
   .post__body code {
-    background: rgba(0, 240, 255, 0.08);
-    border: 1px solid rgba(0, 240, 255, 0.3);
+    background: color-mix(in srgb, var(--neon-cyan) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--neon-cyan) 30%, transparent);
     padding: 0.05rem 0.35rem;
     color: var(--neon-cyan);
     font-size: 0.92em;
     font-family: ui-monospace, "JetBrains Mono", monospace;
   }
   .post__body pre {
-    background: rgba(7, 3, 15, 0.7);
+    background: color-mix(in srgb, var(--bg-void) 70%, transparent);
     border: 1px solid var(--neon-magenta);
     padding: 1rem 1.2rem;
     overflow-x: auto;
     margin: 1.2rem 0;
-    box-shadow: 0 0 10px rgba(255, 46, 136, 0.2);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--neon-magenta) 20%, transparent);
   }
   .post__body pre code {
     background: transparent;
@@ -185,7 +185,7 @@ const jsonLd = {
     border-left: 3px solid var(--neon-magenta);
     padding: 0.4rem 1rem;
     margin: 1.2rem 0;
-    background: rgba(255, 46, 136, 0.08);
+    background: color-mix(in srgb, var(--neon-magenta) 8%, transparent);
     color: var(--text-soft);
     font-style: italic;
   }
@@ -202,7 +202,7 @@ const jsonLd = {
   }
   .post__nav-link {
     border: 1px solid var(--neon-magenta);
-    background: linear-gradient(180deg, rgba(28,13,61,0.7), rgba(7,3,15,0.85));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-panel) 70%, transparent), color-mix(in srgb, var(--bg-void) 85%, transparent));
     padding: 0.85rem 1rem;
     color: inherit;
     display: flex;
@@ -213,7 +213,7 @@ const jsonLd = {
   }
   .post__nav-link:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 12px rgba(255, 46, 136, 0.4);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--neon-magenta) 40%, transparent);
   }
   .post__nav-link--next { text-align: right; }
   .post__nav-label { color: var(--text-muted); font-size: 0.78rem; letter-spacing: 0.18em; }

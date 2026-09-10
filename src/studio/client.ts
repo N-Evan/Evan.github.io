@@ -333,6 +333,44 @@ const setViewport = (mobile: boolean) => {
 $("preview-desktop").addEventListener("click", () => setViewport(false));
 $("preview-mobile").addEventListener("click", () => setViewport(true));
 
+// Theme. Drives both the studio chrome (studio.css imports theme.css, so the
+// attribute is all it needs) and the preview iframe. No CRT power cycle here —
+// the effect is pointless in a 46%-wide pane, so the swap is instant.
+const setTheme = (theme: "dark" | "light") => {
+  const root = document.documentElement;
+  if (theme === "light") root.setAttribute("data-theme", "light");
+  else root.removeAttribute("data-theme");
+
+  try { localStorage.setItem("evan:theme", theme); } catch { /* private mode */ }
+
+  $("preview-theme").textContent = theme === "light" ? "DAY" : "NIGHT";
+  $("preview-theme").setAttribute("aria-pressed", String(theme === "light"));
+
+  // The iframe is same-origin, so it already reads the same localStorage on
+  // load; this keeps an *already-open* preview in step without a reload.
+  $<HTMLIFrameElement>("preview-frame").contentWindow?.postMessage(
+    { type: "evan:theme:set", theme },
+    window.location.origin
+  );
+};
+
+const storedTheme = (): "dark" | "light" => {
+  try { return localStorage.getItem("evan:theme") === "light" ? "light" : "dark"; }
+  catch { return "dark"; }
+};
+
+setTheme(storedTheme());
+$("preview-theme").addEventListener("click", () =>
+  setTheme(storedTheme() === "light" ? "dark" : "light")
+);
+
+// The site posts up when toggled from inside the preview; mirror it.
+window.addEventListener("message", (e) => {
+  if (e.origin !== window.location.origin) return;
+  if (e.data?.type !== "evan:theme") return;
+  setTheme(e.data.theme === "light" ? "light" : "dark");
+});
+
 window.addEventListener("beforeunload", (e) => {
   if (snapshot() !== state.pristine) e.preventDefault();
 });

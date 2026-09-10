@@ -1,0 +1,55 @@
+---
+// Light-mode ambient texture: A.T. Field hexagons running down both edges of
+// the page, cropped by the viewport.
+//
+// Two rules, enforced by construction rather than by eye:
+//   1. Sides alternate, so no two marks can ever share a horizontal line.
+//   2. Vertical stops are evenly spaced, so they can't bunch up.
+// Dark mode has the starfield for this job, so the whole layer is hidden.
+
+import { atFieldMarks } from "../../lib/atField";
+
+const marks = atFieldMarks();
+---
+<div class="atf-marks" aria-hidden="true">
+  {marks.map((m) => (
+    <svg
+      class="atf-mark"
+      viewBox="0 0 200 200"
+      fill="none"
+      stroke="currentColor"
+      style={`top:${m.top}%; ${m.side}:${m.bleed}%; width:${m.size}%;`}
+    >
+      <path d="M100 8 L180 54 L180 146 L100 192 L20 146 L20 54 Z" stroke-width="1.6" />
+      <path d="M100 30 L161 65 L161 135 L100 170 L39 135 L39 65 Z" stroke-width="1.2" opacity="0.6" />
+      <path d="M100 52 L142 76 L142 124 L100 148 L58 124 L58 76 Z" stroke-width="1" opacity="0.42" />
+      <path d="M100 74 L123 87 L123 113 L100 126 L77 113 L77 87 Z" stroke-width="1" opacity="0.28" />
+    </svg>
+  ))}
+</div>
+
+<style>
+  .atf-marks { display: none; }
+
+  :global(:root[data-theme="light"]) .atf-marks {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .atf-mark {
+    position: absolute;
+    max-width: 420px;
+    color: var(--accent-bright);
+    opacity: 0.17;
+  }
+
+  /* Narrow screens: fewer, smaller, further off-edge — at phone widths the
+     marks would otherwise sit under body copy. */
+  @media (max-width: 900px) {
+    .atf-mark { opacity: 0.12; }
+    .atf-mark:nth-child(even) { display: none; }
+  }
+</style>

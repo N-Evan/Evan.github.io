@@ -24,12 +24,12 @@
     gap: 0.7rem;
     align-items: center;
     padding: 0.6rem 0.85rem;
-    background: linear-gradient(90deg, rgba(28,13,61,0.95), rgba(7,3,15,0.95));
+    background: linear-gradient(90deg, color-mix(in srgb, var(--bg-panel) 95%, transparent), color-mix(in srgb, var(--bg-void) 95%, transparent));
     border: 1px solid var(--tone);
     border-left: 3px solid var(--tone);
     box-shadow:
       0 0 12px color-mix(in srgb, var(--tone) 40%, transparent),
-      0 8px 18px rgba(0,0,0,0.6);
+      0 8px 18px color-mix(in srgb, var(--shadow-base) 60%, transparent);
     color: var(--text-soft);
     opacity: 0;
     transform: translateX(40px);
@@ -47,6 +47,20 @@
   .pix-toast--green   { --tone: var(--terminal-grn); }
   .pix-toast--dota    { --tone: #4eb5b3; }      /* Dota-ish teal */
   .pix-toast--orange  { --tone: #ff9f3f; }      /* warm orange for misc */
+  /* Those two are the only literal tones left; on bone they need darkening
+     so the icon glyph and border still read. */
+  :global(:root[data-theme="light"]) .pix-toast--dota   { --tone: #1f6360; }
+  :global(:root[data-theme="light"]) .pix-toast--orange { --tone: #9a5205; }
+
+  /* Flat card, hairline edge — no bloom. */
+  :global(:root[data-theme="light"]) .pix-toast {
+    background: var(--bg-panel);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-base) 22%, transparent);
+  }
+  :global(:root[data-theme="light"]) .pix-toast__icon {
+    box-shadow: none;
+    color: var(--bg-panel);
+  }
 
   .pix-toast__icon {
     width: 36px; height: 36px;

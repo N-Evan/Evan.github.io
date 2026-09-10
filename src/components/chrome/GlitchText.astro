@@ -16,13 +16,21 @@ const { text, as: Tag = "span", class: extraClass = "" } = Astro.props;
     color: var(--text-soft);
     display: inline-block;
   }
+  /* Light mode: the RGB-split ghosts are decoration only. Screen blend
+     lightens toward white, which erased the headline on a bone field, so
+     they're dropped to a whisper and only appear while actually glitching. */
+  :global(:root[data-theme="light"]) .glitch::before,
+  :global(:root[data-theme="light"]) .glitch::after {
+    mix-blend-mode: multiply;
+    opacity: 0.25;
+  }
   .glitch::before,
   .glitch::after {
     content: attr(data-text);
     position: absolute;
     inset: 0;
     pointer-events: none;
-    mix-blend-mode: screen;
+    mix-blend-mode: var(--glitch-blend, screen);
   }
   .glitch::before { color: var(--neon-magenta); transform: translate(0, 0); }
   .glitch::after  { color: var(--neon-cyan);    transform: translate(0, 0); }

@@ -1,3 +1,6 @@
 @import "@fontsource/press-start-2p/400.css";
 @import "@fontsource/vt323/400.css";
 @import "@fontsource-variable/inter";
+/* Light-mode display face (NERV/Matisse stand-in). ~18KB, two weights. */
+@import "@fontsource/archivo-narrow/400.css";
+@import "@fontsource/archivo-narrow/700.css";

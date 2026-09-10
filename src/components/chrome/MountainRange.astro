@@ -37,6 +37,33 @@
       fill="#04020c"
     />
   </svg>
+
+  <!-- Light: Tokyo-3. Same three layers, same parallax speeds, outline
+       instead of silhouette. -->
+  <svg
+    class="mtn mtn--city mtn--city-back"
+    viewBox="0 0 1600 220"
+    preserveAspectRatio="none"
+    data-parallax-speed="0.05"
+  >
+    <path stroke-width="2" d="M0 220 V101 H74 V220 M92 220 V115 H167 V220 M182 220 V149 H240 V220 M253 220 V149 H339 V220 M290 149 V126 H302 V149 M347 220 V104 H398 V220 M415 220 V167 H501 V220 M513 220 V152 H587 V220 M601 220 V165 H651 V220 M623 165 V144 H630 V165 M666 220 V113 H713 V220 M728 220 V106 H786 V220 M796 220 V172 H873 V220 M886 220 V137 H973 V220 M987 220 V140 H1038 V220 M1047 220 V136 H1125 V220 M1081 136 V119 H1092 V136 M1137 220 V135 H1189 V220 M1195 220 V172 H1284 V220 M1290 220 V124 H1366 V220 M1378 220 V163 H1450 V220 M1459 220 V138 H1548 V220 M1558 220 V171 H1625 V220" />
+  </svg>
+  <svg
+    class="mtn mtn--city mtn--city-mid"
+    viewBox="0 0 1600 200"
+    preserveAspectRatio="none"
+    data-parallax-speed="0.12"
+  >
+    <path stroke-width="2.4" d="M0 200 V79 H95 V200 M105 200 V131 H171 V200 M134 131 V107 H143 V131 M181 200 V89 H258 V200 M214 89 V68 H225 V89 M271 200 V67 H329 V200 M344 200 V87 H425 V200 M441 200 V96 H523 V200 M477 96 V67 H488 V96 M533 200 V62 H595 V200 M610 200 V111 H705 V200 M719 200 V128 H782 V200 M800 200 V136 H873 V200 M887 200 V119 H946 V200 M954 200 V71 H1024 V200 M1032 200 V139 H1127 V200 M1135 200 V67 H1211 V200 M1218 200 V84 H1291 V200 M1304 200 V139 H1380 V200 M1398 200 V118 H1468 V200 M1482 200 V74 H1539 V200 M1548 200 V78 H1650 V200" />
+  </svg>
+  <svg
+    class="mtn mtn--city mtn--city-front"
+    viewBox="0 0 1600 160"
+    preserveAspectRatio="none"
+    data-parallax-speed="0.22"
+  >
+    <path stroke-width="2.8" d="M0 160 V72 H68 V160 M76 160 V61 H171 V160 M189 160 V50 H261 V160 M276 160 V43 H343 V160 M354 160 V38 H459 V160 M471 160 V86 H562 V160 M510 86 V69 H523 V86 M569 160 V89 H659 V160 M608 89 V59 H620 V89 M672 160 V59 H746 V160 M760 160 V85 H843 V160 M849 160 V101 H952 V160 M893 101 V86 H907 V101 M960 160 V73 H1044 V160 M1058 160 V95 H1163 V160 M1178 160 V101 H1285 V160 M1224 101 V73 H1239 V101 M1303 160 V66 H1410 V160 M1426 160 V52 H1536 V160 M1474 52 V36 H1489 V52 M1554 160 V102 H1640 V160" />
+  </svg>
 </div>
 
 <style>
@@ -59,5 +86,17 @@
   }
   .mtn--back  { bottom: 60px; opacity: 0.9; }
   .mtn--mid   { bottom: 28px; opacity: 0.95; }
-  .mtn--front { bottom: 0;    opacity: 1;    filter: drop-shadow(0 0 6px rgba(255, 46, 136, 0.18)); }
+  .mtn--front { bottom: 0;    opacity: 1;    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--neon-magenta) 18%, transparent)); }
+
+  /* ---------- light: Tokyo-3 outline ---------- */
+  .mtn--city { display: none; fill: none; stroke: var(--text-soft); vector-effect: non-scaling-stroke; }
+
+  :global(:root[data-theme="light"]) .mtn--back,
+  :global(:root[data-theme="light"]) .mtn--mid,
+  :global(:root[data-theme="light"]) .mtn--front { display: none; }
+
+  /* Tokyo-3 was tried and cut: at this scale the outline read as noise
+     rather than a skyline, and the bone field is stronger empty. Light mode
+     has no horizon — the A.T. Field carries it alone. */
+  :global(:root[data-theme="light"]) .mtn--city { display: none; }
 </style>

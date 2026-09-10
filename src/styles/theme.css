@@ -1,16 +1,150 @@
+/* Two themes, one token set.
+   Dark  = synthwave CRT (default).
+   Light = NERV MAGI schematic — bone field, ink type, orange accents.
+
+   Token NAMES are dark-mode-flavoured (--neon-magenta) and stay that way:
+   472 call sites across the site reference them. In light mode they simply
+   hold non-neon values. Renaming would be a 472-site diff for zero pixels. */
+
 :root {
+  /* --- surfaces --- */
   --bg-void:      #07030f;
   --bg-deep:      #11062a;
   --bg-panel:     #1c0d3d;
+
+  /* --- accents --- */
   --neon-magenta: #ff2e88;
   --neon-cyan:    #00f0ff;
   --neon-yellow:  #f7d046;
   --terminal-grn: #39ff14;
+
+  /* --- type --- */
   --text-soft:    #e8dcff;
   --text-muted:   #8a7ab5;
 
+  /* --- display face: pixel in dark, condensed gothic in light --- */
+  --font-display: "Press Start 2P", monospace;
+
+  /* --- chrome --- */
   --frame-thickness: 4px;
   --scanline-opacity: 0.06;
+  --vignette-tint: rgba(7, 3, 15, 0.65);
+
+  /* Stand-ins for hardcoded overlays, so they follow the theme:
+     shadow-base replaces literal black, and --text-soft replaces literal
+     white (it inverts correctly on its own). */
+  --shadow-base: #000000;
+  --scanline-color: #ffffff;
+  --scanline-blend: overlay;
+
+  /* Decorative accent — allowed to be brighter than the text accent because
+     nothing has to be READ off it. In dark they're the same colour. */
+  --accent-bright: var(--neon-cyan);
+
+  /* Hairline used for panel edges. Dark mode leans on glow instead, so this
+     is near-invisible; light mode does all its structural work with it. */
+  --hairline: color-mix(in srgb, var(--neon-cyan) 22%, transparent);
+
+  /* Ambient background texture. Dark mode has the starfield, so: none. */
+  --field-opacity: 0;
+  --field-image: none;
+
+  /* Scene toggles, read by the chrome components. */
+  --scene-starfield: block;
+  --scene-arcade: block;
+}
+
+/* ------------------------------------------------------------------ *
+ * LIGHT — MAGI schematic
+ * ------------------------------------------------------------------ */
+:root[data-theme="light"] {
+  --bg-void:      #ece6d8;  /* bone field   */
+  --bg-deep:      #e4ddcd;  /* recessed     */
+  --bg-panel:     #f5f1e7;  /* raised card  */
+
+  /* Every one of these is a TEXT colour somewhere, so all are picked to
+     clear 4.5:1 on the bone field. The bright decorative orange lives
+     separately in --accent-bright. */
+  --neon-magenta: #a3140b;  /* alert red    — 6.4:1 */
+  --neon-cyan:    #9c3c05;  /* NERV orange  — 6.6:1 */
+  --neon-yellow:  #74490a;  /* amber label  — 6.9:1 */
+  --terminal-grn: #2c5320;  /* status green — 7.6:1 */
+
+  --text-soft:    #16130f;  /* ink          — 15.2:1 */
+  --text-muted:   #57503f;  /* dim label    — 6.8:1  */
+
+  --accent-bright: #e2580a; /* fills, rules, hexes — never text */
+
+  --font-display: "Archivo Narrow", "Arial Narrow", sans-serif;
+
+  /* CRTs are canon in both modes, but bone doesn't need as much — and the
+     scanline must darken here, not lighten. */
+  --scanline-opacity: 0.03;
+  --scanline-color: #16130f;
+  --scanline-blend: multiply;
+
+  --shadow-base: #6b5a3a;   /* warm grey-brown, not black */
+
+  /* The vignette was the single worst legibility bug: a 65% near-black
+     wash over a bone page. Barely there now. */
+  --vignette-tint: rgba(140, 116, 74, 0.14);
+
+  --hairline: rgba(22, 19, 15, 0.26);
+
+  /* The hexagon wash replaces the starfield as ambient texture.
+     Kept low so it never competes with foreground copy. */
+  --field-opacity: 0.09;
+  --field-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='48' viewBox='0 0 56 48'><path d='M14 0 L42 0 L56 24 L42 48 L14 48 L0 24 Z' fill='none' stroke='%23e2580a' stroke-width='1'/></svg>");
+
+  --scene-starfield: none;
+  --scene-arcade: none;
+}
+
+/* NERV terminals are flat. Every 0 0 Npx bloom on the site is authored
+   inline across ~30 components; killing them centrally beats editing each.
+   This is the one place a global !important is the correct tool. */
+:root[data-theme="light"] * {
+  text-shadow: none !important;
+}
+
+/* Display type: pixel headings become condensed gothic in light mode. */
+:root[data-theme="light"] .font-pixel,
+:root[data-theme="light"] h1,
+:root[data-theme="light"] h2,
+:root[data-theme="light"] h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* Headings are INK, not accent. A MAGI readout puts orange on the small
+   eyebrow labels and the rules — the headline itself is set in ink. Orange
+   at 32px reads as decoration and costs contrast for no benefit.
+   Specificity (0,1,1) beats the .text-neon-* utilities (0,1,0). */
+:root[data-theme="light"] h1,
+:root[data-theme="light"] h2,
+:root[data-theme="light"] h3 {
+  color: var(--text-soft);
+}
+
+/* Orange stays where it belongs: the small uppercase labels above a
+   heading, which is exactly the NERV tag treatment. */
+:root[data-theme="light"] .section-tag {
+  color: var(--neon-cyan);
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------ *
+ * Cross-fade. The CRT power cycle hides the actual swap, but anything
+ * that outruns the overlay (or reduced-motion, which skips it) still
+ * needs to move rather than snap.
+ * ------------------------------------------------------------------ */
+:root.theme-anim,
+:root.theme-anim body,
+:root.theme-anim .pane,
+:root.theme-anim [class*="panel"],
+:root.theme-anim [class*="card"] {
+  transition: background-color 260ms ease, color 260ms ease, border-color 260ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -3,19 +3,22 @@ export default {
   content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
   theme: {
     extend: {
+      // Point at the CSS custom properties so `bg-bg-void` etc. follow the
+      // active theme. Safe as bare var() because nothing uses Tailwind's
+      // slash opacity modifier on these (verified: zero call sites).
       colors: {
-        "bg-void":      "#07030f",
-        "bg-deep":      "#11062a",
-        "bg-panel":     "#1c0d3d",
-        "neon-magenta": "#ff2e88",
-        "neon-cyan":    "#00f0ff",
-        "neon-yellow":  "#f7d046",
-        "terminal-grn": "#39ff14",
-        "text-soft":    "#e8dcff",
-        "text-muted":   "#8a7ab5",
+        "bg-void":      "var(--bg-void)",
+        "bg-deep":      "var(--bg-deep)",
+        "bg-panel":     "var(--bg-panel)",
+        "neon-magenta": "var(--neon-magenta)",
+        "neon-cyan":    "var(--neon-cyan)",
+        "neon-yellow":  "var(--neon-yellow)",
+        "terminal-grn": "var(--terminal-grn)",
+        "text-soft":    "var(--text-soft)",
+        "text-muted":   "var(--text-muted)",
       },
       fontFamily: {
-        pixel:    ['"Press Start 2P"', "monospace"],
+        pixel:    ["var(--font-display)"],
         terminal: ['"VT323"', "monospace"],
         body:     ['"Inter Variable"', "Inter", "system-ui", "sans-serif"],
       },

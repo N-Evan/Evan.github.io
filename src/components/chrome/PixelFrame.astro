@@ -29,7 +29,7 @@ const colorVar =
     box-shadow:
       0 0 0 var(--t) var(--bg-void),
       0 0 0 calc(var(--t) * 2) var(--frame-color),
-      0 0 18px rgba(0, 0, 0, 0.5);
+      0 0 18px color-mix(in srgb, var(--shadow-base) 50%, transparent);
     margin: calc(var(--t) * 2);
   }
   .pixel-frame::before,
