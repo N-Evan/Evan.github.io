@@ -6,6 +6,9 @@ import { TYPES, listEntries, readEntry, slugify } from "@/studio/store.mjs";
 
 let root: string;
 
+type Entry = { id: string; title: string; sort: number; data: any };
+
+
 const project = (title: string, order: number) =>
   `---\ntitle: ${title}\norder: ${order}\nyear: 2025\n---\n\n## Role\n\nBody of ${title}.\n`;
 
@@ -48,18 +51,18 @@ describe("TYPES", () => {
 describe("listEntries", () => {
   it("sorts projects by order ascending", async () => {
     const list = await listEntries(root, "projects");
-    expect(list.map((e) => e.id)).toEqual(["alpha", "beta"]);
+    expect(list.map((e: Entry) => e.id)).toEqual(["alpha", "beta"]);
     expect(list[0].title).toBe("Alpha");
   });
 
   it("sorts posts newest first", async () => {
     const list = await listEntries(root, "posts");
-    expect(list.map((e) => e.id)).toEqual(["newer", "older"]);
+    expect(list.map((e: Entry) => e.id)).toEqual(["newer", "older"]);
   });
 
   it("returns career entries in JSON array order", async () => {
     const list = await listEntries(root, "career");
-    expect(list.map((e) => e.id)).toEqual(["b", "a"]);
+    expect(list.map((e: Entry) => e.id)).toEqual(["b", "a"]);
   });
 
   it("returns an empty array when the directory is missing", async () => {

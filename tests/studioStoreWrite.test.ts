@@ -7,6 +7,9 @@ import {
 } from "@/studio/store.mjs";
 
 let root: string;
+
+type Entry = { id: string; title: string; sort: number; data: any };
+
 const KEYS = ["title", "order", "year", "tagline"];
 
 beforeEach(async () => {
@@ -66,7 +69,7 @@ describe("createEntry", () => {
       "", []
     );
     const list = await listEntries(root, "career");
-    expect(list.map((e) => e.id)).toEqual(["b", "a", "new-role"]);
+    expect(list.map((e: Entry) => e.id)).toEqual(["b", "a", "new-role"]);
   });
 
   it("leaves no .tmp files behind", async () => {
@@ -105,7 +108,7 @@ describe("writeEntry", () => {
       "", []
     );
     const list = await listEntries(root, "career");
-    expect(list.map((e) => e.id)).toEqual(["b", "a"]);
+    expect(list.map((e: Entry) => e.id)).toEqual(["b", "a"]);
     expect(list[1].data.title).toBe("A renamed");
     expect(list[1].data.tone).toBe("yellow");
   });
@@ -128,7 +131,7 @@ describe("deleteEntry", () => {
   it("removes a career entry from the array", async () => {
     await deleteEntry(root, "career", "b");
     const list = await listEntries(root, "career");
-    expect(list.map((e) => e.id)).toEqual(["a"]);
+    expect(list.map((e: Entry) => e.id)).toEqual(["a"]);
   });
 
   it("trashes a career entry as JSON", async () => {
@@ -147,8 +150,8 @@ describe("reorderEntries", () => {
   it("renumbers project order fields to match the given sequence", async () => {
     await reorderEntries(root, "projects", ["beta", "alpha"]);
     const list = await listEntries(root, "projects");
-    expect(list.map((e) => e.id)).toEqual(["beta", "alpha"]);
-    expect(list.map((e) => e.data.order)).toEqual([1, 2]);
+    expect(list.map((e: Entry) => e.id)).toEqual(["beta", "alpha"]);
+    expect(list.map((e: Entry) => e.data.order)).toEqual([1, 2]);
   });
 
   it("preserves project bodies while reordering", async () => {
@@ -160,7 +163,7 @@ describe("reorderEntries", () => {
 
   it("splices the career array", async () => {
     await reorderEntries(root, "career", ["a", "b"]);
-    expect((await listEntries(root, "career")).map((e) => e.id)).toEqual(["a", "b"]);
+    expect((await listEntries(root, "career")).map((e: Entry) => e.id)).toEqual(["a", "b"]);
   });
 
   it("rejects a list that does not match the existing ids", async () => {

@@ -1,5 +1,6 @@
 import { FIELDS, blankEntry, type Field } from "./fields";
 import { renderField } from "./widgets";
+import { moveInList, previewUrlFor } from "./preview";
 
 type Type = keyof typeof FIELDS;
 
@@ -27,6 +28,16 @@ const state = {
   pristine: "",
   isNew: false,
 };
+
+const BASE = document.documentElement.dataset.previewHome ?? "/";
+
+function refreshPreview(bust = false) {
+  if (!state.type) return;
+  const frame = $<HTMLIFrameElement>("preview-frame");
+  const next = previewUrlFor(state.type, state.id, BASE, bust ? Date.now() : undefined);
+  if (frame.getAttribute("src") !== next) frame.setAttribute("src", next);
+  else if (bust) frame.contentWindow?.location.reload();
+}
 
 function toast(message: string, isError = false) {
   const node = $("toast");
@@ -133,19 +144,22 @@ function showErrors(errors: Array<{ path: string; message: string }> = []) {
   }
 }
 
-// Extended in Task 11 with drag-reorder.
 function renderRails() {
   for (const section of document.querySelectorAll<HTMLElement>(".rail-group")) {
     const type = section.dataset.type as Type;
     const list = section.querySelector<HTMLUListElement>(".rail-list")!;
+    const reorderable = type !== "posts";
     list.replaceChildren();
+
     for (const entry of state.lists[type] ?? []) {
       const item = document.createElement("li");
       item.className = "rail-item";
       item.dataset.id = entry.id;
       item.dataset.type = type;
+      item.draggable = reorderable;
       if (state.type === type && state.id === entry.id) item.setAttribute("aria-current", "true");
-      if (type !== "posts") {
+
+      if (reorderable) {
         const grip = document.createElement("span");
         grip.className = "rail-item__grip";
         grip.textContent = "∷";
@@ -158,8 +172,43 @@ function renderRails() {
       meta.textContent = String(entry.data.year ?? entry.data.stamp ?? "");
       item.append(label, meta);
       item.addEventListener("click", () => void select(type, entry.id));
+
+      if (reorderable) {
+        item.addEventListener("dragstart", (e) => {
+          e.dataTransfer?.setData("text/plain", `${type}:${entry.id}`);
+        });
+        item.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          item.classList.add("is-dragover");
+        });
+        item.addEventListener("dragleave", () => item.classList.remove("is-dragover"));
+        item.addEventListener("drop", (e) => {
+          e.preventDefault();
+          item.classList.remove("is-dragover");
+          const [dragType, dragId] = (e.dataTransfer?.getData("text/plain") ?? "").split(":");
+          if (dragType !== type || !dragId || dragId === entry.id) return;
+          void commitReorder(type, dragId, entry.id);
+        });
+      }
       list.append(item);
     }
+  }
+}
+
+async function commitReorder(type: Type, dragId: string, dropId: string) {
+  const ids = (state.lists[type] ?? []).map((entry) => entry.id);
+  const next = moveInList(ids, ids.indexOf(dragId), ids.indexOf(dropId));
+  try {
+    await api(`/reorder/${type}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: next }),
+    });
+    await refreshLists();
+    refreshPreview(true);
+    toast(`reordered ${type}`);
+  } catch (err) {
+    toast((err as Error).message, true);
   }
 }
 
@@ -169,7 +218,6 @@ async function refreshLists() {
   renderRails();
 }
 
-// Extended in Task 11 to point the preview iframe at the entry.
 async function select(type: Type, id: string) {
   if (snapshot() !== state.pristine && !confirm("Discard unsaved changes?")) return;
   const entry = await api(`/entry/${type}/${id}`);
@@ -183,6 +231,7 @@ async function select(type: Type, id: string) {
   showErrors();
   renderForm();
   renderRails();
+  refreshPreview();
 }
 
 function startNew(type: Type) {
@@ -204,7 +253,6 @@ function startNew(type: Type) {
   renderRails();
 }
 
-// Extended in Task 11 to reload the preview after a successful save.
 async function save() {
   if (!state.type) return;
   const payload = JSON.stringify({ data: state.data, body: state.body });
@@ -226,6 +274,7 @@ async function save() {
     state.pristine = snapshot();
     await refreshLists();
     onFormChanged();
+    refreshPreview(true);
     toast(`saved ${state.type}/${result.id}`);
   } catch (err) {
     const issues = (err as { errors?: Array<{ path: string; message: string }> }).errors;
@@ -261,6 +310,7 @@ async function remove() {
   state.pristine = snapshot();
   await refreshLists();
   renderForm();
+  $<HTMLIFrameElement>("preview-frame").setAttribute("src", BASE);
 }
 
 $("btn-save").addEventListener("click", () => void save());
@@ -275,6 +325,14 @@ for (const button of document.querySelectorAll<HTMLElement>(".rail-new")) {
     startNew((button.closest(".rail-group") as HTMLElement).dataset.type as Type);
   });
 }
+const setViewport = (mobile: boolean) => {
+  $("preview-frame").classList.toggle("is-mobile", mobile);
+  $("preview-desktop").setAttribute("aria-pressed", String(!mobile));
+  $("preview-mobile").setAttribute("aria-pressed", String(mobile));
+};
+$("preview-desktop").addEventListener("click", () => setViewport(false));
+$("preview-mobile").addEventListener("click", () => setViewport(true));
+
 window.addEventListener("beforeunload", (e) => {
   if (snapshot() !== state.pristine) e.preventDefault();
 });
