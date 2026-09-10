@@ -1,22 +1,69 @@
 ---
-// Replaced in Task 9 with the real three-pane shell.
+// Local authoring tool. Injected at /studio by src/studio/plugin.mjs, and only
+// when `command === "dev"` — this file is never built into dist/.
+import "@fontsource/press-start-2p";
+import "@fontsource/vt323";
+import "./studio.css";
+import { withBase } from "../lib/url";
+
+const previewHome = withBase("/");
 ---
-<html lang="en">
-  <head><meta charset="utf-8" /><title>Studio</title></head>
+<html lang="en" data-preview-home={previewHome}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>STUDIO // Evan Portfolio</title>
+  </head>
   <body>
-    <h1>Studio</h1>
-    <pre id="probe">loading…</pre>
+    <div class="studio">
+      <div class="pane" id="sidebar">
+        <div class="pane__head"><span>STUDIO</span></div>
+        <section class="rail-group" data-type="projects">
+          <div class="pane__head"><span>PROJECTS</span><button class="btn rail-new" type="button">+ NEW</button></div>
+          <ul class="rail-list"></ul>
+        </section>
+        <section class="rail-group" data-type="posts">
+          <div class="pane__head"><span>POSTS</span><button class="btn rail-new" type="button">+ NEW</button></div>
+          <ul class="rail-list"></ul>
+        </section>
+        <section class="rail-group" data-type="career">
+          <div class="pane__head"><span>CAREER</span><button class="btn rail-new" type="button">+ NEW</button></div>
+          <ul class="rail-list"></ul>
+        </section>
+      </div>
+
+      <div class="pane" id="editor">
+        <div class="pane__head"><span id="form-title">NOTHING SELECTED</span></div>
+        <div class="checklist" id="form-checklist"></div>
+        <form id="form-fields" autocomplete="off">
+          <p class="empty">Pick an entry on the left, or start a new one.</p>
+        </form>
+        <div class="actionbar">
+          <button class="btn btn--primary" id="btn-save" type="button" disabled>SAVE</button>
+          <button class="btn" id="btn-discard" type="button" disabled>DISCARD</button>
+          <button class="btn btn--danger" id="btn-delete" type="button" disabled>DELETE</button>
+          <span id="dirty-flag"></span>
+        </div>
+      </div>
+
+      <div class="pane" id="preview">
+        <div class="pane__head">
+          <span>PREVIEW</span>
+          <span>
+            <button class="btn" id="preview-desktop" type="button" aria-pressed="true">DESKTOP</button>
+            <button class="btn" id="preview-mobile" type="button" aria-pressed="false">MOBILE</button>
+          </span>
+        </div>
+        <div class="preview-body">
+          <iframe id="preview-frame" title="Live site preview" src={previewHome}></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
     <script>
-      fetch("/__studio/entries")
-        .then((r) => r.json())
-        .then((d) => {
-          document.getElementById("probe").textContent = JSON.stringify(
-            Object.fromEntries(
-              Object.entries(d.entries).map(([k, v]) => [k, v.length])
-            ),
-            null, 2
-          );
-        });
+      import "./client";
     </script>
   </body>
 </html>
