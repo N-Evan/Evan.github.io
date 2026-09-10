@@ -1,23 +1,27 @@
 ---
 // Persistent corner HUD telemetry — fixed-position, decorative.
+// Exception: the theme toggle in the top-right corner is a real control,
+// so that corner is not aria-hidden.
+import ThemeToggle from "./ThemeToggle.astro";
 ---
-<div class="hud" aria-hidden="true">
-  <div class="hud__corner hud__tl">
+<div class="hud">
+  <div class="hud__corner hud__tl" aria-hidden="true">
     <span class="hud__bracket">[</span>
     <span class="hud__label">SYS</span>
     <span class="hud__value" data-clock>--:--:--</span>
     <span class="hud__bracket">]</span>
   </div>
   <div class="hud__corner hud__tr">
-    <span class="hud__bracket">[</span>
-    <span class="hud__dot"></span>
-    <span class="hud__value">LINK::STABLE</span>
-    <span class="hud__bracket">]</span>
+    <span aria-hidden="true" class="hud__bracket">[</span>
+    <span aria-hidden="true" class="hud__dot"></span>
+    <span aria-hidden="true" class="hud__value">LINK::STABLE</span>
+    <span aria-hidden="true" class="hud__bracket">]</span>
+    <ThemeToggle />
   </div>
-  <div class="hud__corner hud__bl">
+  <div class="hud__corner hud__bl" aria-hidden="true">
     <span class="hud__value">PORTFOLIO.exe v2.0</span>
   </div>
-  <div class="hud__corner hud__br">
+  <div class="hud__corner hud__br" aria-hidden="true">
     <span class="hud__coin" data-coin-counter>
       <span class="hud__coin-icon">●</span>
       <span class="hud__coin-count" data-coin-count>000</span>
@@ -63,7 +67,8 @@
     text-transform: uppercase;
   }
   .hud__tl { top: 0; left: 0; color: var(--neon-cyan); }
-  .hud__tr { top: 0; right: 0; color: var(--neon-magenta); }
+  .hud__tr { top: 0; right: 0; color: var(--neon-magenta); opacity: 1; }
+  .hud__tr .hud__bracket, .hud__tr .hud__dot, .hud__tr .hud__value { opacity: 0.7; }
   .hud__bl { bottom: 0; left: 0; color: var(--text-muted); }
   .hud__br { bottom: 0; right: 0; color: var(--terminal-grn); gap: 0.7rem; }
   .hud__coin {
@@ -95,5 +100,6 @@
   @media (max-width: 640px) {
     .hud { font-size: 0.65rem; }
     .hud__bl, .hud__br { display: none; }
+    .hud__tr .hud__value { display: none; }
   }
 </style>

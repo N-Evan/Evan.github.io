@@ -13,6 +13,7 @@ const defaultSections: SectionEntry[] = [
   { id: "profile",     label: "Profile" },
   { id: "missions",    label: "Missions" },
   { id: "loadout",     label: "Loadout" },
+  { id: "architecture", label: "Systems" },
   { id: "career",      label: "Career" },
   { id: "comms",       label: "Comms" },
 ];
@@ -34,6 +35,8 @@ const { sections = defaultSections } = Astro.props;
 </nav>
 
 <script>
+  import { pickActiveSection } from "../../lib/sectionScroll";
+
   const dotsNav = document.querySelector<HTMLElement>(".section-dots");
   const dots = document.querySelectorAll<HTMLAnchorElement>(".section-dot");
   if (dots.length && dotsNav) {
@@ -50,18 +53,30 @@ const { sections = defaultSections } = Astro.props;
       dots.forEach((d) => d.classList.toggle("is-active", d.dataset.section === id));
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let best: IntersectionObserverEntry | null = null;
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          if (!best || entry.intersectionRatio > best.intersectionRatio) best = entry;
-        }
-        if (best) setActive((best.target as HTMLElement).id);
-      },
-      { threshold: [0.3, 0.5, 0.7], rootMargin: "-15% 0px -25% 0px" }
-    );
-    targets.forEach((t) => observer.observe(t));
+    // Ratio thresholds were the bug: a section TALLER than the viewport can
+    // never reach intersectionRatio 0.3, so #career (a long timeline) never
+    // activated and the neighbouring dot stayed lit instead. The pure part
+    // lives in lib/sectionScroll.ts so it's covered by tests.
+    const FOCUS = 0.38; // fraction down the viewport that "you are here" means
+
+    function pickActive() {
+      const boxes = targets.map((t) => {
+        const r = t.getBoundingClientRect();
+        return { id: t.id, top: r.top, bottom: r.bottom };
+      });
+      const id = pickActiveSection(boxes, window.innerHeight * FOCUS);
+      if (id) setActive(id);
+    }
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { pickActive(); ticking = false; });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    pickActive();
 
     // Hide dots while the hero is in view (it has its own side decorations).
     const hero = document.getElementById("press-start");

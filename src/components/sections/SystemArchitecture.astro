@@ -1,0 +1,172 @@
+---
+import GlitchText from "../chrome/GlitchText.astro";
+import RevealOnScroll from "../chrome/RevealOnScroll.astro";
+
+// Unity packages co-authored during Silent Scream 2, published to OpenUPM.
+// Edit here — this is the only place the module list lives.
+// `impls` are platform-specific implementations behind the module's interface.
+const layered: { name: string; version: string; impls: string[] }[] = [
+  { name: "savesystem",         version: "2.2.3",  impls: ["steam", "xboxcorepc"] },
+  { name: "authsystem",         version: "4.0.4",  impls: ["steam", "xboxcorepc"] },
+  { name: "achievementsystem",  version: "1.9.9",  impls: ["steam", "xboxcorepc"] },
+  { name: "settings.video",     version: "1.0.11", impls: ["hdrp", "urp"] },
+];
+
+const modules: string[] = [
+  "interactionsystem", "dialoguesystem", "inventorysystem", "objectivesystem",
+  "cutscenesystem", "puzzlesystem", "audiosystem.fmod", "addressablechunkloadersystem",
+  "loadingsystem", "cloudsave", "settingsmanager", "settings.control",
+  "settings.audio.fmod", "buttoniconresourcemanager", "betterrebinder",
+  "bettercursormanager", "splashscreensystem", "creditssystem",
+  "upmassistant", "storebuilduploader", "steamnews",
+];
+
+const registry = "https://openupm.com/packages/com.studio23.ss2.savesystem/";
+---
+<section id="architecture" class="arch relative py-24 px-6 max-w-6xl mx-auto">
+  <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
+    [ EXT ] &middot; SYSTEM ARCHITECTURE
+  </div>
+  <RevealOnScroll>
+    <GlitchText
+      as="h2"
+      text="// MODULAR RUNTIME :: 25 PACKAGES"
+      class="font-pixel text-neon-cyan text-2xl sm:text-3xl block mb-3"
+    />
+  </RevealOnScroll>
+  <RevealOnScroll delay={120}>
+    <p class="font-terminal text-text-muted text-base sm:text-lg mb-8 max-w-3xl">
+      &gt; Co-authored the decomposition of a shipped title into 25 independently
+      versioned Unity modules, published to
+      <a href={registry} target="_blank" rel="noopener noreferrer" class="arch__link">OpenUPM</a>.
+      Platform concerns sit behind interfaces &mdash; the same game logic ships to Steam and Xbox.
+    </p>
+  </RevealOnScroll>
+
+  <RevealOnScroll>
+    <div class="arch__panel">
+      <div class="arch__bar font-terminal" aria-hidden="true">
+        <span class="arch__dot"></span>
+        <span>com.studio23.ss2 &mdash; platform abstraction</span>
+      </div>
+
+      <ul class="arch__tree font-terminal">
+        {layered.map((m) => (
+          <li class="arch__node">
+            <span class="arch__mod">
+              <span class="arch__glyph" aria-hidden="true">&#9670;</span>{m.name}
+              <span class="arch__ver">[{m.version}]</span>
+              <span class="arch__kind">interface</span>
+            </span>
+            <ul class="arch__impls">
+              {m.impls.map((impl, i) => (
+                <li>
+                  <span class="arch__branch" aria-hidden="true">{i === m.impls.length - 1 ? "└─" : "├─"}</span>
+                  <span class="arch__impl">.{impl}</span>
+                  <span class="arch__kind">impl</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+
+      <p class="arch__caption font-terminal">
+        &gt; 21 further runtime modules, each versioned and consumed independently:
+      </p>
+      <ul class="arch__grid font-terminal" role="list">
+        {modules.map((m) => <li class="arch__chip">{m}</li>)}
+      </ul>
+    </div>
+  </RevealOnScroll>
+</section>
+
+<style>
+  .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+  .arch__link {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px var(--neon-cyan);
+  }
+  .arch__link:hover { text-shadow: 0 0 10px var(--neon-cyan); }
+
+  .arch__panel {
+    border: 1px solid var(--neon-cyan);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-panel) 70%, transparent), color-mix(in srgb, var(--bg-void) 85%, transparent));
+    box-shadow: 0 0 14px color-mix(in srgb, var(--neon-cyan) 18%, transparent);
+  }
+  .arch__bar {
+    display: flex; align-items: center; gap: 0.55rem;
+    padding: 0.55rem 0.9rem;
+    background: color-mix(in srgb, var(--neon-cyan) 10%, transparent);
+    border-bottom: 1px solid var(--neon-cyan);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+  }
+  .arch__dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 6px var(--neon-cyan);
+    flex: none;
+  }
+
+  .arch__tree {
+    list-style: none;
+    margin: 0;
+    padding: 1.1rem 1rem 0.4rem;
+    display: grid;
+    gap: 0.9rem;
+  }
+  @media (min-width: 820px) {
+    .arch__tree { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 2rem; }
+  }
+  .arch__node { min-width: 0; }
+  .arch__mod {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.45rem;
+    color: var(--neon-cyan);
+    font-size: 1rem;
+    text-shadow: 0 0 6px color-mix(in srgb, var(--neon-cyan) 50%, transparent);
+  }
+  .arch__glyph { color: var(--neon-magenta); text-shadow: 0 0 6px var(--neon-magenta); }
+  .arch__ver { color: var(--neon-yellow); font-size: 0.82rem; text-shadow: 0 0 6px var(--neon-yellow); }
+  .arch__kind {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-shadow: none;
+  }
+  .arch__impls {
+    list-style: none;
+    margin: 0.25rem 0 0;
+    padding-left: 1.1rem;
+  }
+  .arch__impls li {
+    display: flex; align-items: baseline; gap: 0.45rem;
+    padding: 0.1rem 0;
+  }
+  .arch__branch { color: var(--text-muted); }
+  .arch__impl { color: var(--text-soft); font-size: 0.92rem; }
+
+  .arch__caption {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 0.9rem 1rem 0;
+    border-top: 1px dashed var(--text-muted);
+    margin: 0.9rem 1rem 0;
+  }
+  .arch__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0.7rem 1rem 1.1rem;
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+  }
+  .arch__chip {
+    border: 1px dashed var(--text-muted);
+    background: color-mix(in srgb, var(--text-soft) 2%, transparent);
+    color: var(--text-soft);
+    font-size: 0.78rem;
+    padding: 0.22rem 0.5rem;
+    letter-spacing: 0.04em;
+  }
+</style>

@@ -224,7 +224,7 @@ function platSlug(s: string) {
     align-items: center;
     gap: 0.5rem;
     padding: 0.7rem 0.9rem;
-    background: rgba(7,3,15,0.5);
+    background: color-mix(in srgb, var(--bg-void) 50%, transparent);
     border: 1px dashed var(--neon-cyan);
     margin-bottom: 1.5rem;
   }
@@ -254,7 +254,7 @@ function platSlug(s: string) {
     border-color: var(--neon-cyan);
     color: var(--neon-cyan);
     text-shadow: 0 0 6px var(--neon-cyan);
-    box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--neon-cyan) 40%, transparent);
   }
   .filter-chip.is-active {
     background: var(--neon-magenta);
@@ -307,12 +307,12 @@ function platSlug(s: string) {
   }
   .mc-frame {
     position: relative;
-    background: linear-gradient(180deg, rgba(28,13,61,0.85), rgba(7,3,15,0.92));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-panel) 85%, transparent), color-mix(in srgb, var(--bg-void) 92%, transparent));
     border: 2px solid var(--neon-magenta);
     box-shadow:
       0 0 0 4px var(--bg-void),
-      0 0 18px rgba(255,46,136,0.25),
-      0 8px 24px rgba(0,0,0,0.6);
+      0 0 18px color-mix(in srgb, var(--neon-magenta) 25%, transparent),
+      0 8px 24px color-mix(in srgb, var(--shadow-base) 60%, transparent);
     padding: 1rem 1rem 1.1rem;
     transition: box-shadow 250ms ease, border-color 200ms ease;
     overflow: hidden;
@@ -320,14 +320,14 @@ function platSlug(s: string) {
   .mission-card:hover .mc-frame {
     box-shadow:
       0 0 0 4px var(--bg-void),
-      0 0 26px rgba(255,46,136,0.55),
-      0 0 50px rgba(255,46,136,0.25),
-      0 12px 30px rgba(0,0,0,0.7);
+      0 0 26px color-mix(in srgb, var(--neon-magenta) 55%, transparent),
+      0 0 50px color-mix(in srgb, var(--neon-magenta) 25%, transparent),
+      0 12px 30px color-mix(in srgb, var(--shadow-base) 70%, transparent);
   }
   .mc-frame::before {
     content: "";
     position: absolute; inset: -1px;
-    background: linear-gradient(120deg, transparent 30%, rgba(0,240,255,0.18) 50%, transparent 70%);
+    background: linear-gradient(120deg, transparent 30%, color-mix(in srgb, var(--neon-cyan) 18%, transparent) 50%, transparent 70%);
     transform: translateX(-100%);
     pointer-events: none;
     transition: transform 700ms ease;
@@ -376,7 +376,7 @@ function platSlug(s: string) {
   .mc-thumb__scan {
     position: absolute; left: 0; right: 0; height: 30%;
     top: -30%;
-    background: linear-gradient(180deg, transparent, rgba(0,240,255,0.18), transparent);
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--neon-cyan) 18%, transparent), transparent);
     pointer-events: none;
   }
   .mission-card:hover .mc-thumb__scan { animation: m-scan 1.4s ease-in-out infinite; }
@@ -387,8 +387,8 @@ function platSlug(s: string) {
   .mc-thumb__grid {
     position: absolute; inset: 0;
     background-image:
-      linear-gradient(to right, rgba(0,240,255,0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0,240,255,0.08) 1px, transparent 1px);
+      linear-gradient(to right, color-mix(in srgb, var(--neon-cyan) 8%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--neon-cyan) 8%, transparent) 1px, transparent 1px);
     background-size: 16px 16px;
     pointer-events: none;
   }
@@ -397,7 +397,7 @@ function platSlug(s: string) {
   .mc-title {
     color: var(--text-soft);
     line-height: 1.1;
-    text-shadow: 0 0 8px rgba(255,46,136,0.4);
+    text-shadow: 0 0 8px color-mix(in srgb, var(--neon-magenta) 40%, transparent);
   }
   .mc-tagline { margin-top: 0.25rem; line-height: 1.4; }
 

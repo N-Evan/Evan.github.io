@@ -118,13 +118,66 @@ const tickerItems = [
     letter-spacing: 0.1em;
   }
   .social-link:hover {
-    background: rgba(0,240,255,0.08);
+    background: color-mix(in srgb, var(--neon-cyan) 8%, transparent);
     border-color: var(--neon-magenta);
     color: var(--neon-cyan);
     transform: translateY(-2px);
-    box-shadow: 0 0 14px rgba(0,240,255,0.4);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--neon-cyan) 40%, transparent);
     text-shadow: 0 0 6px var(--neon-cyan);
   }
   .social-link__bracket { color: var(--text-muted); }
   .social-link__hint { color: var(--neon-magenta); font-size: 0.85em; opacity: 0.7; }
+
+  /* ---------- light: WARNING register, dialled right back ---------- *
+     A full-bleed orange field was unreadable to sit in front of. The alarm
+     now reads as two hazard RULES bracketing a bone section — the register
+     is still unmistakable, but the page stays somewhere you can linger. */
+  :global(:root[data-theme="light"]) .comms {
+    background: var(--bg-panel);
+    position: relative;
+    border-top: 2px solid var(--text-soft);
+    border-bottom: 2px solid var(--text-soft);
+  }
+  :global(:root[data-theme="light"]) .comms::before,
+  :global(:root[data-theme="light"]) .comms::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 10px;
+    background: repeating-linear-gradient(
+      45deg,
+      var(--accent-bright) 0 10px,
+      transparent 10px 20px
+    );
+  }
+  :global(:root[data-theme="light"]) .comms::before { top: 0; }
+  :global(:root[data-theme="light"]) .comms::after  { bottom: 0; }
+
+  :global(:root[data-theme="light"]) .comms h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  :global(:root[data-theme="light"]) .comms .waveform {
+    color: var(--accent-bright);
+    opacity: 0.35;
+  }
+
+  /* The one saturated element left: the social links, which are the actual
+     call to action. */
+  :global(:root[data-theme="light"]) .social-link {
+    border: 2px solid var(--neon-cyan);
+    border-style: solid;
+    color: var(--neon-cyan);
+    background: transparent;
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  :global(:root[data-theme="light"]) .social-link:hover {
+    background: var(--neon-cyan);
+    color: var(--bg-panel);
+    border-color: var(--neon-cyan);
+    box-shadow: none;
+  }
+  :global(:root[data-theme="light"]) .social-link__bracket,
+  :global(:root[data-theme="light"]) .social-link__hint { color: inherit; opacity: 0.6; }
 </style>

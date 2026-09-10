@@ -1,10 +1,18 @@
 ---
-// The classic synthwave sun — magenta-to-yellow gradient half-disc with
-// horizontal bars cutting through the lower portion. Pure CSS, decorative.
+// Dark: the classic synthwave sun — magenta-to-yellow gradient half-disc with
+// horizontal bars cutting through the lower portion.
+// Light: the same silhouette rebuilt as a concentric A.T. Field hexagon —
+// same anchor, same bar-mask, same pulse. Decorative either way.
 ---
 <div class="retrosun" aria-hidden="true">
   <div class="retrosun__halo"></div>
   <div class="retrosun__disc"></div>
+  <svg class="retrosun__atf" viewBox="0 0 200 200" fill="none" stroke="currentColor">
+    <path d="M100 8 L180 54 L180 146 L100 192 L20 146 L20 54 Z" stroke-width="1.6" />
+    <path d="M100 30 L161 65 L161 135 L100 170 L39 135 L39 65 Z" stroke-width="1.2" opacity="0.62" />
+    <path d="M100 52 L142 76 L142 124 L100 148 L58 124 L58 76 Z" stroke-width="1" opacity="0.45" />
+    <path d="M100 74 L123 87 L123 113 L100 126 L77 113 L77 87 Z" stroke-width="1" opacity="0.3" />
+  </svg>
 </div>
 
 <style>
@@ -22,8 +30,8 @@
     position: absolute;
     inset: -60px;
     background:
-      radial-gradient(ellipse 60% 60% at 50% 80%, rgba(255, 46, 136, 0.30), transparent 65%),
-      radial-gradient(ellipse 40% 35% at 50% 88%, rgba(247, 208, 70, 0.18), transparent 65%);
+      radial-gradient(ellipse 60% 60% at 50% 80%, color-mix(in srgb, var(--neon-magenta) 30%, transparent), transparent 65%),
+      radial-gradient(ellipse 40% 35% at 50% 88%, color-mix(in srgb, var(--neon-yellow) 18%, transparent), transparent 65%);
     filter: blur(18px);
     opacity: 0.85;
   }
@@ -80,7 +88,78 @@
     0%, 100% { filter: blur(0.6px) saturate(1.1) brightness(1);    }
     50%      { filter: blur(0.6px) saturate(1.2) brightness(1.12); }
   }
+
+  /* ---------- light ---------- *
+     The A.T. Field is now a page-wide layer (ATFieldMarks.astro) that
+     alternates sides down the whole document. A second, section-local one
+     here could land on the same line as a page mark, so RetroSun renders
+     nothing in light mode. */
+  .retrosun__atf { display: none; }
+  :global(:root[data-theme="light"]) .retrosun { display: none; }
+
+  :global(:root[data-theme="light"]) .retrosun__halo,
+  :global(:root[data-theme="light"]) .retrosun__disc { display: none; }
+
+  :global(:root[data-theme="light"]) .retrosun {
+    inset: 0;
+    width: auto;
+    aspect-ratio: auto;
+    transform: none;
+    left: 0;
+  }
+
+  :global(:root[data-theme="light"]) .retrosun__atf {
+    display: block;
+    position: absolute;
+    /* Anchored to the section's top-right and cropped by its overflow.
+       Centred low it sat behind the opaque mission cards and was invisible;
+       up here it reads against the empty bone beside the heading, and a
+       hexagon running off the edge is the more EVA composition anyway. */
+    top: -6%;
+    right: -10%;
+    bottom: auto;
+    left: auto;
+    margin: 0;
+    width: 52%;
+    max-width: 520px;
+    color: var(--accent-bright);
+    opacity: 0.22;
+    /* Same horizontal bar-mask the synthwave disc uses. */
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%, black 50%,
+      transparent 51%, transparent 53%,
+      black 53%, black 58%,
+      transparent 58%, transparent 61%,
+      black 61%, black 65%,
+      transparent 65%, transparent 70%,
+      black 70%, black 73%,
+      transparent 73%, transparent 80%,
+      black 80%, black 82%,
+      transparent 82%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%, black 50%,
+      transparent 51%, transparent 53%,
+      black 53%, black 58%,
+      transparent 58%, transparent 61%,
+      black 61%, black 65%,
+      transparent 65%, transparent 70%,
+      black 70%, black 73%,
+      transparent 73%, transparent 80%,
+      black 80%, black 82%,
+      transparent 82%
+    );
+    animation: atf-pulse 7s ease-in-out infinite;
+  }
+  @keyframes atf-pulse {
+    0%, 100% { opacity: 0.22; }
+    50%      { opacity: 0.30; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .retrosun__disc { animation: none; }
+    .retrosun__disc,
+    :global(:root[data-theme="light"]) .retrosun__atf { animation: none; }
   }
 </style>

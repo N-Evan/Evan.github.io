@@ -1,95 +1,16 @@
 ---
+import { getCollection } from "astro:content";
 import GlitchText from "../chrome/GlitchText.astro";
 import RevealOnScroll from "../chrome/RevealOnScroll.astro";
 
-type Tone = "magenta" | "cyan" | "yellow";
-type Kind = "role" | "milestone" | "education";
-
-interface Entry {
-  stamp: string;
-  title: string;
-  org?: string;
-  body: string;
-  tone: Tone;
-  kind: Kind;
-  icon?: string;
-}
-
-// Newest first. Add or remove entries — the timeline adapts automatically.
-const entries: Entry[] = [
-  {
-    stamp: "2025",
-    title: "Unilever Marvel 3",
-    body: "Led a 8 member team while engineering a full-scale industrial-training-sim.",
-    tone: "magenta",
-    kind: "milestone",
-    icon: "✦",
-  },
-  {
-    stamp: "2024",
-    title: "XBOX PORT // SILENT SCREAM",
-    body: "Ported the horror cooking game to XBox; tuned controller feel, performance, and platform-specific UX.",
-    tone: "magenta",
-    kind: "milestone",
-    icon: "✦",
-  },
-  {
-    stamp: "2023 — PRESENT",
-    title: "Gameplay Programmer",
-    org: "Studio-23 · Brain Station 23",
-    body: "Built core gameplay systems, tooling, and game-feel polish across Silent Scream, High Noon, and other titles. Co-authored open-source Unity packages used team-wide.",
-    tone: "magenta",
-    kind: "role",
-  },
-  {
-    stamp: "2023",
-    title: "SHIPPED // SILENT SCREAM",
-    body: "Helped launch the studio's flagship horror cooking game on Steam.",
-    tone: "cyan",
-    kind: "milestone",
-    icon: "▲",
-  },
-  {
-    stamp: "2023",
-    title: "SHIPPED // HIGH NOON",
-    body: "Released a real-time PvP duel game powered by Photon networking. Owned UI/UX on the PC build.",
-    tone: "cyan",
-    kind: "milestone",
-    icon: "▲",
-  },
-  {
-    stamp: "2022 — 2023",
-    title: "Trainee Gameplay Programmer",
-    org: "Studio-23 · Brain Station 23",
-    body: "Joined the team while finishing undergrad. Worked on VR Football for Meta Quest 2 and started High Noon.",
-    tone: "cyan",
-    kind: "role",
-  },
-  {
-    stamp: "2022",
-    title: "FIRST VR PROJECT",
-    body: "Built a Meta Quest 2 penalty-shootout saver under senior guidance. First time wrangling spatial input.",
-    tone: "yellow",
-    kind: "milestone",
-    icon: "◆",
-  },
-  {
-    stamp: "2018 — 2022",
-    title: "B.Sc. Computer Science",
-    org: "[ FILL ME IN: school + focus areas ]",
-    body: "First serious dive into Unity, building text-based adventures, prototypes, and learning the craft.",
-    tone: "yellow",
-    kind: "education",
-  },
-  {
-    stamp: "2021",
-    title: "FIRST GAME // ABYSS CRAWLER",
-    body: "Released the first proper game I solo-built — a 2D platformer. Still up on itch.io.",
-    tone: "magenta",
-    kind: "milestone",
-    icon: "▲",
-  },
-];
+// Newest first — array order in src/data/career.json is the display order.
+// getCollection does not guarantee loader order, so re-sort by it explicitly.
+const order = (await import("../../data/career.json")).default.map((e: { id: string }) => e.id);
+const collection = await getCollection("career");
+const entries = order
+  .map((id) => collection.find((e) => e.id === id))
+  .filter((e): e is NonNullable<typeof e> => Boolean(e))
+  .map((e) => e.data);
 ---
 <section id="career" class="career relative py-28 px-6 max-w-4xl mx-auto">
   <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
@@ -102,6 +23,23 @@ const entries: Entry[] = [
     <p class="font-terminal text-text-muted text-base sm:text-lg mb-12 max-w-2xl">
       &gt; Roles, shipped titles, and milestones — most recent first.
     </p>
+  </RevealOnScroll>
+
+  <RevealOnScroll delay={180}>
+    <ul class="tl-legend font-terminal">
+      <li class="tl-legend__item tl-entry--role">
+        <span class="tl-legend__node" aria-hidden="true"></span>
+        <span><b>ROLE</b> &mdash; a job I held</span>
+      </li>
+      <li class="tl-legend__item tl-entry--milestone">
+        <span class="tl-legend__node" aria-hidden="true"><span class="tl-legend__icon">&#10022;</span></span>
+        <span><b>EVENT</b> &mdash; a title shipped or milestone hit</span>
+      </li>
+      <li class="tl-legend__item tl-entry--education">
+        <span class="tl-legend__node" aria-hidden="true"></span>
+        <span><b>EDU</b> &mdash; study</span>
+      </li>
+    </ul>
   </RevealOnScroll>
 
   <ol class="timeline">
@@ -122,7 +60,7 @@ const entries: Entry[] = [
             </div>
             <h3 class="tl-title font-pixel">{e.title}</h3>
             {e.org && <p class="tl-org font-terminal">{e.org}</p>}
-            <p class="tl-body font-body">{e.body}</p>
+            <p class="tl-body font-body">{e.detail}</p>
           </div>
         </li>
       </RevealOnScroll>
@@ -141,10 +79,13 @@ const entries: Entry[] = [
     --node-size: 18px;
     --node-center: calc(var(--node-y) + var(--node-size) / 2);
     --connector-w: 26px;
+    /* Single source of truth for the horizontal axis. The rail and every
+       node read this, so they cannot drift apart. */
+    --rail-x: 50%;
   }
   .timeline__rail {
     position: absolute;
-    left: 50%; top: 0; bottom: 0;
+    left: var(--rail-x); top: 0; bottom: 0;
     width: 2px;
     transform: translateX(-50%);
     background-image: repeating-linear-gradient(
@@ -171,17 +112,80 @@ const entries: Entry[] = [
   .tl-entry--yellow  { --tone: var(--neon-yellow); }
 
   /* Diamond node aligned via shared --node-y */
+  /* Legend. The timeline carries three entry kinds and two axes of meaning
+     (shape/glyph = kind, colour = tone) with nothing to decode them. */
+  .tl-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.6rem;
+    margin: -0.5rem 0 2.5rem;
+    padding: 0.7rem 0.95rem;
+    list-style: none;
+    border: 1px solid var(--hairline);
+    background: color-mix(in srgb, var(--bg-panel) 45%, transparent);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+  .tl-legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    --tone: var(--text-muted);
+  }
+  .tl-legend__item b { color: var(--text-soft); letter-spacing: 0.12em; font-weight: 400; }
+  .tl-legend__item.tl-entry--role      { --tone: var(--neon-cyan); }
+  .tl-legend__item.tl-entry--milestone { --tone: var(--neon-magenta); }
+  .tl-legend__item.tl-entry--education { --tone: var(--neon-yellow); }
+  .tl-legend__node {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    border: 2px solid var(--tone);
+    background: var(--bg-void);
+    transform: rotate(45deg);
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+  .tl-legend__item.tl-entry--milestone .tl-legend__node {
+    width: 17px; height: 17px;
+    background: var(--tone);
+  }
+  .tl-legend__item:not(.tl-entry--milestone) .tl-legend__node::before {
+    content: "";
+    position: absolute; inset: 2px;
+    background: var(--tone);
+  }
+  .tl-legend__icon {
+    transform: rotate(-45deg);
+    font-size: 0.6rem;
+    line-height: 1;
+    color: var(--bg-void);
+  }
+  @media (max-width: 640px) {
+    .tl-legend { font-size: 0.85rem; gap: 0.45rem 1rem; }
+  }
+
   .tl-node {
-    grid-column: 2;
+    /* Anchored to --node-center by transform rather than by a margin
+       computed per node size. The old approach needed a hand-written offset
+       for every size variant (and a separate one at mobile), so any node
+       that wasn't exactly --node-size drifted off the connector. Now every
+       node centres on the connector by construction, whatever its size. */
+    /* NO grid-column: for an absolutely-positioned grid child, a grid
+       placement makes the GRID AREA the containing block, so `left: 50%`
+       resolved against the 36px middle column in some engines and against
+       a side column in others — which is why the nodes sat far right.
+       Without it the containing block is unambiguously the row box, and
+       --rail-x lines them up with the rail by construction. */
+    position: absolute;
+    left: var(--rail-x);
+    top: var(--node-center);
     width: var(--node-size);
     height: var(--node-size);
-    margin-top: var(--node-y);
-    margin-inline: auto;
+    transform: translate(-50%, -50%) rotate(45deg);
     border: 2px solid var(--tone);
     background: var(--bg-void);
     box-shadow: 0 0 10px var(--tone), 0 0 18px color-mix(in srgb, var(--tone) 40%, transparent);
-    transform: rotate(45deg);
-    position: relative;
     z-index: 2;
     display: grid;
     place-items: center;
@@ -195,7 +199,6 @@ const entries: Entry[] = [
   /* Milestone nodes get a glyph and slightly larger size */
   .tl-entry--milestone .tl-node {
     width: 26px; height: 26px;
-    margin-top: calc(var(--node-y) - 4px); /* keep center aligned: 18 = 26 - 4*2 → recenter manually */
   }
   .tl-node__icon {
     transform: rotate(-45deg);
@@ -223,7 +226,7 @@ const entries: Entry[] = [
 
   .tl-card {
     border: 1px solid var(--tone);
-    background: linear-gradient(180deg, rgba(28,13,61,0.85), rgba(7,3,15,0.9));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-panel) 85%, transparent), color-mix(in srgb, var(--bg-void) 90%, transparent));
     box-shadow: 0 0 14px color-mix(in srgb, var(--tone) 25%, transparent);
     padding: 1rem 1.1rem;
     position: relative;
@@ -252,7 +255,7 @@ const entries: Entry[] = [
 
   /* Milestone cards: subtler, more compact */
   .tl-entry--milestone .tl-card {
-    background: linear-gradient(180deg, rgba(28,13,61,0.6), rgba(7,3,15,0.75));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg-panel) 60%, transparent), color-mix(in srgb, var(--bg-void) 75%, transparent));
     border-style: dashed;
   }
   .tl-entry--milestone .tl-title {
@@ -290,26 +293,23 @@ const entries: Entry[] = [
       --node-size: 16px;
     }
     .timeline__rail {
-      left: 18px !important;
+      /* The rail reads --rail-x like everything else; see the override on
+         .timeline below. */
       transform: none !important;
     }
+    .timeline { --rail-x: 20px; }   /* 40px rail column, so centre = 20px */
     .tl-entry,
     .tl-entry.is-left,
     .tl-entry.is-right {
       grid-template-columns: 40px 1fr !important;
       margin-bottom: 1.6rem;
     }
-    .tl-entry .tl-node,
-    .tl-entry.is-left .tl-node,
-    .tl-entry.is-right .tl-node {
-      grid-column: 1 !important;
-      margin-inline: auto !important;
-    }
-    /* Milestone nodes shrink slightly on mobile so they fit the rail column */
+
+    /* Milestone nodes shrink slightly on mobile so they fit the rail column.
+       No offset needed — the transform anchor handles any size. */
     .tl-entry--milestone .tl-node {
       width: 22px !important;
       height: 22px !important;
-      margin-top: calc(var(--node-y) - 3px) !important;
     }
     .tl-entry .tl-card,
     .tl-entry.is-left .tl-card,

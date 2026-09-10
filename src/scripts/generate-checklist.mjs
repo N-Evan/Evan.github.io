@@ -5,56 +5,11 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseFrontmatter } from "../studio/frontmatter.mjs";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const PROJECTS_DIR = join(ROOT, "src/content/projects");
 const OUT = join(ROOT, "CONTENT-CHECKLIST.md");
-
-function parseFrontmatter(src) {
-  const match = src.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
-  if (!match) return { data: {}, body: src };
-  const yaml = match[1];
-  const body = match[2];
-  const data = {};
-  const arrayKeys = ["keyInsights", "gallery", "platforms", "tech", "genres"];
-  let currentArrayKey = null;
-  let inLinks = false;
-  for (const rawLine of yaml.split("\n")) {
-    const line = rawLine.replace(/\r$/, "");
-    if (!line.trim()) continue;
-    if (currentArrayKey && /^\s+-\s/.test(line)) {
-      data[currentArrayKey].push(line.replace(/^\s+-\s/, "").trim().replace(/^["']|["']$/g, ""));
-      continue;
-    }
-    if (inLinks && /^\s+\w+:\s/.test(line)) {
-      const lm = line.match(/^\s+(\w+):\s*(.*)$/);
-      if (lm) data.links[lm[1]] = lm[2].replace(/^["']|["']$/g, "");
-      continue;
-    }
-    currentArrayKey = null;
-    inLinks = false;
-    const m = line.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
-    if (!m) continue;
-    const [, key, rest] = m;
-    if (rest === "" && arrayKeys.includes(key)) {
-      data[key] = [];
-      currentArrayKey = key;
-      continue;
-    }
-    if (rest.startsWith("[")) {
-      const inner = rest.replace(/^\[|\]$/g, "").trim();
-      data[key] = inner.length === 0 ? [] : inner.split(",").map((s) => s.trim().replace(/^["']|["']$/g, ""));
-      continue;
-    }
-    if (key === "links") {
-      data.links = {};
-      inLinks = true;
-      continue;
-    }
-    data[key] = rest.replace(/^["']|["']$/g, "");
-  }
-  return { data, body };
-}
 
 async function main() {
   let files = [];

@@ -1,0 +1,306 @@
+---
+// Theme switch, slotted into the top-right HUD corner next to LINK::STABLE.
+// The HUD itself is aria-hidden decoration; this is the one real control in
+// it, so it carries its own label and live region.
+---
+<div class="theme-toggle">
+  <button
+    type="button"
+    class="theme-toggle__btn"
+    data-theme-toggle
+    aria-label="Switch colour theme"
+  >
+    <span class="theme-toggle__icon" data-theme-icon aria-hidden="true">&#9789;</span>
+    <span class="theme-toggle__mode" data-theme-label>NIGHT</span>
+  </button>
+  <span class="sr-only" role="status" aria-live="polite" data-theme-status></span>
+</div>
+
+<!-- CRT power-cycle overlay. Collapses the screen to a scanline, flickers,
+     reopens on the new theme. Sits above everything including the scanlines. -->
+<div class="crt-cycle" data-crt-cycle aria-hidden="true">
+  <div class="crt-cycle__shutter crt-cycle__shutter--top"></div>
+  <div class="crt-cycle__shutter crt-cycle__shutter--bottom"></div>
+  <div class="crt-cycle__line"></div>
+</div>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    pointer-events: auto;
+  }
+  .theme-toggle__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: color-mix(in srgb, var(--bg-panel) 70%, transparent);
+    border: 1px solid var(--neon-yellow);
+    padding: 0.18rem 0.5rem;
+    cursor: pointer;
+    font: inherit;
+    color: var(--neon-yellow);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+  }
+  .theme-toggle__icon { font-size: 1.05em; line-height: 1; }
+  .theme-toggle__btn:hover,
+  .theme-toggle__btn:focus-visible {
+    color: var(--bg-void);
+    background: var(--neon-yellow);
+    border-color: var(--neon-yellow);
+  }
+
+  /* First visit only: a few slow pulses so the control is noticed, then it
+     settles down and never does it again. */
+  .theme-toggle__btn.is-hinting {
+    animation: tt-hint 2.2s ease-in-out 3;
+  }
+  @keyframes tt-hint {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--neon-yellow) 60%, transparent); }
+    50%      { box-shadow: 0 0 0 5px color-mix(in srgb, var(--neon-yellow) 0%, transparent); }
+  }
+  .theme-toggle__btn:focus-visible {
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
+  }
+  .theme-toggle__bracket { opacity: 0.6; }
+  .theme-toggle__mode { min-width: 3.4em; text-align: center; }
+
+  /* Light mode: the HUD is a NERV readout, so the control gets a hard edge
+     instead of a glow. */
+  :global(:root[data-theme="light"]) .theme-toggle__btn {
+    border: 1.5px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    background: var(--bg-panel);
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  :global(:root[data-theme="light"]) .theme-toggle__btn:hover,
+  :global(:root[data-theme="light"]) .theme-toggle__btn:focus-visible {
+    background: var(--neon-cyan);
+    color: var(--bg-panel);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- CRT power cycle ---------- *
+     Two shutters close from the top and bottom edges toward the middle, so
+     the screen is FULLY covered at the pinch — that's where the palette
+     swaps, out of sight. The earlier version animated a clip-path that
+     shrank the overlay to a line, which uncovered the page instead of
+     covering it, so the swap happened in plain view mid-animation. */
+  .crt-cycle {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  /* Fixed height, scaled on the compositor — animating `height` would
+     repaint every frame. >50% so the two always meet with no seam. */
+  .crt-cycle__shutter {
+    position: absolute;
+    left: 0; right: 0;
+    height: 50.2%;
+    background: #05030a;
+    transform: scaleY(0);
+    will-change: transform;
+  }
+  .crt-cycle__shutter--top    { top: 0;    transform-origin: top; }
+  .crt-cycle__shutter--bottom { bottom: 0; transform-origin: bottom; }
+  .crt-cycle__line {
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    height: 2px;
+    margin-top: -1px;
+    background: #dff6ff;
+    box-shadow: 0 0 12px 2px rgba(223, 246, 255, 0.85);
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  /* Phase 1 — shutters close. Theme swaps at the end of this. */
+  .crt-cycle.is-collapsing {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .crt-cycle.is-collapsing .crt-cycle__shutter {
+    animation: crt-close 300ms cubic-bezier(0.55, 0, 0.85, 0.2) forwards;
+  }
+  .crt-cycle.is-collapsing .crt-cycle__line {
+    animation: crt-line-in 300ms ease-out forwards;
+  }
+
+  /* Phase 2 — flicker, then shutters retract on the new palette. */
+  .crt-cycle.is-reopening {
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .crt-cycle.is-reopening .crt-cycle__shutter {
+    animation: crt-open 420ms cubic-bezier(0.15, 0.75, 0.3, 1) forwards;
+  }
+  .crt-cycle.is-reopening .crt-cycle__line {
+    animation: crt-line-out 420ms ease-in forwards;
+  }
+
+  @keyframes crt-close {
+    0%   { transform: scaleY(0); }
+    100% { transform: scaleY(1); }
+  }
+  @keyframes crt-open {
+    0%   { transform: scaleY(1);    }
+    12%  { transform: scaleY(1);    }  /* hold fully black — swap is here */
+    18%  { transform: scaleY(0.98); }  /* flicker */
+    24%  { transform: scaleY(1);    }
+    100% { transform: scaleY(0);    }
+  }
+  @keyframes crt-line-in {
+    0%   { transform: scaleX(0);    opacity: 0; }
+    70%  { transform: scaleX(1);    opacity: 1; }
+    100% { transform: scaleX(1);    opacity: 1; }
+  }
+  @keyframes crt-line-out {
+    0%   { transform: scaleX(1);    opacity: 1; }
+    18%  { transform: scaleX(1);    opacity: 0.4; }
+    24%  { transform: scaleX(1);    opacity: 1; }
+    55%  { transform: scaleX(0.35); opacity: 0.7; }
+    100% { transform: scaleX(0);    opacity: 0; }
+  }
+
+  /* Reduced motion gets the plain cross-fade from theme.css instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .crt-cycle.is-collapsing .crt-cycle__shutter,
+    .crt-cycle.is-reopening .crt-cycle__shutter,
+    .crt-cycle.is-collapsing .crt-cycle__line,
+    .crt-cycle.is-reopening .crt-cycle__line {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { applyTheme, nextTheme, readStoredTheme, storeTheme, themeColor } from "../../lib/theme";
+
+  const root = document.documentElement;
+  const btn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  const label = document.querySelector<HTMLElement>("[data-theme-label]");
+  const icon = document.querySelector<HTMLElement>("[data-theme-icon]");
+  const status = document.querySelector<HTMLElement>("[data-theme-status]");
+  const overlay = document.querySelector<HTMLElement>("[data-crt-cycle]");
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const paint = (theme: "dark" | "light") => {
+    if (label) label.textContent = theme === "light" ? "DAY" : "NIGHT";
+    // Show the mode you'd switch TO, which is what the icon is for.
+    if (icon) icon.textContent = theme === "light" ? "☼" : "☽";
+    btn?.setAttribute("aria-pressed", String(theme === "light"));
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", themeColor(theme));
+    if (status) status.textContent = `${theme === "light" ? "Light" : "Dark"} theme active`;
+  };
+
+  paint(readStoredTheme());
+
+  // One-time discoverability nudge.
+  try {
+    if (!localStorage.getItem("evan:theme-seen")) {
+      btn?.classList.add("is-hinting");
+      btn?.addEventListener("click", () => {
+        btn.classList.remove("is-hinting");
+        localStorage.setItem("evan:theme-seen", "1");
+      }, { once: true });
+    }
+  } catch { /* private mode */ }
+
+  // The cross-fade class is added only after first paint so the initial load
+  // never animates from the wrong colours.
+  requestAnimationFrame(() => root.classList.add("theme-anim"));
+
+  let busy = false;
+
+  const swap = () => {
+    const theme = nextTheme(readStoredTheme());
+    applyTheme(root, theme);
+    storeTheme(theme);
+    paint(theme);
+    // Keep an open studio preview in step (same-origin parent).
+    try {
+      window.parent?.postMessage({ type: "evan:theme", theme }, window.location.origin);
+    } catch { /* cross-origin embed — nothing to notify */ }
+  };
+
+  btn?.addEventListener("click", () => {
+    if (busy) return;
+
+    if (reduced || !overlay) {
+      swap();
+      return;
+    }
+
+    busy = true;
+
+    // animationend BUBBLES. The scanline child animates alongside the
+    // overlay, so an unguarded listener fired on the child's event and cut
+    // the collapse short — the palette swapped mid-animation. Only the
+    // overlay's own animation may advance the sequence.
+    const onPhaseEnd = (name: string, fn: () => void) => {
+      let ran = false;
+      const once = () => {
+        if (ran) return;
+        ran = true;
+        overlay.removeEventListener("animationend", handler);
+        clearTimeout(timer);
+        fn();
+      };
+      // animationend bubbles from both shutters and the line; only the named
+      // shutter animation may advance the sequence, and only once.
+      const handler = (e: AnimationEvent) => {
+        if (e.animationName !== name) return;
+        once();
+      };
+      overlay.addEventListener("animationend", handler);
+      // Fallback if the animation is dropped (background tab, reduced GPU).
+      const timer = setTimeout(once, 1200);
+    };
+
+    overlay.classList.add("is-collapsing");
+
+    onPhaseEnd("crt-close", () => {
+      // Swap only once the screen is fully closed to a line.
+      swap();
+      // Add reopen BEFORE removing collapse so no frame lands on the base
+      // rule (height 0 / hidden), which would flash the page. `.is-reopening`
+      // is declared later in the sheet, so it wins while both are present.
+      overlay.classList.add("is-reopening");
+      overlay.classList.remove("is-collapsing");
+
+      onPhaseEnd("crt-open", () => {
+        overlay.classList.remove("is-reopening");
+        busy = false;
+      });
+    });
+  });
+
+  // Studio drives the preview iframe's theme from its own toggle.
+  window.addEventListener("message", (e) => {
+    if (e.origin !== window.location.origin) return;
+    if (e.data?.type !== "evan:theme:set") return;
+    const theme = e.data.theme === "light" ? "light" : "dark";
+    applyTheme(root, theme);
+    storeTheme(theme);
+    paint(theme);
+  });
+</script>

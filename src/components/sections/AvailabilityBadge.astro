@@ -28,7 +28,7 @@ const colorVar =
     max-width: 6xl;
     margin: 1.5rem auto 0;
     padding: 0.85rem 1rem 0.85rem 1.4rem;
-    background: linear-gradient(90deg, rgba(28,13,61,0.85), rgba(7,3,15,0.7));
+    background: linear-gradient(90deg, color-mix(in srgb, var(--bg-panel) 85%, transparent), color-mix(in srgb, var(--bg-void) 70%, transparent));
     border: 1px solid var(--avail-color);
     border-left: 4px solid var(--avail-color);
     box-shadow: 0 0 14px color-mix(in srgb, var(--avail-color) 25%, transparent);
@@ -88,6 +88,55 @@ const colorVar =
     transform: translateY(-1px);
     text-shadow: none;
   }
+  /* ---------- light: WARNING register ---------- *
+     One of two places the alarm treatment is allowed, because this element
+     genuinely IS a status alert — the register carries meaning here rather
+     than decorating. Hazard stripes, orange field, hard black edges. */
+  :global(:root[data-theme="light"]) .avail-badge {
+    background: var(--accent-bright);
+    border: 2px solid #120d08;
+    border-left: 2px solid #120d08;
+    box-shadow: none;
+    color: #120d08;
+  }
+  :global(:root[data-theme="light"]) .avail-badge::before,
+  :global(:root[data-theme="light"]) .avail-badge::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    height: 7px;
+    background: repeating-linear-gradient(45deg, #120d08 0 8px, transparent 8px 16px);
+  }
+  :global(:root[data-theme="light"]) .avail-badge::before { top: 0; }
+  :global(:root[data-theme="light"]) .avail-badge::after  { bottom: 0; }
+
+  :global(:root[data-theme="light"]) .avail-badge__rail { display: none; }
+  :global(:root[data-theme="light"]) .avail-badge__dot {
+    background: #120d08;
+    border-radius: 0;
+    box-shadow: none;
+    /* hexagon, not a dot */
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+  :global(:root[data-theme="light"]) .avail-badge__label,
+  :global(:root[data-theme="light"]) .avail-badge__msg {
+    color: #120d08;
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  :global(:root[data-theme="light"]) .avail-badge__msg { font-weight: 400; opacity: 0.8; }
+  :global(:root[data-theme="light"]) .avail-badge__cta {
+    color: #120d08;
+    border: 2px solid #120d08;
+    border-style: solid;
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  :global(:root[data-theme="light"]) .avail-badge__cta:hover {
+    background: #120d08;
+    color: var(--accent-bright);
+  }
+
   @media (max-width: 640px) {
     .avail-badge {
       flex-direction: column;

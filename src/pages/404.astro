@@ -49,14 +49,45 @@ import { withBase } from "../lib/url";
 
 <style>
   .err-page__diag {
-    background: rgba(7, 3, 15, 0.55);
+    background: color-mix(in srgb, var(--bg-void) 55%, transparent);
     border: 1px dashed var(--terminal-grn);
     padding: 1rem 1.4rem;
     text-align: left;
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--terminal-grn) 20%, transparent);
     font-size: 0.95rem;
     line-height: 1.65;
     max-width: 520px;
     text-shadow: 0 0 6px var(--terminal-grn);
+  }
+
+  /* ---------- light: full WARNING screen ---------- *
+     The one page where the alarm register is literally correct rather than
+     decorative — this IS an error state. */
+  /* Hazard rules top and bottom, bone in between — same restraint as the
+     comms block. A full orange field is unreadable to sit in front of. */
+  :global(:root[data-theme="light"]) .err-page::before,
+  :global(:root[data-theme="light"]) .err-page::after {
+    content: "";
+    position: fixed;
+    left: 0; right: 0;
+    height: 12px;
+    z-index: 20;
+    background: repeating-linear-gradient(
+      45deg,
+      var(--accent-bright) 0 12px,
+      transparent 12px 24px
+    );
+  }
+  :global(:root[data-theme="light"]) .err-page::before { top: 0; }
+  :global(:root[data-theme="light"]) .err-page::after  { bottom: 0; }
+
+  :global(:root[data-theme="light"]) .err-page h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+  :global(:root[data-theme="light"]) .err-page__diag {
+    background: var(--bg-panel);
+    border: 1px solid var(--hairline);
+    box-shadow: none;
   }
 </style>

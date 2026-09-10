@@ -23,7 +23,7 @@ const color = tone === "magenta" ? "var(--neon-magenta)" : "var(--neon-cyan)";
   .ticker {
     overflow: hidden;
     border-block: 1px dashed var(--ticker-color);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.025), transparent);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-soft) 2.5%, transparent), transparent);
     padding: 0.55rem 0;
     position: relative;
   }

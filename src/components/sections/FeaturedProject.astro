@@ -83,13 +83,13 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
     position: relative;
     border: 2px solid var(--neon-magenta);
     background:
-      linear-gradient(180deg, rgba(28,13,61,0.85), rgba(7,3,15,0.95)),
-      repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,46,136,0.025) 12px 13px);
+      linear-gradient(180deg, color-mix(in srgb, var(--bg-panel) 85%, transparent), color-mix(in srgb, var(--bg-void) 95%, transparent)),
+      repeating-linear-gradient(45deg, transparent 0 12px, color-mix(in srgb, var(--neon-magenta) 2.5%, transparent) 12px 13px);
     box-shadow:
       0 0 0 6px var(--bg-void),
-      0 0 22px rgba(255, 46, 136, 0.4),
-      0 0 60px rgba(255, 46, 136, 0.18),
-      0 12px 40px rgba(0,0,0,0.7);
+      0 0 22px color-mix(in srgb, var(--neon-magenta) 40%, transparent),
+      0 0 60px color-mix(in srgb, var(--neon-magenta) 18%, transparent),
+      0 12px 40px color-mix(in srgb, var(--shadow-base) 70%, transparent);
     padding: 1.4rem;
     margin-bottom: 3rem;
     transform-style: preserve-3d;
@@ -99,37 +99,43 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
   .featured:hover {
     box-shadow:
       0 0 0 6px var(--bg-void),
-      0 0 30px rgba(255, 46, 136, 0.6),
-      0 0 80px rgba(255, 46, 136, 0.3),
-      0 16px 48px rgba(0,0,0,0.8);
+      0 0 30px color-mix(in srgb, var(--neon-magenta) 60%, transparent),
+      0 0 80px color-mix(in srgb, var(--neon-magenta) 30%, transparent),
+      0 16px 48px color-mix(in srgb, var(--shadow-base) 80%, transparent);
   }
   .featured::before {
     content: "";
     position: absolute; inset: -2px;
     pointer-events: none;
-    background: linear-gradient(120deg, transparent 30%, rgba(0,240,255,0.18) 50%, transparent 70%);
+    background: linear-gradient(120deg, transparent 30%, color-mix(in srgb, var(--neon-cyan) 18%, transparent) 50%, transparent 70%);
     transform: translateX(-100%);
     transition: transform 1000ms ease;
   }
   .featured:hover::before { transform: translateX(100%); }
 
+  /* Frame marks live in the card's 1.4rem padding gutter. At 1.4rem with
+     default line-height they overran it and collided with the badge and the
+     ENTER MISSION button; tightened so the gutter actually contains them. */
   .featured__corner {
     position: absolute;
     color: var(--neon-magenta);
     font-family: theme("fontFamily.pixel");
-    font-size: 1.4rem;
+    font-size: 1rem;
+    line-height: 1;
     text-shadow: 0 0 8px var(--neon-magenta);
     z-index: 4;
+    pointer-events: none;
   }
-  .featured__corner--tl { top: 0.4rem; left: 0.5rem; }
-  .featured__corner--tr { top: 0.4rem; right: 0.5rem; }
-  .featured__corner--bl { bottom: 0.4rem; left: 0.5rem; }
-  .featured__corner--br { bottom: 0.4rem; right: 0.5rem; }
+  .featured__corner--tl { top: 0.3rem; left: 0.35rem; }
+  .featured__corner--tr { top: 0.3rem; right: 0.35rem; }
+  .featured__corner--bl { bottom: 0.3rem; left: 0.35rem; }
+  .featured__corner--br { bottom: 0.3rem; right: 0.35rem; }
 
   .featured__badge {
     position: absolute;
-    top: -1px; right: 2.6rem;
-    transform: translateY(-50%);
+    /* Fully inside the card (it clips its own overflow), and clear of the
+       top-right frame mark, which occupies the first ~1.35rem. */
+    top: 0.85rem; right: 2.6rem;
     background: var(--bg-void);
     border: 1px solid var(--neon-magenta);
     padding: 0.35rem 0.7rem;
@@ -183,7 +189,7 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
   .featured__scan {
     position: absolute; left: 0; right: 0; height: 30%;
     top: -30%;
-    background: linear-gradient(180deg, transparent, rgba(0,240,255,0.2), transparent);
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--neon-cyan) 20%, transparent), transparent);
     pointer-events: none;
   }
   .featured:hover .featured__scan { animation: feat-scan 2s ease-in-out infinite; }
@@ -194,8 +200,8 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
   .featured__grid {
     position: absolute; inset: 0;
     background-image:
-      linear-gradient(to right,  rgba(0,240,255,0.08) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0,240,255,0.08) 1px, transparent 1px);
+      linear-gradient(to right,  color-mix(in srgb, var(--neon-cyan) 8%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--neon-cyan) 8%, transparent) 1px, transparent 1px);
     background-size: 20px 20px;
     pointer-events: none;
   }
@@ -247,7 +253,7 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
     margin-top: 0.4rem;
     padding: 0.7rem 0.9rem;
     border: 1px dashed var(--text-muted);
-    background: rgba(255,255,255,0.02);
+    background: color-mix(in srgb, var(--text-soft) 2%, transparent);
     font-size: 0.95rem;
   }
   .featured__stats > div { display: flex; justify-content: space-between; gap: 0.5rem; }
