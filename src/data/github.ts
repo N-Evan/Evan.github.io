@@ -7,7 +7,7 @@ export const github: {
   /** API endpoint that returns { contributions: [{date, count, level}], total: {...} } */
   endpoint: string;
 } = {
-  enabled: true,
+  enabled: false,
   username: "N-Evan",
   endpoint: "https://github-contributions-api.jogruber.de/v4",
 };

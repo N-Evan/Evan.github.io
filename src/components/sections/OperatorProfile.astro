@@ -4,11 +4,13 @@ import DataChip from "../chrome/DataChip.astro";
 import GlitchText from "../chrome/GlitchText.astro";
 import RevealOnScroll from "../chrome/RevealOnScroll.astro";
 
-const stats: { label: string; value: number; tone: "magenta" | "cyan" | "yellow" }[] = [
-  { label: "GAMEPLAY",    value: 90, tone: "magenta" },
-  { label: "LEVEL DESIGN",value: 80, tone: "cyan" },
-  { label: "VFX",         value: 70, tone: "yellow" },
-  { label: "TOOLING",     value: 75, tone: "cyan" },
+// Competency rows — every entry cites a shipped artifact, never a self-scored number.
+const competencies: { label: string; evidence: string; tone: "magenta" | "cyan" | "yellow" }[] = [
+  { label: "PLATFORM ABSTRACTION", evidence: "25 versioned Unity modules, OpenUPM", tone: "cyan" },
+  { label: "DISTRIBUTED STATE",    evidence: "Photon authoritative sync · High Noon", tone: "magenta" },
+  { label: "CONSOLE DELIVERY",     evidence: "Xbox port · Silent Scream", tone: "magenta" },
+  { label: "AI INTEGRATION",       evidence: "RAG chatbot · ADGM", tone: "yellow" },
+  { label: "TECHNICAL LEADERSHIP", evidence: "Lead of 10 engineers · ADGM", tone: "cyan" },
 ];
 
 // 8x8 pixel avatar — colors keyed: 0 void, 1 magenta hair, 2 cyan visor,
@@ -66,15 +68,12 @@ const palette: Record<number, string> = {
             <div class="row"><dt>STATUS</dt><dd class="text-terminal-grn">// ONLINE</dd></div>
           </dl>
 
-          <div class="stats mt-5">
-            <p class="font-terminal text-text-muted text-xs tracking-widest mb-2">PROFICIENCY</p>
-            {stats.map((s, i) => (
-              <div class="stat" style={`--stat-delay:${i * 100}ms;`}>
-                <span class="stat__label font-terminal">{s.label}</span>
-                <span class={`stat__bar stat__bar--${s.tone}`}>
-                  <span class="stat__fill" style={`width:${s.value}%;`}></span>
-                </span>
-                <span class="stat__num font-terminal">{s.value}</span>
+          <div class="comp mt-5">
+            <p class="font-terminal text-text-muted text-xs tracking-widest mb-2">CORE COMPETENCIES</p>
+            {competencies.map((c) => (
+              <div class={`comp__row comp__row--${c.tone}`}>
+                <span class="comp__label font-terminal">{c.label}</span>
+                <span class="comp__evidence font-terminal">{c.evidence}</span>
               </div>
             ))}
           </div>
@@ -161,40 +160,25 @@ const palette: Record<number, string> = {
   .row dt { color: var(--text-muted); letter-spacing: 0.15em; font-size: 0.85em; }
   .row dd { color: var(--text-soft); }
 
-  /* Stat bars */
-  .stats { padding-top: 0.4rem; border-top: 1px dashed var(--text-muted); }
-  .stat {
+  /* Competency rows */
+  .comp { padding-top: 0.5rem; border-top: 1px dashed var(--text-muted); }
+  .comp__row {
     display: grid;
-    grid-template-columns: 110px 1fr 36px;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.2rem 0;
+    gap: 0.05rem;
+    padding: 0.3rem 0 0.3rem 0.6rem;
+    border-left: 2px solid var(--comp-color, var(--text-muted));
   }
-  .stat__label { font-size: 0.85em; letter-spacing: 0.12em; color: var(--text-muted); }
-  .stat__bar {
-    position: relative;
-    height: 8px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--bar-color);
-    --bar-color: var(--text-muted);
-    overflow: hidden;
+  .comp__row + .comp__row { margin-top: 0.35rem; }
+  .comp__row--magenta { --comp-color: var(--neon-magenta); }
+  .comp__row--cyan    { --comp-color: var(--neon-cyan); }
+  .comp__row--yellow  { --comp-color: var(--neon-yellow); }
+  .comp__label {
+    font-size: 0.8em;
+    letter-spacing: 0.14em;
+    color: var(--comp-color);
+    text-shadow: 0 0 6px var(--comp-color);
   }
-  .stat__bar--magenta { --bar-color: var(--neon-magenta); }
-  .stat__bar--cyan    { --bar-color: var(--neon-cyan); }
-  .stat__bar--yellow  { --bar-color: var(--neon-yellow); }
-  .stat__fill {
-    display: block;
-    height: 100%;
-    background: var(--bar-color);
-    box-shadow: 0 0 8px var(--bar-color);
-    width: 0;
-    animation: bar-fill 1.2s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-delay: var(--stat-delay, 0ms);
-  }
-  .reveal:not(.is-visible) .stat__fill { width: 0 !important; animation: none; }
-  .reveal.is-visible .stat__fill { animation: bar-fill 1.2s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--stat-delay, 0ms); }
-  @keyframes bar-fill { from { width: 0; } }
-  .stat__num { text-align: right; color: var(--neon-cyan); font-size: 0.9em; text-shadow: 0 0 6px var(--neon-cyan); }
+  .comp__evidence { font-size: 0.85em; color: var(--text-soft); }
 
   /* Bio terminal */
   .bio-terminal {
