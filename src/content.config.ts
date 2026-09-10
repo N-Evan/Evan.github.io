@@ -1,6 +1,6 @@
 import { defineCollection } from "astro:content";
-import { glob } from "astro/loaders";
-import { postSchema, projectSchema } from "./content/schemas";
+import { file, glob } from "astro/loaders";
+import { careerSchema, postSchema, projectSchema } from "./content/schemas";
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
@@ -12,4 +12,10 @@ const projects = defineCollection({
   schema: projectSchema,
 });
 
-export const collections = { projects, posts };
+// Array order in career.json is the display order — newest first.
+const career = defineCollection({
+  loader: file("src/data/career.json"),
+  schema: careerSchema,
+});
+
+export const collections = { projects, posts, career };

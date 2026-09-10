@@ -1,95 +1,16 @@
 ---
+import { getCollection } from "astro:content";
 import GlitchText from "../chrome/GlitchText.astro";
 import RevealOnScroll from "../chrome/RevealOnScroll.astro";
 
-type Tone = "magenta" | "cyan" | "yellow";
-type Kind = "role" | "milestone" | "education";
-
-interface Entry {
-  stamp: string;
-  title: string;
-  org?: string;
-  body: string;
-  tone: Tone;
-  kind: Kind;
-  icon?: string;
-}
-
-// Newest first. Add or remove entries — the timeline adapts automatically.
-const entries: Entry[] = [
-  {
-    stamp: "2025",
-    title: "Unilever Marvel 3",
-    body: "Led a 8 member team while engineering a full-scale industrial-training-sim.",
-    tone: "magenta",
-    kind: "milestone",
-    icon: "✦",
-  },
-  {
-    stamp: "2024",
-    title: "XBOX PORT // SILENT SCREAM",
-    body: "Ported the horror cooking game to XBox; tuned controller feel, performance, and platform-specific UX.",
-    tone: "magenta",
-    kind: "milestone",
-    icon: "✦",
-  },
-  {
-    stamp: "2023 — PRESENT",
-    title: "Gameplay Programmer",
-    org: "Studio-23 · Brain Station 23",
-    body: "Built core gameplay systems, tooling, and game-feel polish across Silent Scream, High Noon, and other titles. Co-authored open-source Unity packages used team-wide.",
-    tone: "magenta",
-    kind: "role",
-  },
-  {
-    stamp: "2023",
-    title: "SHIPPED // SILENT SCREAM",
-    body: "Helped launch the studio's flagship horror cooking game on Steam.",
-    tone: "cyan",
-    kind: "milestone",
-    icon: "▲",
-  },
-  {
-    stamp: "2023",
-    title: "SHIPPED // HIGH NOON",
-    body: "Released a real-time PvP duel game powered by Photon networking. Owned UI/UX on the PC build.",
-    tone: "cyan",
-    kind: "milestone",
-    icon: "▲",
-  },
-  {
-    stamp: "2022 — 2023",
-    title: "Trainee Gameplay Programmer",
-    org: "Studio-23 · Brain Station 23",
-    body: "Joined the team while finishing undergrad. Worked on VR Football for Meta Quest 2 and started High Noon.",
-    tone: "cyan",
-    kind: "role",
-  },
-  {
-    stamp: "2022",
-    title: "FIRST VR PROJECT",
-    body: "Built a Meta Quest 2 penalty-shootout saver under senior guidance. First time wrangling spatial input.",
-    tone: "yellow",
-    kind: "milestone",
-    icon: "◆",
-  },
-  {
-    stamp: "2018 — 2022",
-    title: "B.Sc. Computer Science",
-    org: "[ FILL ME IN: school + focus areas ]",
-    body: "First serious dive into Unity, building text-based adventures, prototypes, and learning the craft.",
-    tone: "yellow",
-    kind: "education",
-  },
-  {
-    stamp: "2021",
-    title: "FIRST GAME // ABYSS CRAWLER",
-    body: "Released the first proper game I solo-built — a 2D platformer. Still up on itch.io.",
-    tone: "magenta",
-    kind: "milestone",
-    icon: "▲",
-  },
-];
+// Newest first — array order in src/data/career.json is the display order.
+// getCollection does not guarantee loader order, so re-sort by it explicitly.
+const order = (await import("../../data/career.json")).default.map((e: { id: string }) => e.id);
+const collection = await getCollection("career");
+const entries = order
+  .map((id) => collection.find((e) => e.id === id))
+  .filter((e): e is NonNullable<typeof e> => Boolean(e))
+  .map((e) => e.data);
 ---
 <section id="career" class="career relative py-28 px-6 max-w-4xl mx-auto">
   <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
@@ -122,7 +43,7 @@ const entries: Entry[] = [
             </div>
             <h3 class="tl-title font-pixel">{e.title}</h3>
             {e.org && <p class="tl-org font-terminal">{e.org}</p>}
-            <p class="tl-body font-body">{e.body}</p>
+            <p class="tl-body font-body">{e.detail}</p>
           </div>
         </li>
       </RevealOnScroll>

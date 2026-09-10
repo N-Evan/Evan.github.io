@@ -54,7 +54,18 @@ export const projectSchema = z.object({
     .optional(),
 });
 
+export const careerSchema = z.object({
+  stamp: z.string(),
+  title: z.string(),
+  org: z.string().optional(),
+  detail: z.string(),
+  tone: z.enum(["magenta", "cyan", "yellow"]),
+  kind: z.enum(["role", "milestone", "education"]),
+  icon: z.string().optional(),
+});
+
 export const SCHEMAS = {
   projects: projectSchema,
   posts: postSchema,
+  career: careerSchema,
 } as const;
