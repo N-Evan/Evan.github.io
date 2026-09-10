@@ -122,6 +122,21 @@ function enoent(message) {
   return err;
 }
 
+// Throws EEXIST if `path` is taken. Guards both create and retitle-rename:
+// fs.rename on Windows overwrites the destination silently, so the caller
+// must check first rather than rely on the syscall to refuse.
+async function assertFree(path, label) {
+  try {
+    await readFile(path, "utf8");
+  } catch (err) {
+    if (err.code === "ENOENT") return;
+    throw err;
+  }
+  const err = new Error(`entry already exists: ${label}`);
+  err.code = "EEXIST";
+  throw err;
+}
+
 async function writeCareerFile(root, items) {
   await writeAtomic(jsonPath(root, "career"), `${JSON.stringify(items, null, 2)}\n`);
 }
@@ -153,14 +168,7 @@ export async function createEntry(root, type, data, body, keyOrder = []) {
   }
 
   const path = mdPath(root, type, id);
-  try {
-    await readFile(path, "utf8");
-    const err = new Error(`entry already exists: ${type}/${id}`);
-    err.code = "EEXIST";
-    throw err;
-  } catch (readErr) {
-    if (readErr.code !== "ENOENT") throw readErr;
-  }
+  await assertFree(path, `${type}/${id}`);
 
   await mkdir(join(root, config.dir), { recursive: true });
   await writeAtomic(path, stringifyFrontmatter(data, body, keyOrder));
@@ -187,8 +195,17 @@ export async function writeEntry(root, type, id, data, body, keyOrder = []) {
     if (err.code === "ENOENT") throw enoent(`no such entry: ${type}/${id}`);
     throw err;
   }
-  await writeAtomic(path, stringifyFrontmatter(data, body, keyOrder));
-  return { id };
+
+  // The filename is the URL slug, so a retitle has to move the file or the
+  // published route drifts from the title forever. An empty slug (a title of
+  // only punctuation) keeps the current filename.
+  const slug = slugify(data.title ?? "");
+  const renamed = slug && slug !== id ? slug : null;
+  if (renamed) await assertFree(mdPath(root, type, renamed), `${type}/${renamed}`);
+
+  await writeAtomic(mdPath(root, type, renamed ?? id), stringifyFrontmatter(data, body, keyOrder));
+  if (renamed) await unlink(path);
+  return { id: renamed ?? id };
 }
 
 export async function deleteEntry(root, type, id) {

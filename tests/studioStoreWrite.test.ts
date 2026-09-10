@@ -113,6 +113,52 @@ describe("writeEntry", () => {
     expect(list[1].data.tone).toBe("yellow");
   });
 
+  it("renames the file when the title changes", async () => {
+    const before = await readEntry(root, "projects", "alpha");
+    const { id } = await writeEntry(
+      root, "projects", "alpha",
+      { ...before.data, title: "Alpha Reborn" }, before.body, KEYS
+    );
+    expect(id).toBe("alpha-reborn");
+    const files = await readdir(join(root, "src/content/projects"));
+    expect(files).toContain("alpha-reborn.md");
+    expect(files).not.toContain("alpha.md");
+    expect((await readEntry(root, "projects", "alpha-reborn")).body).toBe(
+      "\n## Role\n\nKeep me.\n"
+    );
+  });
+
+  it("refuses a retitle that collides with another entry", async () => {
+    const before = await readEntry(root, "projects", "alpha");
+    await expect(
+      writeEntry(root, "projects", "alpha", { ...before.data, title: "Beta" }, before.body, KEYS)
+    ).rejects.toMatchObject({ code: "EEXIST" });
+    const files = await readdir(join(root, "src/content/projects"));
+    expect(files).toContain("alpha.md");
+    expect(await readFile(join(root, "src/content/projects/beta.md"), "utf8")).toContain(
+      "beta body"
+    );
+  });
+
+  it("keeps the filename when the title only changes cosmetically", async () => {
+    const before = await readEntry(root, "projects", "alpha");
+    const { id } = await writeEntry(
+      root, "projects", "alpha",
+      { ...before.data, title: "  Alpha!  " }, before.body, KEYS
+    );
+    expect(id).toBe("alpha");
+    expect(await readdir(join(root, "src/content/projects"))).toContain("alpha.md");
+  });
+
+  it("leaves no .tmp file behind after a rename", async () => {
+    const before = await readEntry(root, "projects", "alpha");
+    await writeEntry(
+      root, "projects", "alpha", { ...before.data, title: "Alpha Two" }, before.body, KEYS
+    );
+    const files = await readdir(join(root, "src/content/projects"));
+    expect(files.some((f) => f.endsWith(".tmp"))).toBe(false);
+  });
+
   it("throws ENOENT when the entry does not exist", async () => {
     await expect(
       writeEntry(root, "projects", "ghost", { title: "G" }, "", KEYS)
