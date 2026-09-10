@@ -17,6 +17,34 @@ Other commands:
 - `npm run check` — Astro type checking
 - `npm test` — run unit tests (Vitest)
 
+## Authoring studio
+
+Run the dev server and open the studio:
+
+```bash
+npm run dev
+# then http://localhost:4321/Evan.github.io/studio
+```
+
+The studio creates, edits, reorders, and deletes projects, devlog posts, and
+career entries, writing straight to `src/content/` and `src/data/career.json`.
+The right-hand pane is an iframe of the running dev server, so the preview is
+the real site rendered by the real components.
+
+**It is dev-only by construction.** The route is injected by
+`src/studio/plugin.mjs` only when `command === "dev"`, and the write API mounts
+in Vite's `configureServer` hook, which has no production counterpart. Neither
+appears in `dist/`, and `tests/studioIsolation.test.ts` asserts that.
+
+Notes:
+
+- Changes are written to your working tree. Review with `git diff` and commit as usual — nothing deploys until you push.
+- Deleted entries are copied to `.studio-trash/` (gitignored) before removal, so a never-committed entry is still recoverable.
+- Dropped images are normalised by `sharp`: hero art to 1500x750, gallery to 1600x900, post covers to 1200x630, all PNG.
+- Invalid frontmatter is rejected before anything is written, with the error shown under the offending field.
+- Projects and career entries reorder by dragging in the sidebar. Posts sort by `date`, so they have no drag handle.
+- Saving rewrites the whole frontmatter block, so inline YAML arrays (`tech: [Unity, "C#"]`) come back as block lists. Same data, larger diff — expected on the first studio save of a file.
+
 ## Content authoring guide
 
 All hand-edited content lives under `src/content/` and `src/data/`. None
@@ -84,9 +112,15 @@ matching `message`.
 
 ### Career Log (timeline)
 
-Inline in [src/components/sections/CareerLog.astro](src/components/sections/CareerLog.astro)
-(top of file). Each entry takes a `kind` (`role` \| `milestone` \|
-`education`), `when`, `title`, `where`, and `body`. Newest first.
+Career entries live in `src/data/career.json`, loaded as a content collection
+and validated by `careerSchema` in `src/content/schemas.ts`. Array order is
+display order, newest first.
+
+Each entry takes `stamp` (the displayed date, e.g. `2023 — PRESENT`), `title`,
+optional `org`, `detail`, `tone` (`magenta` / `cyan` / `yellow`), `kind`
+(`role` / `milestone` / `education`), and an optional `icon` for milestones.
+
+Easiest path: the authoring studio. By hand: edit the JSON directly.
 
 ### Devlog posts
 
@@ -105,6 +139,7 @@ root) and see what is still unfilled per project.
 - [GSAP](https://gsap.com/) — Press Start landing animations
 - [Vitest](https://vitest.dev/) — utility tests
 - Self-hosted fonts: Press Start 2P, VT323, Inter (via `@fontsource`)
+- Authoring: dev-only studio at `/studio` (Vite middleware + `yaml` + `sharp`)
 
 ## Deploy
 
