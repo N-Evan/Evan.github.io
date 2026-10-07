@@ -10,14 +10,20 @@ teamSize: Individual
 duration: Aug 2026
 role: Solo Developer
 tagline: A local research monitor. Each day's top stories and niche finds per topic, summarised by a local LLM. No paid APIs, no cloud.
-thumb: ""
+thumb: /images/thumbs/allseer.png
 genres: [research, tooling]
 tech: [Python, FastAPI, SQLite FTS5, llama.cpp, Ollama, pytest]
 keyInsights:
   - "Set up to run a 30B mixture-of-experts model (Qwen3-30B-A3B) locally on a 16 GB GPU."
   - "No paid APIs, no cloud, with a headless mode for scheduled runs."
   - "Built with Claude, covered by 44 pytest tests."
-gallery: []
+gallery:
+  - /images/gallery/allseer-today.png
+  - /images/gallery/allseer-detail.png
+  - /images/gallery/allseer-write.png
+  - /images/gallery/allseer-search.png
+  - /images/gallery/allseer-running.png
+  - /images/gallery/allseer-mobile.png
 ---
 
 ## Role & Responsibilities
