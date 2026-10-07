@@ -10,7 +10,7 @@ teamSize: 7
 duration: 3 months
 role: Led development direction & architecture; directed 10 minigames
 tagline: A cyber-security awareness game for UNICEF, with a 2D cutscene story, real voiceovers and 10 minigames.
-thumb: ""
+thumb: /images/thumbs/protocol-watchtower.webp
 genres: [serious game, awareness]
 tech: [Unity]
 links:
@@ -20,7 +20,10 @@ keyInsights:
   - "Each minigame went from concept to an accepted, playable proof of concept in 2–3 days."
   - "Set the development direction and made the key architectural decisions."
   - "Shipped on Google Play and the App Store."
-gallery: []
+gallery:
+  - /images/gallery/protocol-watchtower-cutscene.webp
+  - /images/gallery/protocol-watchtower-glitch.webp
+  - /images/gallery/protocol-watchtower-minigame.webp
 ---
 
 ## Role & Responsibilities

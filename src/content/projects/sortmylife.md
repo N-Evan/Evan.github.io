@@ -10,14 +10,20 @@ teamSize: Individual
 duration: Aug–Sep 2026
 role: Solo Developer
 tagline: A gamified personal organizer. Tasks scored by what to do next, focus timer, habits, calendar fitting and a Telegram bot.
-thumb: ""
+thumb: /images/thumbs/sortmylife.png
 genres: [productivity, web app]
 tech: [SvelteKit 2, Svelte 5, Node 24, node:sqlite, Tailscale]
 keyInsights:
   - "Schema migrations v1→v8, each tested on a copy of the live database."
   - "Multi-user auth (scrypt, DB sessions, login throttling) and an admin panel."
   - "Built with Claude and self-hosted, reached over Tailscale."
-gallery: []
+gallery:
+  - /images/gallery/sortmylife-bridge.png
+  - /images/gallery/sortmylife-focus.png
+  - /images/gallery/sortmylife-calendar.png
+  - /images/gallery/sortmylife-mobile.png
+  - /images/gallery/sortmylife-telegram.png
+  - /images/gallery/sortmylife-admin.png
 ---
 
 ## Role & Responsibilities

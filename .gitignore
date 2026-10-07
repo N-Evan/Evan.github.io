@@ -44,3 +44,6 @@ secrets/
 
 # Brainstorm visual companion scratch
 .superpowers/
+
+# Local authoring material (source screenshots not used on the site)
+authoring/
