@@ -64,7 +64,7 @@ Each project is a single markdown file at
 3. Fill in the frontmatter — the schema in [src/content.config.ts](src/content.config.ts) is authoritative; the build fails loudly if anything is missing or wrong.
 4. Drop the hero thumb at `public/images/thumbs/<your-slug>.png` and reference it as `/images/thumbs/<your-slug>.png` in the `thumb:` field.
 5. Drop gallery images at `public/images/gallery/<your-slug>/` and list them in the `gallery:` array.
-6. Replace the three `[ FILL ME IN ]` sections in the body (Role, Learnings, Behind the Scenes).
+6. Write the body sections (Role, Learnings, Behind the Scenes). A heading with nothing under it is hidden, as are empty Key Insights and Gallery.
 
 **Frontmatter fields:**
 
@@ -76,8 +76,8 @@ Each project is a single markdown file at
 | `platforms`, `tech` | ✓ | Arrays of strings (used by Mission Log filter chips) |
 | `teamSize` | ✓ | A number, or the literal string `"Individual"` |
 | `tagline` | ✓ | ≤ 140 chars — shows on the card |
-| `thumb` | ✓ | Path beginning with `/images/...` |
-| `genres`, `keyInsights`, `gallery`, `links`, `featured`, `snippets` | optional | `links` supports `steam`, `itch`, `github`, `youtube`, `website`. `featured: true` pins the project to the hero card (only one should be featured). |
+| `thumb` | ✓ | Path beginning with `/images/...`, or `""` to show the title as a text tile |
+| `genres`, `keyInsights`, `gallery`, `links`, `featured`, `snippets` | optional | `links` supports `steam`, `itch`, `github`, `youtube`, `website`, `googleplay`, `appstore`. `featured: true` pins the project to the hero card (only one should be featured). |
 
 **To edit an existing project:** open its file in
 [src/content/projects/](src/content/projects/) and edit frontmatter or

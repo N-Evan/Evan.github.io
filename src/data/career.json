@@ -1,9 +1,18 @@
 [
   {
+    "id": "software-engineer-ii",
+    "stamp": "JAN 2025 — PRESENT",
+    "title": "Software Engineer II",
+    "org": "Brain Station 23 PLC",
+    "detail": "XR & AI experiences. Delivered ADGM Smart Induction (with its RAG chatbot), Industrial Machine Safety Training, Seven Keys, and Protocol Watchtower for UNICEF, and finished Unilever Marvel 3.",
+    "tone": "magenta",
+    "kind": "role"
+  },
+  {
     "id": "unilever-marvel-3",
-    "stamp": "2025",
+    "stamp": "NOV 2024 — JAN 2025",
     "title": "Unilever Marvel 3",
-    "detail": "Led a 8 member team while engineering a full-scale industrial-training-sim.",
+    "detail": "Led a 9-member team on PC & PCVR interactive training for Unilever. Unilever reported 300+ distinct trainings run by its employees.",
     "tone": "magenta",
     "kind": "milestone",
     "icon": "✦"
@@ -18,11 +27,11 @@
     "icon": "✦"
   },
   {
-    "id": "gameplay-programmer",
-    "stamp": "2023 — PRESENT",
-    "title": "Gameplay Programmer",
-    "org": "Studio-23 · Brain Station 23",
-    "detail": "Built core gameplay systems, tooling, and game-feel polish across Silent Scream, High Noon, and other titles. Co-authored open-source Unity packages used team-wide.",
+    "id": "software-engineer",
+    "stamp": "JUL 2023 — DEC 2024",
+    "title": "Software Engineer",
+    "org": "Brain Station 23 PLC",
+    "detail": "Worked on Silent Scream 2 for most of the role and co-authored its open-source Unity packages, then led Unilever Marvel 3 from Nov 2024.",
     "tone": "magenta",
     "kind": "role"
   },
@@ -45,11 +54,11 @@
     "icon": "▲"
   },
   {
-    "id": "trainee-gameplay-programmer",
-    "stamp": "2022 — 2023",
-    "title": "Trainee Gameplay Programmer",
-    "org": "Studio-23 · Brain Station 23",
-    "detail": "Joined the team while finishing undergrad. Worked on VR Football for Meta Quest 2 and started High Noon.",
+    "id": "associate-software-engineer",
+    "stamp": "MAR 2022 — JUN 2023",
+    "title": "Associate Software Engineer",
+    "org": "Brain Station 23 PLC",
+    "detail": "Worked on the proof-of-concept games Westwood Manor and High Noon with the team, then on Silent Scream toward the end of the role.",
     "tone": "cyan",
     "kind": "role"
   },
@@ -63,10 +72,19 @@
     "icon": "◆"
   },
   {
+    "id": "software-engineer-trainee",
+    "stamp": "NOV 2021 — FEB 2022",
+    "title": "Software Engineer Trainee",
+    "org": "Brain Station 23 PLC",
+    "detail": "Joined Brain Station 23 while finishing my undergrad.",
+    "tone": "cyan",
+    "kind": "role"
+  },
+  {
     "id": "bsc-computer-science",
-    "stamp": "2018 — 2022",
-    "title": "B.Sc. Computer Science",
-    "org": "[ FILL ME IN: school + focus areas ]",
+    "stamp": "2018 — JAN 2022",
+    "title": "B.Sc. in Computer Science & Engineering",
+    "org": "BRAC University",
     "detail": "First serious dive into Unity, building text-based adventures, prototypes, and learning the craft.",
     "tone": "yellow",
     "kind": "education"

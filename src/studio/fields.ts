@@ -42,7 +42,7 @@ const projectFields: Field[] = [
 
   { key: "keyInsights", label: "Key insights", widget: "tags", group: "Detail", help: "Up to 4. Checklist wants 3 or more." },
   { key: "links", label: "Links", widget: "repeater", group: "Detail", subFields: [
-    { key: "platform", label: "Platform", widget: "select", options: ["steam", "itch", "github", "youtube", "website"] },
+    { key: "platform", label: "Platform", widget: "select", options: ["steam", "itch", "github", "youtube", "website", "googleplay", "appstore"] },
     { key: "url", label: "URL", widget: "url" },
   ] },
   { key: "snippets", label: "Code snippets", widget: "repeater", group: "Detail", subFields: [

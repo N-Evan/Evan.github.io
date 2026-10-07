@@ -1,6 +1,6 @@
 ---
 title: Aetherfall
-order: 4
+order: 12
 year: 2024
 status: in-development
 studio: null
@@ -26,11 +26,3 @@ RPG at a small, realistic scale for a solo developer. There is no end
 goal — I plan to keep iterating on it as I write more of the story
 and slowly grow it into a complete game. Built in my free time using
 free design resources from the internet.
-
-## Learnings
-
-[ FILL ME IN ]
-
-## Behind the Scenes
-
-[ FILL ME IN ]

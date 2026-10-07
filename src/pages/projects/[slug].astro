@@ -72,4 +72,6 @@ const { prev, next } = getPrevNext(sorted, entry.id);
   .markdown-body p { margin: 0.75rem 0; line-height: 1.7; color: var(--text-soft); }
   .markdown-body ul { margin: 0.75rem 0 0.75rem 1.25rem; list-style: square; }
   .markdown-body li { margin: 0.25rem 0; }
+  /* A heading with nothing under it (studio scaffold) stays hidden. */
+  .markdown-body h2:has(+ h2), .markdown-body h2:last-child { display: none; }
 </style>

@@ -28,11 +28,6 @@ Default rumble is a wall of noise. We split haptics into three layers:
 Layering them means each pulse means something. A cinematic ramp during a
 quiet kitchen scene now reads like a warning, not background noise.
 
-## Frame pacing is a feature
-
-[ FILL ME IN: include the GIF showing pre/post pacing comparison once
-captured ]
-
 ## Closing thoughts
 
 Console ports aren't translations; they're new designs that share assets

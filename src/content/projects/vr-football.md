@@ -1,6 +1,6 @@
 ---
 title: VR Football
-order: 5
+order: 13
 year: 2022
 status: shipped
 studio: Studio-23
@@ -25,11 +25,3 @@ Developed a penalty-shootout saver game for Meta Quest 2. The shots
 get progressively harder the longer you play. Most of the core systems
 were developed by me under the guidance of a senior game developer
 and designer. My first VR project.
-
-## Learnings
-
-[ FILL ME IN ]
-
-## Behind the Scenes
-
-[ FILL ME IN ]

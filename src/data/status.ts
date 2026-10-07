@@ -12,7 +12,7 @@ export const status: {
   message?: string;
 } = {
   current: "available",
-  message: "Open to gameplay programming roles, contract work, and collaborations.",
+  message: "Open to product engineering roles and collaborations.",
 };
 
 export const STATE_META: Record<

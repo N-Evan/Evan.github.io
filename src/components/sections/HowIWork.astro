@@ -1,0 +1,114 @@
+---
+import GlitchText from "../chrome/GlitchText.astro";
+import RevealOnScroll from "../chrome/RevealOnScroll.astro";
+import { withBase } from "../../lib/url";
+
+// Results first: every line pairs Claude with something it produced.
+const proof: { stat: string; sub?: string; what: string; href: string }[] = [
+  { stat: "1 H", sub: "vs 4+ h", what: "Omnidirectional spriteboard for ADGM: base version and audit tool, with Claude.", href: "/projects/adgm-smart-induction" },
+  { stat: "~2 H", what: "ADGM's multi-agent RAG chatbot, API and ingestion included, with Claude. My first chatbot.", href: "/projects/adgm-smart-induction" },
+  { stat: "48", sub: "panoramas", what: "Converted by Claude into 6-sided cubemaps without quality loss, for the Seven Keys 360 viewer.", href: "/projects/seven-keys" },
+  { stat: "<2 H", what: "From a new repo to WhereIsOurMoney's first full-stack version, built from 3 written specs with Claude.", href: "/projects/whereisourmoney" },
+];
+
+const repo = "https://github.com/N-Evan/Evan.github.io";
+---
+<section id="method" class="method relative py-24 px-6 max-w-6xl mx-auto">
+  <div class="section-tag font-terminal text-text-muted text-sm tracking-widest mb-3">
+    [ EXT ] &middot; FIELD NOTES
+  </div>
+  <RevealOnScroll>
+    <GlitchText as="h2" text="// HOW I WORK" class="font-pixel text-neon-magenta text-2xl sm:text-3xl block mb-3" />
+  </RevealOnScroll>
+  <RevealOnScroll delay={120}>
+    <p class="font-terminal text-text-muted text-base sm:text-lg mb-8 max-w-3xl">
+      &gt; What building with Claude, from written specs, has produced so far.
+    </p>
+  </RevealOnScroll>
+
+  <ul class="method__proof">
+    {proof.map((p, i) => (
+      <li>
+        <RevealOnScroll from="up" delay={i * 80}>
+          <a href={withBase(p.href)} class="method__card">
+            <span class="method__stat font-pixel">{p.stat}</span>
+            {p.sub && <span class="method__sub font-terminal">{p.sub}</span>}
+            <span class="method__what font-body">{p.what}</span>
+          </a>
+        </RevealOnScroll>
+      </li>
+    ))}
+  </ul>
+
+  <RevealOnScroll>
+    <ul class="method__notes font-body">
+      <li>
+        <b>Spec-driven, since Nov 2025.</b> Brainstorm, written spec, implementation plan, then agent
+        execution. WhereIsOurMoney came out of 3 of those specs.
+      </li>
+      <li>
+        <b>Checked by behaviour.</b> I test how Claude's output behaves, at work and on personal projects:
+        AllSeer has 44 pytest tests, and every SortMyLife schema migration is tested on a copy of the live database.
+      </li>
+      <li>
+        <b>Shared with the team.</b> I promoted a shared CLAUDE.md, day-to-day skills and a spec-driven
+        setup across the team, so output stays consistent with the requirements.
+      </li>
+      <li>
+        <b>This site.</b> Rebuilt from spec to deployed in about 4.5 hours (May 2026). Its authoring studio
+        (Sep 2026) added a dev-only Vite middleware write API, a YAML frontmatter round-trip, a
+        <code>sharp</code> image pipeline, and a test that asserts the studio never ships to production. Both are in the
+        <a href={`${repo}/commits/main`} target="_blank" rel="noopener noreferrer">repo history</a> and its
+        <a href={`${repo}/tree/main/docs/superpowers`} target="_blank" rel="noopener noreferrer">specs</a>.
+      </li>
+    </ul>
+  </RevealOnScroll>
+</section>
+
+<style>
+  .section-tag { text-shadow: 0 0 6px var(--text-muted); }
+
+  .method__proof {
+    list-style: none; margin: 0 0 2.5rem; padding: 0;
+    display: grid; gap: 1rem;
+  }
+  @media (min-width: 720px) { .method__proof { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .method__card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 1rem;
+    align-items: baseline;
+    height: 100%;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--neon-cyan);
+    background: color-mix(in srgb, var(--bg-panel) 70%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--neon-cyan) 15%, transparent);
+    transition: box-shadow 200ms, border-color 200ms;
+  }
+  .method__card:hover {
+    border-color: var(--neon-magenta);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--neon-magenta) 30%, transparent);
+  }
+  .method__stat {
+    grid-row: span 2;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px var(--neon-yellow);
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    white-space: nowrap;
+  }
+  .method__sub { color: var(--text-muted); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .method__what { grid-column: 2; color: var(--text-soft); line-height: 1.55; }
+
+  .method__notes {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: 0.9rem;
+    max-width: 52rem;
+    color: var(--text-soft);
+    line-height: 1.65;
+  }
+  .method__notes li { padding-left: 1rem; border-left: 2px solid var(--neon-magenta); }
+  .method__notes b { color: var(--neon-cyan); font-weight: 600; }
+  .method__notes a { color: var(--neon-cyan); text-decoration: underline; text-underline-offset: 3px; }
+  .method__notes code { font-size: 0.9em; color: var(--neon-yellow); }
+</style>

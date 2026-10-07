@@ -10,7 +10,7 @@ export async function GET(context: { site?: URL }) {
   return rss({
     title: "Md. Nurusshafi Evan — Devlog",
     description:
-      "Working notes from a gameplay programmer: post-mortems, design breakdowns, tooling experiments.",
+      "Working notes from a software engineer: post-mortems, design breakdowns, tooling experiments.",
     site: context.site ?? "https://n-evan.github.io",
     items: sorted.map((p) => ({
       title: p.data.title,
