@@ -7,7 +7,7 @@ const entries = JSON.parse(readFileSync("src/data/career.json", "utf8"));
 describe("career.json", () => {
   it("is a non-empty array", () => {
     expect(Array.isArray(entries)).toBe(true);
-    expect(entries.length).toBe(9);
+    expect(entries.length).toBe(11);
   });
 
   it("gives every entry a unique id for the file() loader", () => {
@@ -25,15 +25,21 @@ describe("career.json", () => {
     }
   });
 
-  it("preserves the newest-first order from the original component", () => {
-    expect(entries[0].title).toBe("Unilever Marvel 3");
-    expect(entries[0].stamp).toBe("2025");
+  it("keeps newest-first order", () => {
+    expect(entries[0].title).toBe("Software Engineer II");
+    expect(entries[0].stamp).toBe("JAN 2025 — PRESENT");
     expect(entries.at(-1).title).toBe("FIRST GAME // ABYSS CRAWLER");
   });
 
-  it("keeps the role entry's org", () => {
-    const role = entries.find((e: { kind: string }) => e.kind === "role");
-    expect(role.org).toBe("Studio-23 · Brain Station 23");
+  it("lists the four official job titles, exactly, at the employer of record", () => {
+    const roles = entries.filter((e: { kind: string }) => e.kind === "role");
+    expect(roles.map((r: { title: string }) => r.title)).toEqual([
+      "Software Engineer II",
+      "Software Engineer",
+      "Associate Software Engineer",
+      "Software Engineer Trainee",
+    ]);
+    expect(roles.every((r: { org: string }) => r.org === "Brain Station 23 PLC")).toBe(true);
   });
 });
 
