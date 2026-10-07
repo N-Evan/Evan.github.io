@@ -10,7 +10,7 @@ teamSize: Individual
 duration: 3 days
 role: Solo Developer
 tagline: My GMTK Game Jam 2026 entry. Ranked 274th in Enjoyment and 383rd in Creativity out of 10.5k submissions.
-thumb: ""
+thumb: /images/thumbs/chrono-hunt.png
 genres: [game jam, arcade]
 tech: [JavaScript, Cloudflare Workers]
 links:
@@ -19,7 +19,8 @@ keyInsights:
   - "Ranked 274th in Enjoyment and 383rd in Creativity out of 10.5k submissions (community vote)."
   - "Built solo with Claude in 3 days of the 7-day jam."
   - "Every idea and mechanic was new for the jam."
-gallery: []
+gallery:
+  - /images/gallery/chrono-hunt-gameplay.png
 ---
 
 ## Role & Responsibilities
