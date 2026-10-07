@@ -37,7 +37,7 @@ featured: true
 ---
 
 ## Role & Responsibilities
-Led the development of the smart induction platform, working closely with stakeholders and managing the team of developers and designers. The tour covers 7 office floors, each fully explorable with guided paths.
+Led the development of the smart induction platform, working closely with stakeholders, in a team of 10: 5 designers, 3 developers, a business analyst and a product owner. The tour covers 7 office floors, each fully explorable with guided paths.
 
 **What I built:** the RAG chatbot and its API; the tour's core systems (user navigation, dynamic scene streaming, and tour rails, both guided and manual); and the UI in Unity.
 

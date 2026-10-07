@@ -34,4 +34,4 @@ My wife and I use it to track shared spending without handing our data to a thir
 ## How it's built
 A React 18, Vite and Tailwind v4 frontend; a Cloudflare Worker API with passcode/session auth and KV rate limiting; Cloudflare D1 (SQLite) with migrations; and Vitest tests running inside workerd. Deployed on Cloudflare Workers.
 
-The repo is private for now. I plan to publish it after a security audit.
+The repo is private for now.
