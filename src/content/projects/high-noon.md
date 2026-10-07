@@ -21,7 +21,7 @@ gallery: []
 
 ## Role & Responsibilities
 
-Built a real-time player-versus-player dueling game using Photon Unity
-Networking and developed all systems from scratch. Explored design ideas
+Developed the entire game from scratch while learning and implementing
+Photon multiplayer in Unity: a real-time player-versus-player dueling game. Explored design ideas
 to make the game more fun and engaging with the support of 3D artists
 and designers from the team. Design owner of the UI & UX on the PC platform.

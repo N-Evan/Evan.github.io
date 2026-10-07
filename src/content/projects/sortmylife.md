@@ -34,4 +34,4 @@ SvelteKit 2 (Svelte 5) on Node 24 with the built-in `node:sqlite`. Multi-user au
 ## Planned
 Not built yet: AI-assisted task focus, spotting tendencies, and turning loose notes (from Telegram or the web UI) into actionable tasks.
 
-The repo is private for now. I plan to publish it after a security audit.
+The repo is private for now.

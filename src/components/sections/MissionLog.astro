@@ -29,9 +29,9 @@ const years    = [...yearSet].sort((a, b) => b - a);
 const platforms = [...platformSet].sort();
 
 // Studio titles listed without a page until their roles, links and months are confirmed.
-const alsoOnFile = [
+const alsoOnFile: { title: string; period: string; note: string; href?: string }[] = [
   { title: "Westwood Manor", period: "2022–2023", note: "A proof-of-concept game, built as a team. On itch.io." },
-  { title: "Silent Scream 2", period: "2023–2024", note: "A narrative, story-driven game that became a first-person boss-combat game. On Steam." },
+  { title: "Silent Scream 2", period: "2023–2024", note: "A narrative, story-driven game that became a first-person boss-combat game. On Steam.", href: "https://store.steampowered.com/app/3023460/SILENT_SCREAM_2/" },
 ];
 
 function platSlug(s: string) {
@@ -160,7 +160,9 @@ function platSlug(s: string) {
       <ul>
         {alsoOnFile.map((a) => (
           <li>
-            <span class="also-on-file__title">{a.title}</span>
+            {a.href
+              ? <a class="also-on-file__title" href={a.href} target="_blank" rel="noopener noreferrer">{a.title} ↗</a>
+              : <span class="also-on-file__title">{a.title}</span>}
             <span class="also-on-file__period">[{a.period}]</span>
             <span>{a.note}</span>
           </li>

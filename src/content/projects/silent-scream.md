@@ -21,7 +21,7 @@ gallery: []
 
 ## Role & Responsibilities
 
-Collaborated with a team of five while aiding in the development of key
-systems of the game. Throughout the development period we also produced
-open-source packages for Unity to speed up development. Responsible for
-working on the game feel as we ported the game to the XBox platform.
+Primarily led the Xbox port, and supported debugging and enhancing core
+modules such as Kitchen Management and Interaction. Worked with a team of
+five; along the way we produced open-source packages for Unity to speed
+up development.

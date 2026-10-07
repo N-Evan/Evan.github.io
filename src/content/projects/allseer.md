@@ -32,4 +32,4 @@ Built with Claude, and covered by 44 pytest tests. It runs locally: no paid APIs
 ## How it's built
 Python, FastAPI + Uvicorn, httpx, trafilatura and SQLite FTS5. The LLM runs behind an OpenAI-compatible API (llama.cpp or Ollama), set up to run a 30B mixture-of-experts model (Qwen3-30B-A3B) on a 16 GB GPU.
 
-The repo is private for now. I plan to publish it after a security audit.
+The repo is private for now.
