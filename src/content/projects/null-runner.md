@@ -1,6 +1,6 @@
 ---
 title: Null Runner
-order: 3
+order: 11
 year: 2023
 status: shipped
 studio: null
@@ -27,11 +27,3 @@ and dark. Handcrafted the maze and the unique mechanic of navigating
 through the unknown — using freely available assets and writing all
 systems from scratch. Encapsulates my overall knowledge of game design
 and development across both the visual and backend sides.
-
-## Learnings
-
-[ FILL ME IN ]
-
-## Behind the Scenes
-
-[ FILL ME IN ]
