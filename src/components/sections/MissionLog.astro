@@ -17,7 +17,7 @@ const rest = all.filter((p) => !p.data.featured);
 const tickerItems = [
   `MISSIONS LOGGED :: ${all.length}`,
   "OPERATIONAL :: ALL SYSTEMS NOMINAL",
-  "FOCUS :: GAMEPLAY × LEVEL DESIGN × VFX",
+  "FOCUS :: XR & AI EXPERIENCES",
   "SIGNAL :: 433.92 MHz",
   `SHIPPED :: ${all.filter((p) => p.data.status === "shipped").length}`,
 ];
@@ -27,6 +27,12 @@ const yearSet  = new Set(rest.map((p) => p.data.year));
 const platformSet = new Set(rest.flatMap((p) => p.data.platforms));
 const years    = [...yearSet].sort((a, b) => b - a);
 const platforms = [...platformSet].sort();
+
+// Studio titles listed without a page until their roles, links and months are confirmed.
+const alsoOnFile = [
+  { title: "Westwood Manor", period: "2022–2023", note: "A proof-of-concept game, built as a team. On itch.io." },
+  { title: "Silent Scream 2", period: "2023–2024", note: "A narrative, story-driven game that became a first-person boss-combat game. On Steam." },
+];
 
 function platSlug(s: string) {
   return s.toLowerCase().replace(/\s+/g, "-");
@@ -47,7 +53,7 @@ function platSlug(s: string) {
     </RevealOnScroll>
     <RevealOnScroll delay={120}>
       <p class="font-terminal text-text-muted text-base sm:text-lg mb-10 max-w-2xl">
-        &gt; {all.length} entries on file. Click any mission to access debrief, gallery, and behind-the-scenes data.
+        &gt; {all.length} entries on file. Click any mission for the full debrief.
       </p>
     </RevealOnScroll>
 
@@ -107,15 +113,19 @@ function platSlug(s: string) {
                 </div>
 
                 <div class="mc-thumb">
-                  <img
-                    src={withBase(p.data.thumb)}
-                    alt={`${p.data.title} title art`}
-                    width="600"
-                    height="300"
-                    class="mc-thumb__img"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  {p.data.thumb ? (
+                    <img
+                      src={withBase(p.data.thumb)}
+                      alt={`${p.data.title} title art`}
+                      width="600"
+                      height="300"
+                      class="mc-thumb__img"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <span class="thumb-fallback">{p.data.title}</span>
+                  )}
                   <div class="mc-thumb__scan"></div>
                   <div class="mc-thumb__grid"></div>
                 </div>
@@ -144,6 +154,19 @@ function platSlug(s: string) {
     <p class="mission-empty font-terminal" hidden>
       &gt; NO MISSIONS MATCH FILTER. <button id="reset-filters" class="reset-link">[ RESET ]</button>
     </p>
+
+    <div class="also-on-file font-terminal">
+      <p class="also-on-file__label">ALSO ON FILE ::</p>
+      <ul>
+        {alsoOnFile.map((a) => (
+          <li>
+            <span class="also-on-file__title">{a.title}</span>
+            <span class="also-on-file__period">[{a.period}]</span>
+            <span>{a.note}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -284,6 +307,18 @@ function platSlug(s: string) {
     position: absolute;
     visibility: hidden;
   }
+
+  .also-on-file {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed var(--text-muted);
+    color: var(--text-soft);
+  }
+  .also-on-file__label { color: var(--text-muted); letter-spacing: 0.18em; font-size: 0.85rem; margin-bottom: 0.5rem; }
+  .also-on-file ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+  .also-on-file li { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+  .also-on-file__title { color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); }
+  .also-on-file__period { color: var(--neon-yellow); font-size: 0.9rem; }
 
   .mission-empty {
     text-align: center;

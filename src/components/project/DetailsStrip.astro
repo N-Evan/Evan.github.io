@@ -8,6 +8,8 @@ interface ProjectLinks {
   github?: string;
   youtube?: string;
   website?: string;
+  googleplay?: string;
+  appstore?: string;
 }
 interface Props {
   platforms: string[];
@@ -25,6 +27,8 @@ if (links.itch)    linkItems.push({ label: "ITCH.IO", href: links.itch });
 if (links.github)  linkItems.push({ label: "GITHUB", href: links.github });
 if (links.youtube) linkItems.push({ label: "YOUTUBE", href: links.youtube });
 if (links.website) linkItems.push({ label: "WEBSITE", href: links.website });
+if (links.googleplay) linkItems.push({ label: "GOOGLE PLAY", href: links.googleplay });
+if (links.appstore) linkItems.push({ label: "APP STORE", href: links.appstore });
 ---
 <PixelFrame tone="cyan">
   <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-2 font-terminal text-base">

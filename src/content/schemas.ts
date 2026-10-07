@@ -36,6 +36,8 @@ export const projectSchema = z.object({
       github: z.string().url().optional(),
       youtube: z.string().url().optional(),
       website: z.string().url().optional(),
+      googleplay: z.string().url().optional(),
+      appstore: z.string().url().optional(),
     })
     .partial()
     .optional(),

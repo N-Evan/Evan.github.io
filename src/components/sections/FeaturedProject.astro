@@ -29,14 +29,18 @@ if (p.links?.youtube) linkItems.push({ label: "YOUTUBE", href: p.links.youtube }
 
   <a class="featured__inner" href={withBase(`/projects/${project.id}`)}>
     <div class="featured__thumb">
-      <img
-        src={withBase(p.thumb)}
-        alt={`${p.title} title art`}
-        width="900"
-        height="450"
-        loading="eager"
-        decoding="async"
-      />
+      {p.thumb ? (
+        <img
+          src={withBase(p.thumb)}
+          alt={`${p.title} title art`}
+          width="900"
+          height="450"
+          loading="eager"
+          decoding="async"
+        />
+      ) : (
+        <span class="thumb-fallback">{p.title}</span>
+      )}
       <div class="featured__scan"></div>
       <div class="featured__grid"></div>
     </div>
